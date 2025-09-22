@@ -1,5 +1,6 @@
 # Time Log
 
-| Date     | Task | Hours | Notes|
-|----------|------|-------|------|
-| 06/16/24 | Set up project repository, write problem statement, time log and weekly reflection, target tech| 2 | |
+| Date     | Task                                  | Hours | Notes|
+|----------|---------------------------------------|-------|------|
+| 09/21/25 | Ent Java -> Week 3 Videos/Material    | 4     | |
+| 09/21/25 | Ent Java -> Week 3 Exercise/Challenge | 5     | |
