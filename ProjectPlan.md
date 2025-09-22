@@ -55,7 +55,7 @@ For those using this as a model, continue adding weekly tasks by considering:
 #### Checkpoint 3 is Due: Deployed to AWS, at least one JSP that displays data from the database is implemented, authentication implemented, add AWS deployed app link to indie project list in student repo.
 - [ ] Double-check all checkpoint 3 items (above) are complete and visible in github.
 
-### Week 15
+### Week 12
 - [ ] Implement Feedback from Week 14 review
 - [ ] Final Presentation
 - [ ] Create video, add video link to readme.md
@@ -63,6 +63,6 @@ For those using this as a model, continue adding weekly tasks by considering:
 - [ ] Code quality check
 - [ ] Weekly journal entry
 
-### Week 16
+### Week 13
 - [ ] Weekly journal entry
 - [ ] Final touches before code complete
