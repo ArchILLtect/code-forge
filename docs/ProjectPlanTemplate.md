@@ -15,7 +15,7 @@
 - [ ] Confirm MVP stories meet Ent Java indie project objectives
 - [ ] Design screens - make sure all MVP user stories are covered
 - [ ] Triple-check for Checkpoint 1
-- [ ] Update journal/time log/reflection - I should probably just use one :)
+- [ ] Update journal/time log/reflection
 
 For those using this as a model, continue adding weekly tasks by considering:
 1. which user story will you work on in a given week
@@ -25,26 +25,26 @@ For those using this as a model, continue adding weekly tasks by considering:
 5. I started a few of these below as examples
 
 ### Week 4 - Class topic is Hibernate
-#### This week my focus is the Find Trails by Name user story
+#### This week my focus is...
 - [ ] First cut at database design
-- [ ] Create the dev version of the database - at least the Trail table
-- [ ] Create Trail entity
-- [ ] Create a class to perform CRUD on trail - TrailDao
+- [ ] Create the dev version of the database
+- [ ] Create Challenge entity
+- [ ] Create a class to perform CRUD on challenge
 - [ ] Create the config files for the DB connection info (dev and test)
 - [ ] Create a test version of the database for unit testing
-- [ ] Create unit tests for the TrailDao
+- [ ] Create unit tests for the ChallengeDao
 - [ ] Create a class for the DB connection business
-- [ ] Create JSP for finding trails
-- [ ] Create JSP for trail results
-- [ ] Create controller to route to find-a-trail jsp
-- [ ] Create controller to manage the work of finding a trail
+- [ ] Create JSP for finding challenges
+- [ ] Create JSP for challenge results
+- [ ] Create controller to route to challenge selector jsp
+- [ ] Create controller to manage the work of finding a challenge
 - [ ] Update weekly reflection
 
 ### Week 7
-#### Checkpoint 2 is Due: Database designed and created, at least one DAO with full CRUD (create, read, update, delete) implemented with Hibernate, DAO is fully unit tested, Log4J is implemented (no System.out.printlns)
+#### Checkpoint 2 is Due: Database designed and created, at least one DAO with full CRUD (create, read, update, delete) implemented with Hibernate, DAO is fully unit tested, Log4J is implemented (no System.out.println)
 
-- [ ] Double-check all checkpoint 2 items (above) are complete and visible in github.
-- [ ] Set up Authentication in indie project (more tasks coming for this)
+- [ ] Double-check all checkpoint 2 items (above) are complete and visible in GitHub.
+- [ ] Set up Authentication in independent project (more tasks coming for this)
 - [ ] Create project DB on AWS.
 - [ ] Update project config files for AWS as needed
 - [ ] Deploy project to AWS
@@ -53,7 +53,7 @@ For those using this as a model, continue adding weekly tasks by considering:
 
 ### Week 9 (Start of the team project)
 #### Checkpoint 3 is Due: Deployed to AWS, at least one JSP that displays data from the database is implemented, authentication implemented, add AWS deployed app link to indie project list in student repo.
-- [ ] Double-check all checkpoint 3 items (above) are complete and visible in github.
+- [ ] Double-check all checkpoint 3 items (above) are complete and visible in GitHub.
 
 ### Week 12
 - [ ] Implement Feedback from Week 14 review
