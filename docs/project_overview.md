@@ -44,5 +44,5 @@ Upon completion, this project will be an important part of your portfolio to be 
 ## Checkpoints
 
 - **Checkpoint 1:** Problem statement, user stories, project plan, screen design and reflection statements pushed to GitHub. Be sure to identify which stories are part of the Minimum Viable Product (MVP). Link to your repository [🔗here](https://github.com/mad-ent-java-f25/student/blob/main/IndividualProjects.md) *Week 4*.
-- **Checkpoint 2:** Database designed and created, at least one DAO with full CRUD (create, read, update, delete) implemented with Hibernate, DAO is fully unit tested, Log4J is implemented (no System.out.printlns). *Week 7*.
+- **Checkpoint 2:** Database designed and created, at least one DAO with full CRUD (create, read, update, delete) implemented with Hibernate, DAO is fully unit tested, Log4J is implemented (no System.out.println allowed). *Week 7*.
 - **Checkpoint 3:** Deployed to AWS, at least one JSP that displays data from the database is implemented, authentication implemented. Add link to your deployed application [🔗here](https://github.com/mad-ent-java-f25/student/blob/main/IndividualProjects.md). *Week 9*.
