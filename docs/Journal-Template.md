@@ -162,9 +162,11 @@ working pretty quickly.
 tests, I noticed tests failing because the id of the inserted record was
 being returned as 0.  Turns out the generated hbm.xml file did not have the
 the generator class set to native:   
-```<id name="id" type="int" column="id">
-     <generator class="native"/>
-   </id>```
+```
+    <id name="id" type="int" column="id">
+        <generator class="native"/>
+    </id>
+```
 I'm noticing as I build the daos, that they are all similar, I think these
 could all be a subclass of some abstract Dao.  See this as an example: http://www.java2s.com/Code/Java/Hibernate/GenericDaoFindAll.htm
 
