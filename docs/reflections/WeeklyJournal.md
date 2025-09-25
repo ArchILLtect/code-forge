@@ -2,7 +2,7 @@
 
 ## Week 3 – Fall 2025
 
-**9/22/25**
+**9/21/25**
 
 This week I focused on getting the *CodeForge* project organized and aligned with the Enterprise Java class requirements. I created and refined several key project artifacts:
 
@@ -19,25 +19,32 @@ This week was heavily documentation- and planning-focused, but that work was ess
 
 ---
 
-## Week 3 – Fall 2025
+## Week 4 – Fall 2025
 
-**9/--/25**
+**9/28/25**
 
-This week I focused on 
+This week I focused on [.........]
 
 - Completion project 1 checkpoint.
-- Drafted a polished
-- Designed a detailed
-- Compared the
-- Troubleshot
+- Drafting a polished ___ (placeholder for what you’ll fill in).
+- Designing a detailed ___ (placeholder).
+- Comparing the ___ (placeholder).
+- Troubleshooting ___ (placeholder).
 
-Overall, I feel ...
+Overall, I feel ___ (placeholder).
+
+>### Note on Vulnerabilities:
+>Vulnerabilities were flagged in transitive dependencies of Spring Boot and related libraries. Since this project is running in a local development/test environment (not exposed to the public), they are not exploitable in this context. I am acknowledging them here, but for course scope I am not remediating or overriding versions at this time. In a production scenario, I would upgrade to patched versions or apply dependency overrides as recommended.
 
 ---
 
 ### Reflection
 Week 4 Reflection – Checkpoint 1
-Wins: Boot app runs, H2 console enabled, Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, logging via SLF4J (no System.out).
-Blockers: POM cleanup (legacy deps), config gotcha (edited application-test.yml instead of application.yml) and jar lock on Windows—resolved.
-Decisions: Base package me.nickhanson.codeforge; H2 for dev/test; enums for Difficulty; Boot + JPA + Thymeleaf stack.
-Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
+
+**Wins:** Boot app runs, H2 console enabled, Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, logging via SLF4J (no `System.out`).
+
+**Blockers:** POM cleanup (legacy deps), config gotcha (edited `application-test.yml` instead of `application.yml`) and jar lock on Windows—resolved.
+
+**Decisions:** Base package `me.nickhanson.codeforge`; H2 for dev/test; enums for Difficulty; Boot + JPA + Thymeleaf stack.
+
+**Next:** Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.

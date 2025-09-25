@@ -31,6 +31,7 @@
   </properties>
   <dependencies>
     <!-- Web + MVC (embedded Tomcat) -->
+    <!-- Ignored vulnerability warning for now: CVE-2020-5412 -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -77,6 +78,7 @@
     -->
 
     <!-- Tests (JUnit 5, Mockito, AssertJ, JSON, etc.) -->
+    <!-- Ignored vulnerability warnings for now: CVE-2020-5398, CVE-2020-5397, CVE-2020-5421 -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
