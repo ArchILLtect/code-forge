@@ -14,7 +14,30 @@ This week I focused on getting the *CodeForge* project organized and aligned wit
 
 Overall, I feel much more confident about the direction of the project. I now have a clear roadmap that aligns with the class rubric and also delivers on my original CodeForge vision: a simpler, friendlier coding practice platform with both Practice and Drill Modes.
 
+### Reflection
+This week was heavily documentation- and planning-focused, but that work was essential. The plan now shows a clear path from Week 4 to Week 14 that should both meet the Enterprise Java rubric and result in a working MVP of CodeForge. My biggest snag was IntelliJ’s project file indexing, which cost some time until I realized a restart solved it. Next week, I’ll move into actual Hibernate work and database schema setup, per the plan.
+
+---
+
+## Week 3 – Fall 2025
+
+**9/--/25**
+
+This week I focused on 
+
+- Completion project 1 checkpoint.
+- Drafted a polished
+- Designed a detailed
+- Compared the
+- Troubleshot
+
+Overall, I feel ...
+
 ---
 
 ### Reflection
-This week was heavily documentation- and planning-focused, but that work was essential. The plan now shows a clear path from Week 4 to Week 14 that should both meet the Enterprise Java rubric and result in a working MVP of CodeForge. My biggest snag was IntelliJ’s project file indexing, which cost some time until I realized a restart solved it. Next week, I’ll move into actual Hibernate work and database schema setup, per the plan.
+Week 4 Reflection – Checkpoint 1
+Wins: Boot app runs, H2 console enabled, Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, logging via SLF4J (no System.out).
+Blockers: POM cleanup (legacy deps), config gotcha (edited application-test.yml instead of application.yml) and jar lock on Windows—resolved.
+Decisions: Base package me.nickhanson.codeforge; H2 for dev/test; enums for Difficulty; Boot + JPA + Thymeleaf stack.
+Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
