@@ -1,6 +1,8 @@
-# CodeForge ⚒️
+<h2 align="center">CodeForge ⚒️ README</h2>
 
-**CodeForge** is a Java-based coding practice platform that helps students and developers strengthen their algorithm and problem-solving skills.  
+
+
+### **CodeForge** is a Java-based coding practice platform that helps students and developers strengthen their algorithm and problem-solving skills.  
 Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
 
 ---
@@ -51,11 +53,60 @@ CodeForge will include challenges from:
 ---
 
 ## 📚 Tech Stack
-- **Java** (Enterprise Java focus)
-- **Servlets/JSP** or **Spring Boot** (depending on class requirements)
-- **JUnit** for automated solution testing
-- **MySQL/PostgreSQL** for user data and challenge storage
-- **IntelliJ IDEA** as the development environment
+
+The CodeForge project leverages a modern **Enterprise Java** stack alongside supporting tools for development, testing, and deployment.
+
+---
+
+### Backend
+- **Java 17+** — Core language
+- **Spring Boot** — Primary framework for web tier, REST controllers, and DI
+- **JPA / Hibernate** — ORM layer for database persistence
+- **Project Lombok** — Reduces boilerplate (getters, setters, builders, etc.)
+- **Log4J** — Centralized logging framework (replaces `System.out.println`)
+
+---
+
+### Frontend (Server-Side)
+- **JSP / Servlets** — Required for class demonstrations and some views
+- **JSTL** — Tag library for dynamic rendering in JSPs
+
+---
+
+### Database
+- **H2 (local/dev)** — Lightweight in-memory DB for rapid testing
+- **MySQL / PostgreSQL (prod)** — Relational databases for persistence
+- **AWS RDS** — Cloud-hosted DB for deployment
+
+---
+
+## Authentication & Security
+- **AWS Cognito** — Authentication & authorization service (user registration, login, tokens)
+- **Spring Security** (integration) — Protects endpoints and enforces role-based access
+
+---
+
+### Testing
+- **JUnit 5** — Unit and integration testing
+- **Mockito** — (Optional/Stretch) Mocking framework for service/DAO testing
+- **Log4J Test Appenders** — Capture and assert logs during test runs
+- **JaCoCo** — (Optional/Stretch) Test coverage reporting
+
+---
+
+### Build & Deployment
+- **Maven** — Dependency management and build tool
+- **GitHub Actions** — (Optional/Stretch) CI/CD pipeline (build, test, deploy)
+- **AWS (Elastic Beanstalk / EC2)** — Hosting & deployment
+- **Docker** (Stretch) — Containerized environment
+
+---
+
+### Development Environment
+- **IntelliJ IDEA** — Primary IDE
+- **Git & GitHub** — Version control and collaboration
+- **Postman / cURL** — API testing
+- **Draw.io / Mermaid** — (Optional/Stretch) Diagrams and architecture sketches
 
 ---
 
