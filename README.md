@@ -5,6 +5,15 @@ Think of it as a simpler, friendlier alternative to LeetCode — focused on clar
 
 ---
 
+## Project Docs
+- ✅ [Problem Statement](docs/problem-statement.md)
+- ✅ [User Stories (MVP)](docs/user-stories.md)
+- ✅ [Project Plan](docs/project-plan.md)
+- ✅ [Screen Designs (Low-Fi)](docs/screen-designs.md)
+- ✅ [Reflections](docs/reflections/WeeklyJournal.md)
+- ✅ [Time Log](docs/reflections/TimeLog.md)
+
+
 ## 🎯 Features (Planned / In Progress)
 - **Practice Mode**  
   Browse algorithm challenges by topic and difficulty, write your solution, and get instant test feedback.
@@ -12,7 +21,7 @@ Think of it as a simpler, friendlier alternative to LeetCode — focused on clar
 - **Drill Mode**  
   A “flashcard for code” system. Missed or skipped problems come back in future cycles until you solve them correctly — with some solved ones mixed in to re-check your mastery.
 
-- **Progress Tracking**  
+- **Progress Tracking**
   Track your problem status (`Correct`, `Acceptable`, `Incorrect`, `Skipped`) and see your overall improvement over time.
 
 - **Expandable Challenge Set**  
