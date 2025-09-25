@@ -1,5 +1,9 @@
 # Class and Indie Project Plan (Weeks 4–14)
 
+Indie Project Scope:
+- Build a Java web app focused on: Practice Mode, Drill Mode, Progress Tracking, Problem database with Admin interface, and a polished UI.
+- Stack: Spring Boot, JPA, JUnit, relational DB (local H2 for dev, MySQL/PostgreSQL later), IntelliJ IDEA.
+
 **Legend**
 - **Class** = Enterprise Java course tasks and milestones
 - **Indie** = *CodeForge* project tasks (based on `README.md`, rubric, and roadmap)
@@ -140,5 +144,6 @@
   - [ ] Create **demo video** and add video link to `README.md` (rubric requirement)
   - [ ] Finalize documentation and rubric self-check
   - [ ] Final journal/time log entry
+  - [ ] Celebrate completing your indie project!
 
 ---
