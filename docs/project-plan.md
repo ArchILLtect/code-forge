@@ -15,29 +15,30 @@ Indie Project Scope:
 
 ### Week 4 — Hibernate and Data Model _(Sept 22–28)_
 - **Class**
-  - [ ] Lecture/lab: Hibernate mappings, configs, testing patterns, logging
-  - [ ] Set up dev and test databases, seed test data
-  - [ ] Replace `System.out` with Log4J/SLF4J
+  - [x] Lecture/lab: Hibernate mappings, configs, testing patterns, logging
+  - [x] Set up dev and test databases, seed test data
+  - [x] Replace `System.out` with Log4J/SLF4J
 - **Indie**
-  - [ ] Deliver this week (Checkpoint 1)
-    - [ ] Finalize **Problem Statement** and **confirm MVP stories** (align with rubric)
-    - [ ] Finalize initial DB schema from `README.md` challenge domain
-      - [ ] Schema sketch (initial): User, Challenge, Submission, DrillItem.
-      - ⭐[ ] Create ER diagram artifact and baseline DB migrations (Flyway/Liquibase)
-    - [ ] Implement entity mappings and one DAO with full CRUD
-      - [ ] One entity + DAO + CRUD + tests (recommend: Challenge).
-    - [ ] Create Hibernate configs for dev/test; set up test DB
-    - Testing:
-      - [ ] Unit tests for DAO (happy path and edge cases)
-      - [ ] Replace System.out with Log4J.
-    - [ ] Update project plan, journal, and time log
-    - [ ] ⭐Set up GitHub labels, milestones, issue templates, and weekly journal/time log checklist
-    - [ ] Push all changes to GitHub and tag Checkpoint 1
-    - [ ] ⭐Add ARCHITECTURE.md and DATA_MODEL.md scaffolds
-    - [ ] Rubric mapping: DB schema, DAO CRUD, logging, documentation
-    - [ ] Done when: ER diagram, DAO CRUD, tests, log4j, journal, plan, GitHub tag
-    - [ ] Evidence: ER diagram, DAO test report, repo tag, screenshots
-    - [ ] Update journal and time log
+  - [x] Deliver this week (Checkpoint 1)
+    - [x] Finalize **Problem Statement** and **confirm MVP stories** (align with rubric)
+    - [x] Finalize initial DB schema from `README.md` challenge domain
+      - [x] Schema sketch (initial): User, Challenge, Submission, DrillItem.
+      - [x] Create ER diagram artifact and baseline DB migrations (Flyway/Liquibase)
+    - [x] Implement entity mappings and one DAO with full CRUD
+      - [x] One entity + DAO + CRUD + tests (Challenge).
+    - [x] Create Hibernate configs for dev/test; set up test DB
+    - [x] Unit tests for DAO (happy path and edge cases)
+    - [x] Replace System.out with Log4J.
+    - [x] Update project plan, journal, and time log
+    - [x] Set up GitHub labels, milestones, issue templates, and weekly journal/time log checklist
+    - [x] Push all changes to GitHub and tag Checkpoint 1
+    - [x] Add ARCHITECTURE.md and DATA_MODEL.md scaffolds
+    - [x] Rubric mapping: DB schema, DAO CRUD, logging, documentation
+    - [x] Done when: ER diagram, DAO CRUD, tests, log4j, journal, plan, GitHub tag
+    - [x] Evidence: ER diagram, DAO test report, repo tag, screenshots
+    - [x] **Milestone:** Project 1 checkpoint complete! App template running and accessible locally. 🎉
+    - [ ] Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
+    - [x] Update journal and time log
 
 ---
 
@@ -213,4 +214,3 @@ Indie Project Scope:
   - [ ] Evidence: release notes, video link, rubric checklist
 
 ---
-

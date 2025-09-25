@@ -1,11 +1,20 @@
-# CodeForge 🔥
+# CodeForge ⚒️
 
 **CodeForge** is a Java-based coding practice platform that helps students and developers strengthen their algorithm and problem-solving skills.  
 Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
 
 ---
 
-## Project Docs
+## 🚩 Milestone
+- **Project 1 checkpoint complete!**
+- App template is running and accessible locally (localhost:8080)
+- H2 console enabled
+- Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
+- Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike
+
+---
+
+## 🗃️ Project Docs
 - ✅ [Problem Statement](docs/problem-statement.md)
 - ✅ [User Stories (MVP)](docs/user-stories.md)
 - ✅ [Project Plan](docs/project-plan.md)
@@ -14,7 +23,7 @@ Think of it as a simpler, friendlier alternative to LeetCode — focused on clar
 - ✅ [Time Log](docs/reflections/TimeLog.md)
 
 
-## 🎯 Features (Planned / In Progress)
+## ✨ Features (Planned / In Progress)
 - **Practice Mode**  
   Browse algorithm challenges by topic and difficulty, write your solution, and get instant test feedback.
 
@@ -29,7 +38,7 @@ Think of it as a simpler, friendlier alternative to LeetCode — focused on clar
 
 ---
 
-## 📚 Challenge Topics
+## 💪 Challenge Topics
 CodeForge will include challenges from:
 - Arrays & Strings
 - HashMaps & Sets
@@ -41,7 +50,7 @@ CodeForge will include challenges from:
 
 ---
 
-## 🛠️ Tech Stack
+## 📚 Tech Stack
 - **Java** (Enterprise Java focus)
 - **Servlets/JSP** or **Spring Boot** (depending on class requirements)
 - **JUnit** for automated solution testing
@@ -68,12 +77,12 @@ http://localhost:8080
 ```
 
 ---
-## 👩‍💻 Project Purpose
+## ⚠️ Project Purpose
 This project is part of my Enterprise Java class.
 The goal is to demonstrate building a full-stack Java web app with authentication, persistence, and real-world application value — while creating a tool that can actually help practice coding interviews.
 
 ---
-## 📌 Roadmap
+## 🗺️ Roadmap
 - [ ] Initial project setup
 - [ ] User auth & progress tracking
 - [ ] Problem database + admin interface
@@ -82,11 +91,11 @@ The goal is to demonstrate building a full-stack Java web app with authenticatio
 - [ ] Polished UI + expanded problem library
 
 ---
-## 📜 License
+## 🎫 License
 MIT License — feel free to use, fork, and improve CodeForge.
 
 ---
-## ✨ Acknowledgments
+## 🙏 Acknowledgments
 
 - Inspired by platforms like LeetCode and HackerRank
 - Built for students who want less confusion, more clarity, and stronger fundamentals.
