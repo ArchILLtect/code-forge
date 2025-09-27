@@ -6,76 +6,132 @@
   <img src="https://img.shields.io/badge/-MVP%20🏆-gold?style=for-the-badge" alt="MVP Badge"/>
 </div>
 
-### Learner:
+## Learner:
 
-As a learner, I can view a list of challenges so that I can pick one to practice.
+1. ### Register & Sign in with Cognito:
+   #### As a learner, I want to sign up, sign in, and reset my password so that I can access my account securely.
 
-AC: Challenge cards show title, difficulty, short blurb, status (Not Started/In Progress/Passed).
+   **Acceptance:**
+   - [ ] “Sign in / Sign up” opens Cognito hosted UI; successful auth redirects back with session.
+   - [ ] “Forgot password” flow works via Cognito.
+   - [ ] Signed-in users see their name/menu; signed-out users see Sign in.
 
-As a learner, I can open a challenge detail to read the prompt, examples, and constraints.
+2. ### Browse challenges:
+   #### As a learner, I want to see a list of challenges filtered by difficulty/topic so that I can pick what to practice.
 
-AC: Detail page shows description, input/output specs, sample cases.
+   **Acceptance:** list view with title, difficulty, status badge (`Not started` / `In progress` / `Solved`); basic filter by difficulty.
 
-As a learner, I can submit Java code and see pass/fail results against tests.
+3. ### View challenge detail:
+   #### As a learner, I want a clean prompt with examples and constraints so that I know exactly what to build.
 
-AC: Server compiles/runs code in a sandbox; returns test results list with messages and timing.
+   **Acceptance:** title, prompt (Markdown rendered), examples I/O, constraints, “Start/Resume” CTA.
 
-As a learner, I can view my submission history per challenge to learn from attempts.
+4. ### Submit solution & see result:
+   #### As a learner, I want to submit my code and see pass/fail + basic diagnostics so that I can learn from feedback.
 
-AC: Table lists datetime, status, and link to diff of last change (basic plain‑text okay).
+   **Acceptance:**
+    - [ ] POST submission stores attempt, shows result (`Correct` / `Acceptable` / `Incorrect`), shows failing test name(s) or brief hint. (Execution may be stubbed early.)
+    - [ ] **Persistence:** each attempt stored with outcome + timestamp (JPA).
+    - [ ] **Testing:** repository tests cover save/find/list/delete.
+    - [ ] **Logging:** submission received/result emitted at INFO; failures include terse diagnostic.
 
-As a learner, I can mark a challenge “Ready to Drill” after I’ve attempted it, so I can add it to my drill queue.
+5. ### Drill Mode:
+   #### As a learner, I want missed/skipped items to reappear until solved, and I can optionally flag challenges as “Ready to Drill,” so that I retain better.
 
-AC: Button toggles drill flag; appears in Drill queue if not passed 2x consecutively.
+   **Acceptance:**
+    - [ ] Queue cycles `Incorrect`/`Skipped`; once `Correct`, it leaves the loop but may resurface later.
+    - [ ] Button toggles drill flag; appears in Drill queue if not passed 2x consecutively.
+    - [ ] Drill session pulls from learner’s weak set, records score, and updates next‑review time.
+    - [ ] **Persistence:** queue state and outcomes are stored with JPA/Hibernate.
+    - [ ] **Logging:** session start/finish + persisted outcomes logged at INFO; errors at WARN/ERROR.
+    - [ ] **Testing:** DAO/repo unit tests cover queue persistence and deletion side effects.
 
-As a learner, I can run a Drill session that serves 3–5 resurfaced challenges I missed before.
+6. ### Track outcomes:
+   #### As a learner, I want each attempt recorded as `Correct`, `Acceptable`, `Incorrect`, or `Skipped` so that I can see progress.
 
-AC: Drill session pulls from learner’s weak set, records score, and updates next‑review time.
+   **Acceptance:** status stored per attempt; latest status surfaced in list/detail.
 
-As a learner, I can sign in locally to persist my progress.
+7. ### View submission history:
+   #### As a learner, I want to see my past attempts for a challenge so that I can learn from changes over time.
 
-AC: Basic username/password; session; ability to sign out.
+   **Acceptance:** Table lists datetime, status, and (Optional/Stretch) link to diff of last change (basic plain‑text okay).
 
-### System/Technical:
+8. ### External API: inline definitions/hints:
+   #### As a learner, I want short definitions (e.g., “hash map”, “two-pointer technique”) pulled from a reputable public API so that I get quick context without leaving the page.
 
-As the system, I persist learners, challenges, attempts, and drill schedule via JPA/Hibernate.
+   **Acceptance:** on challenge detail, app calls selected public API (e.g., Wikipedia summary or similar), shows 1–2 sentence definition; if API fails, graceful fallback. (Week 5 spike picks the API; Week 8 hardens with retries/timeouts.)
 
-AC: Entities mapped; CRUD DAO for at least one core entity; test DB seeded for demos.
+---
 
-As the system, I log important events (auth, submission run, DAO ops) using SLF4J+Log4j.
+### Admin:
 
-AC: No System.out; logs at INFO/WARN/ERROR; separate dev/test appenders.
+9. ### Create challenge:
+    #### As an admin, I want to add a new challenge so that I can grow the catalog.
 
-As the system, I run DAO tests so that data access is reliable.
+    **Acceptance:**
+    - [ ] Form for title, difficulty, blurb, prompt (Markdown); validation; success flash; record appears in list.
+    - [ ] **Persistence:** challenge saved via JPA; unique title enforced.
+    - [ ] **Testing:** repository test for uniqueness and CRUD.
+    - [ ] **Logging:** create/update/delete events logged at INFO.
 
-AC: JUnit tests cover happy paths and key edge cases; use test DB + rollback or truncation.
+10. ### Edit challenge:
+    #### As an admin, I want to update an existing challenge so that I can fix or improve it.
+
+    **Acceptance:**
+    - [ ] Edit form prefilled; validation; success flash; changes visible in list/detail.
+    - [ ] **Policy documented:** edits update challenge prompt only; existing attempts are preserved.
+    - [ ] **Persistence:** updates saved via JPA.
+    - [ ] **Testing:** repository test for update.
+    - [ ] **Logging:**  edit events logged at INFO.
+
+
+11. ### Delete challenge:
+    #### As an admin, I want to delete a challenge so that I can remove duplicates or test content.
+
+    **Acceptance:**
+    - [ ] Delete requires confirm dialog; success flash; record disappears from list; linked attempts remain (or policy noted). (Soft-delete acceptable—document behavior.)
+    - [ ] **Policy documented:** either soft-delete or hard-delete with attempt retention.
+    - [ ] **Testing:** verify deletes don’t orphan required data.
+    - [ ] **Logging:** delete with entity id/title at INFO.
 
 ---
 
 <div style="text-align: center;">
-  <img src="https://img.shields.io/badge/-MVP%20🏆-gold?style=for-the-badge" alt="MVP Badge"/>
+  <img src="https://img.shields.io/badge/-STRETCH-blue?style=for-the-badge" alt="MVP Badge"/>
 </div>
 
-### Admin:
+### Stretch (post-MVP):
 
-As an admin, I can create/edit challenges with title, prompt, tags, difficulty, and reference tests.
+---
 
-AC: Form validates fields; saves to DB; versioning optional.
+12. ### Leaderboard & streaks:
+    #### As a learner, I want streaks/leaderboard so that I stay motivated.
 
-As an admin, I can view basic analytics (top attempted, average pass rate).
+    **Acceptance:** daily streak display; simple leaderboard (opt-in).
 
-AC: Read‑only dashboard with simple charts or tables.
+13. ### Search & tags:
+    #### As a learner, I want to search by keywords and filter by tags so that I can find relevant problems quickly.
+
+    **Acceptance:** search box filters by title/description; tags filter by predefined categories (arrays or join table).
+
+14. ### OAuth2 login options:
+    #### As a learner, I want Google/GitHub sign-in via Cognito so that I can log in faster.
+
+    **Acceptance:** Cognito configured with Google/GitHub; sign-in works end-to-end.
+
+15. ### Richer diff & diagnostics:
+    #### As a learner, I want better diffs and targeted hints so that I understand why my output differs.
+
+    **Acceptance:** Diff highlights line changes; hints point to common pitfalls (off-by-one, nulls, etc.).
 
 ---
 
 <h2 align="center">Summary</h2>
 
 ### MVP (Minimum Viable Product):
-Stories 1-10.
+Stories 1-11.
 
 ### Stretch (post‑MVP):
 
-Stories 11 & 12.
-Plus leaderboard, tags/search, OAuth2 login, richer code diff, rate limiting, CI/CD.
-
----
+Stories 12-15.
+Plus additional polish features like rate limiting or CI/CD.
