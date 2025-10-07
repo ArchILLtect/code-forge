@@ -24,4 +24,3 @@ IF ERRORLEVEL 1 (
 
 echo [pre-commit] Checks passed. Proceeding with commit.
 EXIT /B 0
-
