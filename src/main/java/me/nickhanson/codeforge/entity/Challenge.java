@@ -31,7 +31,7 @@ public class Challenge {
     @Column(updatable = false)
     private Instant createdAt;
 
-    // --- ctors ---
+    // --- constructors ---
     protected Challenge() {} // JPA
     public Challenge(String title, Difficulty difficulty, String blurb, String promptMd) {
         this.title = title;
@@ -51,4 +51,15 @@ public class Challenge {
     public String getPromptMd() { return promptMd; }
     public void setPromptMd(String promptMd) { this.promptMd = promptMd; }
     public Instant getCreatedAt() { return createdAt; }
+
+    public String toString() {
+        return "Challenge{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", difficulty=" + difficulty +
+                ", blurb='" + blurb + '\'' +
+                ", promptMd='" + (promptMd.length() > 20 ? promptMd.substring(0, 20) + "..." : promptMd) + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
