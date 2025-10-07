@@ -39,4 +39,3 @@
   </c:choose>
 </body>
 </html>
-
