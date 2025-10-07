@@ -50,8 +50,15 @@ public class Challenge {
                 ", title='" + title + '\'' +
                 ", difficulty=" + difficulty +
                 ", blurb='" + blurb + '\'' +
-                ", promptMd='" + (promptMd != null ? (promptMd.length() > 20 ? promptMd.substring(0, 20) + "..." : promptMd) : "null") + '\'' +
+                ", promptMd='" + formatPromptMd() + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
+    }
+
+    private String formatPromptMd() {
+        if (promptMd == null) {
+            return "null";
+        }
+        return promptMd.length() > 20 ? promptMd.substring(0, 20) + "..." : promptMd;
     }
 }
