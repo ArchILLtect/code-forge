@@ -2,11 +2,16 @@ package me.nickhanson.codeforge.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
+import java.lang.SuppressWarnings;
 
 @Entity
 @Table(name = "challenges")
+@SuppressWarnings("JpaDataSourceORMInspection")
+@Getter
 public class Challenge {
 
     @Id
@@ -14,21 +19,26 @@ public class Challenge {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
+    @Setter
     private String title;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @Setter
     private Difficulty difficulty;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
+    @Setter
     private String blurb;
 
     @Lob
     @Column(nullable = false)
+    @Setter
     private String promptMd;
 
     @CreationTimestamp
     @Column(updatable = false)
+    @SuppressWarnings("unused")
     private Instant createdAt;
 
     // --- constructors ---
@@ -39,18 +49,6 @@ public class Challenge {
         this.blurb = blurb;
         this.promptMd = promptMd;
     }
-
-    // --- getters/setters ---
-    public Long getId() { return id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public Difficulty getDifficulty() { return difficulty; }
-    public void setDifficulty(Difficulty difficulty) { this.difficulty = difficulty; }
-    public String getBlurb() { return blurb; }
-    public void setBlurb(String blurb) { this.blurb = blurb; }
-    public String getPromptMd() { return promptMd; }
-    public void setPromptMd(String promptMd) { this.promptMd = promptMd; }
-    public Instant getCreatedAt() { return createdAt; }
 
     public String toString() {
         return "Challenge{" +
