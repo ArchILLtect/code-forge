@@ -50,7 +50,7 @@ public class Challenge {
                 ", title='" + title + '\'' +
                 ", difficulty=" + difficulty +
                 ", blurb='" + blurb + '\'' +
-                ", promptMd='" + (promptMd.length() > 20 ? promptMd.substring(0, 20) + "..." : promptMd) + '\'' +
+                ", promptMd='" + (promptMd != null ? (promptMd.length() > 20 ? promptMd.substring(0, 20) + "..." : promptMd) : "null") + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
     }
