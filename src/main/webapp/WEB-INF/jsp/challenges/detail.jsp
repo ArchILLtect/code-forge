@@ -16,7 +16,7 @@
     <strong>Summary:</strong> <c:out value="${challenge.blurb}"/>
   </p>
   <h3>Prompt</h3>
-  <pre style="white-space: pre-wrap;">${challenge.promptMd}</pre>
+  <pre style="white-space: pre-wrap;"><c:out value="${challenge.promptMd}"/></pre>
 </body>
 </html>
 
