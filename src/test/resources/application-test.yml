@@ -6,10 +6,13 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate.format_sql: true
+  sql:
+    init:
+      mode: never
   h2:
     console:
       enabled: true
