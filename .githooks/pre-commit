@@ -16,7 +16,7 @@ fi
 
 # Run a fast build check (compile + tests). Adjust as needed.
 echo "[pre-commit] Running Maven tests..."
-MVN_OPTS="-Dbatch.mode=true -Dstyle.color=always"
+MVN_OPTS="-B -Dstyle.color=always"
 mvn -q "${MVN_OPTS}" -DskipTests=false -Dtest='**/*Test' test
 MVN_STATUS=$?
 
