@@ -8,14 +8,14 @@
 </head>
 <body>
   <h1>Challenges</h1>
-  <p><a href="/">Home</a></p>
+  <p><a href="${pageContext.request.contextPath}/">Home</a></p>
 
   <c:choose>
     <c:when test="${empty challenges}">
       <p>No challenges available.</p>
     </c:when>
     <c:otherwise>
-      <table border="1" cellpadding="6" cellspacing="0">
+      <table>
         <thead>
           <tr>
             <th>ID</th>

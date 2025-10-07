@@ -7,7 +7,7 @@
   <title>Challenge Detail</title>
 </head>
 <body>
-  <p><a href="/">Home</a> | <a href="/challenges">All Challenges</a></p>
+  <p><a href="${pageContext.request.contextPath}/">Home</a> | <a href="${pageContext.request.contextPath}/challenges">All Challenges</a></p>
   <h1><c:out value="${challenge.title}"/></h1>
   <p>
     <strong>Difficulty:</strong> <c:out value="${challenge.difficulty}"/>
