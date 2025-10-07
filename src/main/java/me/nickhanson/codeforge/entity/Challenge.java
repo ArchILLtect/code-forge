@@ -6,12 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.lang.SuppressWarnings;
 
 @Entity
 @Table(name = "challenges")
-@SuppressWarnings("JpaDataSourceORMInspection")
 @Getter
+@Setter
 public class Challenge {
 
     @Id
@@ -19,26 +18,21 @@ public class Challenge {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
-    @Setter
     private String title;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    @Setter
     private Difficulty difficulty;
 
     @Column(nullable = false)
-    @Setter
     private String blurb;
 
     @Lob
     @Column(nullable = false)
-    @Setter
     private String promptMd;
 
     @CreationTimestamp
     @Column(updatable = false)
-    @SuppressWarnings("unused")
     private Instant createdAt;
 
     // --- constructors ---
