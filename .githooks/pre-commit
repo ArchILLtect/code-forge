@@ -27,4 +27,3 @@ fi
 
 echo "[pre-commit] Checks passed. Proceeding with commit."
 exit 0
-

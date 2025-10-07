@@ -14,4 +14,3 @@ echo [setup] Git hooks configured to use .githooks
 
 echo [setup] You can bypass hooks with: git commit --no-verify
 EXIT /B 0
-

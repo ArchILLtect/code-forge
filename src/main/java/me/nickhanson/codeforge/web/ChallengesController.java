@@ -43,4 +43,3 @@ public class ChallengesController {
         return "challenges/detail";
     }
 }
-

@@ -19,4 +19,3 @@
   <pre style="white-space: pre-wrap;"><c:out value="${challenge.promptMd}"/></pre>
 </body>
 </html>
-
