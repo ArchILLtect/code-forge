@@ -28,7 +28,7 @@
           <c:forEach items="${challenges}" var="ch">
             <tr>
               <td><c:out value="${ch.id}"/></td>
-              <td><a href="/challenges/${ch.id}"><c:out value="${ch.title}"/></a></td>
+              <td><a href="${pageContext.request.contextPath}/challenges/${ch.id}"><c:out value="${ch.title}"/></a></td>
               <td><c:out value="${ch.difficulty}"/></td>
               <td><c:out value="${ch.blurb}"/></td>
             </tr>
