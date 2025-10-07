@@ -44,7 +44,7 @@ Week 4 Reflection – Checkpoint 1
 
 **Blockers:** POM cleanup (legacy deps), config gotcha (edited `application-test.yml` instead of `application.yml`) and jar lock on Windows—resolved.
 
-**Decisions:** Base package `me.nickhanson.codeforge`; H2 for dev/test; enums for Difficulty; Boot + JPA + Thymeleaf stack.
+**Decisions:** Base package `me.nickhanson.codeforge`; H2 for dev/test; enums for Difficulty; Boot + JPA + JSP/JSTL stack (updated from Thymeleaf to align with course requirement for JSP and reduce learning curve).
 
 **Next:** Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
 
