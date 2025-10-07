@@ -24,6 +24,7 @@ public class Challenge {
     @Column(nullable = false, length = 20)
     private Difficulty difficulty;
 
+    @Lob
     @Column(nullable = false)
     private String blurb;
 
