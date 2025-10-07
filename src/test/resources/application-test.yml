@@ -17,3 +17,7 @@ spring:
     console:
       enabled: true
       path: /h2-console
+app:
+  h2:
+    tcp:
+      enabled: false

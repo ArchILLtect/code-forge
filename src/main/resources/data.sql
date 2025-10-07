@@ -1,4 +1,4 @@
-INSERT INTO challenges (title, difficulty, blurb, prompt_md)
+INSERT INTO CHALLENGES (TITLE, DIFFICULTY, BLURB, PROMPT_MD)
 VALUES
   ('Two Sum', 'EASY', 'Find two numbers adding up to target.', 'Given an int array nums and int target, return indices of the two numbers such that they add up to target.'),
   ('Valid Parentheses', 'EASY', 'Check if parentheses are balanced.', 'Given a string s containing ''()[]{}'', determine if the input string is valid.'),
