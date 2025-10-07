@@ -59,11 +59,10 @@
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
 
-    <!-- H2 for dev/test -->
+    <!-- H2 for dev/test: compile scope needed for org.h2.tools.Server in H2ServerConfig -->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <!-- JSP support (Spring Boot 3 / Jakarta) -->

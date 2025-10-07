@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+# Pre-commit hook: block commit if Maven tests fail.
+# Override: use `git commit --no-verify` to bypass.
+
+# Allow explicit override via env var
+if [ "$GIT_ALLOW_COMMIT" = "1" ]; then
+  echo "[pre-commit] Override detected (GIT_ALLOW_COMMIT=1). Skipping checks."
+  exit 0
+fi
+
+# Ensure Maven is available
+if ! command -v mvn >/dev/null 2>&1; then
+  echo "[pre-commit] Maven (mvn) not found on PATH. Aborting commit." >&2
+  exit 1
+fi
+
+# Run a fast build check (compile + tests). Adjust as needed.
+echo "[pre-commit] Running Maven tests..."
+MVN_OPTS="-B -Dstyle.color=always"
+mvn -q "${MVN_OPTS}" -DskipTests=false -Dtest='**/*Test' test
+MVN_STATUS=$?
+
+if [ $MVN_STATUS -ne 0 ]; then
+  echo "[pre-commit] Maven tests failed. Fix issues or commit with --no-verify to override." >&2
+  exit 1
+fi
+
+echo "[pre-commit] Checks passed. Proceeding with commit."
+exit 0
