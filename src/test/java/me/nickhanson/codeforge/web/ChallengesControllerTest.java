@@ -69,9 +69,8 @@ class ChallengesControllerTest {
     }
 
     /**
-     * Test the detail view for a known challenge ID.
-     * Mocks the service to return a specific challenge and verifies the correct view is rendered.
-     * Tests that the detail endpoint renders the "error/404" JSP view for an unknown ID.
+     * Tests that the detail endpoint renders the "error/404" JSP view for an unknown challenge ID.
+     * Mocks the service to return an empty result for the given ID and verifies that a 404 error view is returned.
      *
      * @throws Exception if the request fails.
      */
@@ -84,9 +83,8 @@ class ChallengesControllerTest {
     }
 
     /**
-     * Test the detail view for a known challenge ID.
-     * Mocks the service to return a specific challenge and verifies the correct view is rendered.
-     * Tests that the new form endpoint renders the "challenges/new" JSP view.
+     * Test the new challenge form endpoint.
+     * Simulates a GET request to "/challenges/new" and verifies that the "challenges/new" JSP view is rendered.
      *
      * @throws Exception if the request fails.
      */
@@ -100,7 +98,6 @@ class ChallengesControllerTest {
     /**
      * Test creating a new challenge with valid data.
      * Mocks the service to simulate successful creation and verifies redirection to the detail view.
-     * Tests that a valid create request redirects to the challenge detail page.
      *
      * @throws Exception if the request fails.
      */
@@ -123,8 +120,7 @@ class ChallengesControllerTest {
 
     /**
      * Test creating a new challenge with a duplicate title.
-     * Mocks the service to simulate a duplicate title scenario and verifies the form is re-rendered with errors.
-     * Tests that a create request with a duplicate title returns to the new form with an error.
+     * Mocks the service to simulate a duplicate title scenario and verifies that the form is re-rendered with an error.
      *
      * @throws Exception if the request fails.
      */
