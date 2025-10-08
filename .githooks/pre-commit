@@ -15,9 +15,9 @@ if ! command -v mvn >/dev/null 2>&1; then
 fi
 
 # Run a fast build check (compile + tests). Adjust as needed.
+# Note: Do NOT quote grouped flags; pass them directly so Maven parses them as separate options.
 echo "[pre-commit] Running Maven tests..."
-MVN_OPTS="-B -Dstyle.color=always"
-mvn -q "${MVN_OPTS}" -DskipTests=false -Dtest='**/*Test' test
+mvn -q -B -Dstyle.color=always -DskipTests=false -Dtest='**/*Test' test
 MVN_STATUS=$?
 
 if [ $MVN_STATUS -ne 0 ]; then
