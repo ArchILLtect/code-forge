@@ -136,4 +136,96 @@ class ChallengesControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("challenges/new"));
     }
+
+    /**
+     * Test updating an existing challenge with valid data.
+     * Mocks the service to simulate successful update and verifies redirection to the detail view.
+     *
+     * @throws Exception if the request fails.
+     */
+    @Test
+    void update_valid_shouldRedirectToDetail() throws Exception {
+        long id = 42L;
+        when(service.titleExistsForOther(anyString(), eq(id))).thenReturn(false);
+        Challenge updated = new Challenge("New Title", Difficulty.MEDIUM, "blurb", "prompt");
+        updated.setId(id);
+        when(service.update(eq(id), any(ChallengeForm.class))).thenReturn(Optional.of(updated));
+
+        mockMvc.perform(post("/challenges/" + id)
+                        .param("title", "New Title")
+                        .param("difficulty", "MEDIUM")
+                        .param("blurb", "A short summary")
+                        .param("promptMd", "Prompt body"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/challenges/" + id))
+                .andExpect(flash().attributeExists("success"));
+    }
+
+    /**
+     * Test updating a challenge with a duplicate title.
+     * Mocks the service to simulate a duplicate title scenario and verifies that the edit form is re-rendered with an error.
+     *
+     * @throws Exception if the request fails.
+     */
+    @Test
+    void update_duplicateTitle_shouldReturnEditWithError() throws Exception {
+        long id = 42L;
+        when(service.titleExistsForOther(anyString(), eq(id))).thenReturn(true);
+
+        mockMvc.perform(post("/challenges/" + id)
+                        .param("title", "Duplicate Title")
+                        .param("difficulty", "EASY")
+                        .param("blurb", "A short summary")
+                        .param("promptMd", "Prompt body"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("challenges/edit"));
+    }
+
+    /**
+     * Test deleting a challenge successfully.
+     * Mocks the service to simulate successful deletion and verifies redirection to the challenges list with a success message.
+     *
+     * @throws Exception if the request fails.
+     */
+    @Test
+    void delete_success_shouldRedirectWithFlash() throws Exception {
+        long id = 55L;
+        when(service.delete(id)).thenReturn(true);
+
+        mockMvc.perform(post("/challenges/" + id + "/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/challenges"))
+                .andExpect(flash().attributeExists("success"));
+    }
+
+    /**
+     * Test deleting a challenge that does not exist.
+     * Mocks the service to simulate a not-found scenario and verifies redirection to the challenges list with an error message.
+     *
+     * @throws Exception if the request fails.
+     */
+    @Test
+    void delete_notFound_shouldRedirectWithErrorFlash() throws Exception {
+        long id = 56L;
+        when(service.delete(id)).thenReturn(false);
+
+        mockMvc.perform(post("/challenges/" + id + "/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/challenges"))
+                .andExpect(flash().attributeExists("error"));
+    }
+
+    /**
+     * Test the detail endpoint for a challenge with a server-side exception.
+     * Simulates the service throwing an exception and verifies that the error controller advice maps it to the "error/500" view.
+     *
+     * @throws Exception if the request fails.
+     */
+    @Test
+    void detail_serviceThrows_shouldRender500Jsp() throws Exception {
+        when(service.getById(1L)).thenThrow(new RuntimeException("boom"));
+        mockMvc.perform(get("/challenges/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(view().name("error/500"));
+    }
 }
