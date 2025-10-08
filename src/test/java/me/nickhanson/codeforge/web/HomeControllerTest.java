@@ -12,12 +12,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+/**
+ * Unit tests for the HomeController class.
+ * This class uses Spring Boot's @WebMvcTest to test the controller layer in isolation.
+ */
 @WebMvcTest(controllers = HomeController.class)
 class HomeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Test configuration to define a custom InternalResourceViewResolver bean.
+     * This ensures that JSP views are resolved correctly during the test.
+     */
     @TestConfiguration
     static class ViewResolverConfig {
         @Bean
@@ -29,6 +37,12 @@ class HomeControllerTest {
         }
     }
 
+    /**
+     * Tests that the home endpoint ("/") renders the "home.jsp" view.
+     * Verifies that the HTTP status is 200 (OK) and the correct view name is returned.
+     *
+     * @throws Exception if the request fails.
+     */
     @Test
     void home_shouldRenderHomeJsp() throws Exception {
         mockMvc.perform(get("/"))
