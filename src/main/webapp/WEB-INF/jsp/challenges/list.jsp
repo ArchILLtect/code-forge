@@ -1,8 +1,8 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Challenges</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/challenges.css" />
@@ -10,6 +10,8 @@
     table { border-collapse: collapse; border: 1px solid #000; }
     .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
     .flash-error { background: #ffecec; border: 1px solid #ff3b30; padding: .5rem; margin-bottom: 1rem; }
+    .sort-ind { font-size: 0.85em; }
+    .controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -24,19 +26,31 @@
   </c:if>
 
   <form method="get" action="${pageContext.request.contextPath}/challenges" style="margin-bottom: 1rem;">
-    <label for="difficulty">Filter by difficulty:</label>
-    <select name="difficulty" id="difficulty">
-      <option value="" ${empty difficultyValue ? 'selected' : ''}>All</option>
-      <option value="EASY" ${difficultyValue == 'EASY' ? 'selected' : ''}>EASY</option>
-      <option value="MEDIUM" ${difficultyValue == 'MEDIUM' ? 'selected' : ''}>MEDIUM</option>
-      <option value="HARD" ${difficultyValue == 'HARD' ? 'selected' : ''}>HARD</option>
-    </select>
-    <input type="hidden" name="sort" value="${sort}" />
-    <input type="hidden" name="dir" value="${dir}" />
-    <button type="submit">Apply</button>
-    <c:if test="${not empty difficultyValue}">
-      <a href="${pageContext.request.contextPath}/challenges">Clear</a>
-    </c:if>
+    <div class="controls">
+      <div>
+        <label for="difficulty">Filter by difficulty:</label>
+        <select name="difficulty" id="difficulty">
+          <option value="" ${empty difficultyValue ? 'selected' : ''}>All</option>
+          <option value="EASY" ${difficultyValue == 'EASY' ? 'selected' : ''}>EASY</option>
+          <option value="MEDIUM" ${difficultyValue == 'MEDIUM' ? 'selected' : ''}>MEDIUM</option>
+          <option value="HARD" ${difficultyValue == 'HARD' ? 'selected' : ''}>HARD</option>
+        </select>
+      </div>
+      <div>
+        <label for="size">Page size:</label>
+        <select name="size" id="size">
+          <option value="5" ${pageSize == 5 ? 'selected' : ''}>5</option>
+          <option value="10" ${pageSize == 10 ? 'selected' : ''}>10</option>
+          <option value="25" ${pageSize == 25 ? 'selected' : ''}>25</option>
+        </select>
+      </div>
+      <input type="hidden" name="sort" value="${sort}" />
+      <input type="hidden" name="dir" value="${dir}" />
+      <button type="submit">Apply</button>
+      <c:if test="${not empty difficultyValue || pageSize != 10}">
+        <a href="${pageContext.request.contextPath}/challenges">Clear</a>
+      </c:if>
+    </div>
   </form>
 
   <c:choose>
@@ -49,12 +63,15 @@
           <tr>
             <th>
               <a href="${pageContext.request.contextPath}/challenges?sort=id&dir=${dir == 'asc' ? 'desc' : 'asc'}&difficulty=${difficultyValue}&page=${currentPage}&size=${pageSize}">ID</a>
+              <c:if test="${sort == 'id'}"><span class="sort-ind">${dir == 'asc' ? '&#9650;' : '&#9660;'}</span></c:if>
             </th>
             <th>
               <a href="${pageContext.request.contextPath}/challenges?sort=title&dir=${dir == 'asc' ? 'desc' : 'asc'}&difficulty=${difficultyValue}&page=${currentPage}&size=${pageSize}">Title</a>
+              <c:if test="${sort == 'title'}"><span class="sort-ind">${dir == 'asc' ? '&#9650;' : '&#9660;'}</span></c:if>
             </th>
             <th>
               <a href="${pageContext.request.contextPath}/challenges?sort=difficulty&dir=${dir == 'asc' ? 'desc' : 'asc'}&difficulty=${difficultyValue}&page=${currentPage}&size=${pageSize}">Difficulty</a>
+              <c:if test="${sort == 'difficulty'}"><span class="sort-ind">${dir == 'asc' ? '&#9650;' : '&#9660;'}</span></c:if>
             </th>
             <th>Blurb</th>
           </tr>
