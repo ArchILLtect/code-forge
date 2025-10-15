@@ -1,4 +1,4 @@
-/**
+/*
 package me.nickhanson.codeforge.persistence;
 
 import me.nickhanson.codeforge.entity.Challenge;
@@ -20,4 +20,4 @@ public interface ChallengeRepo extends JpaRepository<Challenge, Long> {
 
     boolean existsByTitleIgnoreCaseAndIdNot(String title, Long id);
 }
-        */
+*/
