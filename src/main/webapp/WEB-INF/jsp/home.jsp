@@ -10,7 +10,11 @@
 </head>
 <body>
   <h1>Welcome to CodeForge</h1>
-  <p>This home page is served via JSP (Spring Boot + Tomcat Jasper).</p>
+  <p>This home page is served via JSP.</p>
+  <h2>Quick quote:</h2>
+  <div class="mt-6 text-gray-700 italic text-sm">
+    ${quote}
+  </div>
   <ul>
     <li><a href="${pageContext.request.contextPath}/challenges">Browse Challenges</a></li>
     <li><a href="${pageContext.request.contextPath}/healthz">Health Check</a></li>
