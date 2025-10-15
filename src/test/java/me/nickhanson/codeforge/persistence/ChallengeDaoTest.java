@@ -1,26 +1,25 @@
-package me.nickhanson.codeforge.utilities;
+package me.nickhanson.codeforge.persistence;
 
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.Difficulty;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for the ChallengeRepo repository.
- * This class uses Spring Boot's @DataJpaTest to test JPA repository methods.
+ * DAO tests for ChallengeDao using JPA slice.
  */
 @DataJpaTest
 @ActiveProfiles("test")
-class ChallengeRepoTest {
+@Import(ChallengeDao.class)
+class ChallengeDaoTest {
 
     @Autowired
-    private ChallengeRepo repo;
+    private ChallengeDao dao;
 
     /**
      * Creates a sample Challenge entity for testing purposes.
@@ -43,25 +42,24 @@ class ChallengeRepoTest {
      */
     @Test
     void save_and_findById_success() {
-        var saved = repo.save(sample());
+        var saved = dao.save(sample());
         assertThat(saved.getId()).isNotNull();
 
-        var found = repo.findById(saved.getId());
+        var found = dao.findById(saved.getId());
         assertThat(found).isPresent();
         assertThat(found.get().getTitle()).isEqualTo("Two Sum");
         assertThat(found.get().getDifficulty()).isEqualTo(Difficulty.EASY);
     }
 
     /**
-     * Tests that the findAll() method returns a list of all saved Challenge entities.
-     * Verifies that the size of the returned list matches the number of saved entities.
+     * Tests that the findAllSorted() method returns a list of all saved Challenge entities.
      */
     @Test
     void findAll_returns_list() {
-        repo.save(sample());
-        repo.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
-        List<Challenge> all = repo.findAll();
-        assertThat(all).hasSize(2);
+        dao.save(sample());
+        dao.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
+        var list = dao.findAllSorted("title", "asc");
+        assertThat(list).hasSize(2);
     }
 
     /**
@@ -70,7 +68,7 @@ class ChallengeRepoTest {
      */
     @Test
     void findByTitle_missing_returns_empty() {
-        assertThat(repo.findByTitle("Nope")).isEmpty();
+        assertThat(dao.findByTitle("Nope")).isEmpty();
     }
 
     /**
@@ -79,9 +77,9 @@ class ChallengeRepoTest {
      */
     @Test
     void deleteById_removes_entity() {
-        var saved = repo.save(sample());
+        var saved = dao.save(sample());
         Long id = saved.getId();
-        repo.deleteById(id);
-        assertThat(repo.findById(id)).isEmpty();
+        dao.deleteById(id);
+        assertThat(dao.findById(id)).isEmpty();
     }
 }
