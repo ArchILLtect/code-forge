@@ -3,6 +3,11 @@ spring:
     url: jdbc:h2:mem:codeforge_dev;DB_CLOSE_DELAY=-1
     username: sa
     password:
+  web:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   jpa:
     hibernate:
       ddl-auto: update

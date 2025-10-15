@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * Global exception handler for the application.
@@ -60,5 +62,20 @@ public class ErrorControllerAdvice {
         model.addAttribute("error", "Internal Server Error");
         model.addAttribute("message", ex.getMessage());
         return "error/500";
+    }
+
+    /**
+     * Handles NoResourceFoundException and ignores it to prevent unnecessary error handling.
+     *
+     * @param ex The NoResourceFoundException to handle.
+     * @return A ResponseEntity with a 404 status code and no body.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Void> ignoreNoResourceFound(NoResourceFoundException ex) {
+        // This exception is thrown by Spring when a static resource is not found.
+        // We can safely ignore it to prevent unnecessary error handling.
+
+        // return a normal 404 without a stacktrace
+        return ResponseEntity.notFound().build();
     }
 }

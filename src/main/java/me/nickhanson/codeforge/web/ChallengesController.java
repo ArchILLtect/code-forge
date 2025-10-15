@@ -6,10 +6,6 @@ import me.nickhanson.codeforge.entity.Difficulty;
 import me.nickhanson.codeforge.service.ChallengeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,8 +14,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 /**
- * Controller class for handling web requests related to Challenges.
+ * Controller class for managing the ChallengeService, which handles CRUD operations for challenges.
  * Provides endpoints for listing, viewing, creating, updating, and deleting challenges.
  */
 @Controller
@@ -41,10 +39,8 @@ public class ChallengesController {
     }
 
     /**
-     * Handles GET requests to list challenges with optional pagination, sorting, and filtering.
+     * Handles GET requests to list challenges with optional sorting and filtering.
      *
-     * @param page       The page number to retrieve (default is 0).
-     * @param size       The number of items per page (default is 10).
      * @param sort       The field to sort by (default is "title").
      * @param dir        The sort direction ("asc" or "desc", default is "asc").
      * @param difficulty Optional filter by difficulty level.
@@ -53,28 +49,17 @@ public class ChallengesController {
      */
     @GetMapping
     public String list(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "sort", defaultValue = "title") String sort,
             @RequestParam(name = "dir", defaultValue = "asc") String dir,
             @RequestParam(name = "difficulty", required = false) Difficulty difficulty,
             Model model
     ) {
-        Sort sortSpec = Sort.by(dir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sort);
-        Pageable pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 50), sortSpec);
+        List<Challenge> challenges = service.listChallenges(difficulty, sort, dir);
 
-        Page<Challenge> pageResult = service.listChallenges(difficulty, pageable);
+        log.info("Rendering challenge list sort={} dir={} difficulty={} count={}",
+                sort, dir, difficulty, challenges.size());
 
-        log.info("Rendering challenge list page={} size={} sort={} dir={} difficulty={} count={}",
-                page, size, sort, dir, difficulty, pageResult.getNumberOfElements());
-
-        model.addAttribute("challenges", pageResult.getContent());
-        model.addAttribute("page", pageResult);
-        model.addAttribute("currentPage", pageResult.getNumber());
-        model.addAttribute("totalPages", pageResult.getTotalPages());
-        model.addAttribute("pageSize", pageResult.getSize());
-        model.addAttribute("hasPrev", pageResult.hasPrevious());
-        model.addAttribute("hasNext", pageResult.hasNext());
+        model.addAttribute("challenges", challenges);
         model.addAttribute("difficulty", difficulty);
         model.addAttribute("difficultyValue", difficulty != null ? difficulty.name() : "");
         model.addAttribute("sort", sort);

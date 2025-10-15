@@ -1,11 +1,13 @@
 package me.nickhanson.codeforge.service;
 
 import me.nickhanson.codeforge.entity.Challenge;
-import me.nickhanson.codeforge.utilities.ChallengeRepo;
+import me.nickhanson.codeforge.entity.Difficulty;
+import me.nickhanson.codeforge.persistence.ChallengeDao;
 import me.nickhanson.codeforge.web.ChallengeForm;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,29 +16,31 @@ import java.util.Optional;
  */
 @Service
 public class ChallengeService {
-    private final ChallengeRepo repo;
+    private final ChallengeDao dao;
 
     /**
      * Constructor for ChallengeService.
      *
-     * @param repo The repository used for accessing Challenge data.
+     * @param dao The repository used for accessing Challenge data.
      */
-    public ChallengeService(ChallengeRepo repo) {
-        this.repo = repo;
+    public ChallengeService(ChallengeDao dao) {
+        this.dao = dao;
     }
 
     /**
-     * Retrieves a paginated list of challenges, optionally filtered by difficulty.
+     * Retrieves a list of challenges, optionally filtered by difficulty, sorted by the given field/direction.
+     * This replaces server-side pagination to support client-side (jQuery) pagination.
      *
      * @param difficulty The difficulty level to filter by (can be null for no filtering).
-     * @param pageable   The pagination and sorting information.
-     * @return A page of challenges matching the criteria.
+     * @param sort       Property to sort by (id, title, difficulty, createdAt). Defaults applied in DAO if invalid.
+     * @param dir        Sort direction (asc/desc). Defaults to asc on invalid input.
+     * @return A list of challenges matching the criteria.
      */
-    public org.springframework.data.domain.Page<Challenge> listChallenges(me.nickhanson.codeforge.entity.Difficulty difficulty, org.springframework.data.domain.Pageable pageable) {
+    public List<Challenge> listChallenges(Difficulty difficulty, String sort, String dir) {
         if (difficulty == null) {
-            return repo.findAll(pageable);
+            return dao.findAllSorted(sort, dir);
         }
-        return repo.findByDifficulty(difficulty, pageable);
+        return dao.findByDifficultySorted(difficulty, sort, dir);
     }
 
     /**
@@ -46,7 +50,7 @@ public class ChallengeService {
      * @return An Optional containing the challenge if found, or empty if not found.
      */
     public Optional<Challenge> getById(Long id) {
-        return repo.findById(id);
+        return dao.findById(id);
     }
 
     /**
@@ -56,7 +60,7 @@ public class ChallengeService {
      * @return True if a challenge with the title exists, false otherwise.
      */
     public boolean titleExists(String title) {
-        return repo.existsByTitleIgnoreCase(title);
+        return dao.existsByTitleIgnoreCase(title);
     }
 
     /**
@@ -67,7 +71,7 @@ public class ChallengeService {
      * @return True if a challenge with the title exists for another challenge, false otherwise.
      */
     public boolean titleExistsForOther(String title, Long id) {
-        return repo.existsByTitleIgnoreCaseAndIdNot(title, id);
+        return dao.existsByTitleIgnoreCaseAndIdNot(title, id);
     }
 
     /**
@@ -78,8 +82,13 @@ public class ChallengeService {
      */
     @Transactional
     public Challenge create(ChallengeForm form) {
-        Challenge c = new Challenge(form.getTitle(), form.getDifficulty(), form.getBlurb(), form.getPromptMd());
-        return repo.save(c);
+        Challenge challenge = new Challenge(
+                form.getTitle(),
+                form.getDifficulty(),
+                form.getBlurb(),
+                form.getPromptMd()
+        );
+        return dao.save(challenge);
     }
 
     /**
@@ -91,12 +100,12 @@ public class ChallengeService {
      */
     @Transactional
     public Optional<Challenge> update(Long id, ChallengeForm form) {
-        return repo.findById(id).map(existing -> {
+        return dao.findById(id).map(existing -> {
             existing.setTitle(form.getTitle());
             existing.setDifficulty(form.getDifficulty());
             existing.setBlurb(form.getBlurb());
             existing.setPromptMd(form.getPromptMd());
-            return repo.save(existing);
+            return dao.save(existing);
         });
     }
 
@@ -108,8 +117,8 @@ public class ChallengeService {
      */
     @Transactional
     public boolean delete(Long id) {
-        if (repo.existsById(id)) {
-            repo.deleteById(id);
+        if (dao.existsById(id)) {
+            dao.deleteById(id);
             return true;
         }
         return false;

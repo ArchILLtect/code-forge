@@ -10,3 +10,18 @@ VALUES
   ('Climbing Stairs', 'EASY', 'Count ways to climb stairs.', 'Given n, return how many distinct ways you can climb to the top.'),
   ('Number of Islands', 'MEDIUM', 'Count islands in a grid.', 'Given an m x n 2D binary grid, return the number of islands.'),
   ('Median of Two Sorted Arrays', 'HARD', 'Find median of two sorted arrays.', 'Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays.');
+
+-- Seed submissions for a few challenges (dev only)
+INSERT INTO SUBMISSIONS (CHALLENGE_ID, OUTCOME, CODE)
+VALUES
+  (1, 'CORRECT', 'int[] twoSum(int[] nums, int target) { /* ... */ }'),
+  (1, 'INCORRECT', '/* first attempt */'),
+  (2, 'ACCEPTABLE', 'boolean isValid(String s) { /* ... */ }'),
+  (3, 'SKIPPED', NULL);
+
+-- Seed drill items for a few challenges (dev only)
+INSERT INTO DRILL_ITEMS (CHALLENGE_ID, TIMES_SEEN, STREAK, NEXT_DUE_AT)
+VALUES
+  (1, 2, 1, NULL),
+  (2, 1, 0, NULL),
+  (3, 3, 2, NULL);

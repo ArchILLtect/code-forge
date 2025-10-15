@@ -6,6 +6,7 @@
     </Console>
   </Appenders>
   <Loggers>
+    <Logger name="me.nickhanson.codeforge" level="debug"/>
     <Logger name="org.springframework" level="info"/>
     <Logger name="org.hibernate" level="info"/>
     <Root level="info">
@@ -13,4 +14,3 @@
     </Root>
   </Loggers>
 </Configuration>
-
