@@ -9,9 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
@@ -60,8 +57,8 @@ class ChallengesControllerTest {
      */
     @Test
     void list_shouldRenderListJsp() throws Exception {
-        Page<Challenge> empty = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 10), 0);
-        when(service.listChallenges(nullable(Difficulty.class), any())).thenReturn(empty);
+        when(service.listChallenges(nullable(Difficulty.class), anyString(), anyString()))
+                .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/challenges"))
                 .andExpect(status().isOk())
