@@ -1,1 +1,1 @@
-web: java -Xms256m -Xmx512m -Dserver.port=$PORT -jar target/codeforge-0.0.1-SNAPSHOT.jar
+web: java -Xms256m -Xmx512m -Dserver.port=$PORT -jar app.jar

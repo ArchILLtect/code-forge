@@ -26,6 +26,7 @@ app:
     tcp:
       enabled: true
 
+server:
   servlet:
     encoding:
       charset: UTF-8
