@@ -1,6 +1,6 @@
 # Class and Indie Project Plan (Weeks 4–14)
 
-_Last Updated: September 24, 2025_
+_Last Updated: October 22, 2025_
 _Inputs: README.md, course_calendar.md, project_overview.md, project_rubric_clean.md_
 
 Indie Project Scope:
@@ -37,8 +37,11 @@ Indie Project Scope:
     - [x] Done when: ER diagram, DAO CRUD, tests, log4j, journal, plan, GitHub tag
     - [x] Evidence: ER diagram, DAO test report, repo tag, screenshots
     - [x] **Milestone:** Project 1 checkpoint complete! App template running and accessible locally. 🎉
-    - [ ] Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
+    - [x] H2 console enabled
+    - [x] Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
+    - [x] Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination
     - [x] Update journal and time log
+    - [ ] Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
   - [ ] Implements Challenge entity + DAO + CRUD (foundation for Story 9: Admin Create Challenge, and Story 4: Learner submissions persistence).
   - DB note: DAO tested with H2, but dev DB = MySQL.
 
@@ -46,38 +49,45 @@ Indie Project Scope:
 
 ### Week 5 — Web Tier and MVP Foundations _(Sept 29–Oct 5)_
 - **Class**
-  - [ ] JSP/Servlets, JSTL, controllers, request lifecycle
-  - [ ] DAO integration patterns in the web tier
+  - [x] JSP/Servlets, JSTL, controllers, request lifecycle
+  - [x] DAO integration patterns in the web tier
 - **Indie**
-  - [ ] Rubric mapping: web tier, DAO integration, external API, CI
-  - [ ] Implement controllers/services wiring to DAO [🔗](user-stories.md#learner) (Stories 2–3: Browse & View challenge).
-  - [ ] Add DAO/CRUD for Submission and DrillItem; service layer for Drill logic. [🔗](user-stories.md#learner) (Story 4: Submit solution & see result, Story 6 outcomes).
-  - [ ] Build basic JSPs for listing/detail and form submission [🔗](user-stories.md#learner) (Stories 2–4).
-  - [ ] Add error handling, validation, and simple UX [🔗](user-stories.md#learner) (Stories 2, 3, 4).
-  - [ ] ⭐ (Stretch Goal) Expand unit and integration tests [🔗](user-stories.md#learner) (Story 4 persistence, Story 6 outcomes).
+  - [x] Rubric mapping: web tier, DAO integration
+  - [x] Implement controllers/services wiring to DAO [🔗](user-stories.md#learner) (Stories 2–3: Browse & View challenge).
+  - [x] Build basic JSPs for listing/detail and form submission [🔗](user-stories.md#learner) (Stories 2–4).
+    - List with pagination/sorting and difficulty filter; Detail page.
+  - [x] Add error handling, validation, and simple UX [🔗](user-stories.md#learner) (Stories 2, 3, 4).
+    - @ControllerAdvice with 404/500 JSPs; form validation; flash messages.
+  - [x] ⭐ Expand unit and integration tests [🔗](user-stories.md#learner)
+    - Repo + WebMvc tests for list, 404, new/create (ok/dup), update (ok/dup), delete (ok/not-found), and 500.
+  - [x] Expand seed data for challenges (10+ entries, various difficulties).
   - [ ] ⭐ (Stretch Goal) Challenge run service (stubbed execution for now; real compile/run later if time).
-  - [ ] Spike: shortlist and select external API, prove minimal call [🔗](user-stories.md#learner) (Story 8).
-  - [ ] ⭐ (Stretch Goal) Add GitHub Actions pipeline for build/tests/static analysis
-  - [ ] Done when: controllers, JSPs, API spike, CI pipeline
-  - [ ] Evidence: screenshots, test report, API call log, CI badge
-  - [ ] Update journal and time log
+  - [ ] ⭐ Add GitHub Actions pipeline for build/tests/static analysis
+  - [x] Done when: controllers, JSPs (list/detail), validation and error pages, tests; API spike/CI deferred to Week 6–8 per calendar.
+  - [x] Evidence: screenshots, test report
+  - [x] Update journal and time log
 
 ---
 
 ### Week 6 — Authentication, Testing, and Logging Quality _(Oct 6–12)_
 - **Class**
-  - [ ] Authentication/authorization fundamentals
-  - [ ] Unit/integration testing practices and coverage
+  - [x] Authentication/authorization fundamentals
+  - [x] Unit/integration testing practices and coverage
 - **Indie**
   - [ ] Rubric mapping: authentication, logging, test coverage
-  - [ ] Implement authentication/authorization (register/login via identity service) [🔗](user-stories.md#learner) (Story 1: Register/Sign in)
-  - [ ] Secure protected routes and challenge data [🔗](user-stories.md#learner) (Story 2: Browse challenges)
+  - [ ] Implement authentication/authorization using AWS Cognito (Spring Security OIDC) [🔗](user-stories.md#learner) (Story 1: Register/Sign in)
+  - [ ] Secure protected routes and challenge data (roles/authorities) [🔗](user-stories.md#learner) (Story 2: Browse challenges)
   - [ ] Replace any lingering `System.out.println` with Log4J logging
-  - [ ] ⭐ (Stretch Goal) Centralize logging with log rotation and diagnostic context
+  - [ ] Switch to jQuery-based pagination via CDN; remove server-side Pageable from APIs and tests
+  - [ ] Elastic Beanstalk prep (Java 17/Corretto): Procfile present; ensure /actuator/health returns UP; handle PORT via `-Dserver.port=$PORT` or `server.port=${PORT:8080}`
+  - [ ] GitHub Actions: build-and-package to produce `eb-bundle.zip` (jar + Procfile) for EB deploy
+  - [ ] Add DAO/CRUD for Submission and DrillItem; service layer for Drill logic. [🔗](user-stories.md#learner) (Story 4: Submit solution & see result, Story 6 outcomes).
+  - [ ] Spike: shortlist and select external API, prove minimal call [🔗](user-stories.md#learner) (Story 8).
+  - [ ] ⭐ (Stretch Goal) Centralize logging with log rotation and diagnostic context (MDC)
   - [ ] ⭐ (Stretch Goal) Raise code coverage threshold; add CI/static analysis
   - [ ] Prep for Checkpoint 2 readiness
-  - [ ] Done when: login/register, protected routes, log4j, CI
-  - [ ] Evidence: test report, screenshots, CI badge
+  - [ ] Done when: Cognito login works; protected routes enforced; jQuery pagination wired; EB bundle produced and health endpoint UP; log4j in place; CI green
+  - [ ] Evidence: test report, screenshots (login & health), CI artifact (eb-bundle.zip), CI badge
   - [ ] Update journal and time log
 
 ---

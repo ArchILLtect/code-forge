@@ -18,15 +18,20 @@ CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to ex
 ## ✨ Features (Planned / In Progress)
 - **Practice Mode**  
   Browse algorithm challenges by topic and difficulty, write your solution, and get instant test feedback.
+  - Early stub runner implemented (ChallengeRunService) for Week 5 to support upcoming submit flow.
 
 - **Drill Mode**  
   A “flashcard for code” system. Missed or skipped problems come back in future cycles until you solve them correctly — with some solved ones mixed in to re-check your mastery.
+  - Backend DrillService (scheduling + due queue) implemented in Week 5; UI wiring and submit flow coming in Week 6.
 
 - **Progress Tracking**
   Track your problem status (`Correct`, `Acceptable`, `Incorrect`, `Skipped`) and see your overall improvement over time.
 
 - **Expandable Challenge Set**  
   Admins/instructors can easily add new problems, test cases, and starter code to grow the platform.
+
+- **Admin Tools (Week 5)**  
+  Basic Challenge management (Create/Edit/Delete), list pagination/sorting, filter by difficulty, validation and friendly error pages (404/500).
 
 ---
 ## 📚 Tech Stack
@@ -95,7 +100,31 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 - App template is running and accessible locally (localhost:8080)
 - H2 console enabled
 - Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
-- Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike
+- Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination/sorting and difficulty filtering, JSP error pages (404/500) via @ControllerAdvice, lightweight service layer, expanded seed data, and WebMvc + JPA tests all green.
+- Week 5: Added DrillService for scheduling (nextDueAt), streak/timesSeen updates, and a due queue; dedicated service tests added and passing.
+- Week 5: Added stub ChallengeRunService to simulate solution execution (supports simple CORRECT/INCORRECT/SKIPPED outcomes) and unit tests.
+- Next (Week 6): Wire Drill UI and submit flow (uses stub run service), optional API spike and CI pipeline per course schedule.
+
+---
+## ℹ️ Drill Scheduling (v1)
+The backend DrillService applies simple spaced-repetition-style rules when recording outcomes and when building the due queue.
+
+- recordOutcome(challengeId, outcome, code)
+  - Updates DrillItem: timesSeen++, streak changes based on outcome, sets nextDueAt.
+  - Creates a Submission audit row.
+- Scheduling rules:
+  - CORRECT / ACCEPTABLE: increment streak; schedule by new streak
+    - streak 1 → +30 minutes
+    - streak 2 → +1 day
+    - streak 3 → +3 days
+    - streak ≥ 4 → +7 days
+  - INCORRECT: streak = 0; nextDueAt = now + 5 minutes
+  - SKIPPED: streak unchanged; nextDueAt = now + 10 minutes
+- getDueQueue(limit):
+  - Returns items due now (or unscheduled) sorted with null nextDueAt first, then past due by time.
+  - If none are due, returns the single soonest upcoming item to avoid an empty queue.
+
+This powers the upcoming Drill mode UI planned for Week 6.
 
 ---
 ## 💪 Challenge Topics
@@ -127,6 +156,15 @@ http://localhost:8080
 ```
 
 ---
+
+## 🧪 Stub Run Service (Week 5)
+The early runner does not compile or execute code. It deterministically simulates outcomes to unblock UI wiring:
+- Unsupported language or blank language → ok=false, outcome=SKIPPED
+- Code contains "SKIP" (case-insensitive) → ok=true, outcome=SKIPPED
+- Code contains "FAIL" or "assert false" → ok=false, outcome=INCORRECT
+- Otherwise → ok=true, outcome=CORRECT
+
+---
 ## ⚠️ Project Purpose
 This project is part of my Enterprise Java class.
 The goal is to demonstrate building a full-stack Java web app with authentication, persistence, and real-world application value — while creating a tool that can actually help practice coding interviews.
@@ -142,3 +180,36 @@ MIT License — feel free to use, fork, and improve CodeForge.
 - Built for students who want less confusion, more clarity, and stronger fundamentals.
 
 ---
+## Week 6 Scope (Auth + Hosting + Drill UI)
+- Authentication & Authorization: Implement OAuth2 login with Amazon Cognito (Spring Security OIDC) and protect routes.
+- Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService.
+- Pagination: Remove server-side Pageable and use jQuery pagination via CDN on listing pages.
+- Deployment (Elastic Beanstalk): Package jar + Procfile into eb-bundle.zip via GitHub Actions; verify /actuator/health returns UP; confirm PORT handling.
+
+### Deployment Notes (Elastic Beanstalk)
+- CI workflow: .github/workflows/build.yml builds and zips eb-bundle.zip (includes Procfile and app.jar).
+- Procfile (repo root) uses the EB-provided $PORT env var to start the app.
+- Health: Ensure Spring Boot Actuator is on the classpath and that /actuator/health returns UP.
+- Local smoke test: Run the jar and open http://localhost:8080 and http://localhost:8080/actuator/health.
+
+### Environment Variables – Cognito OIDC (example)
+Set these in your environment (local .env, IDE run config) or in EB configuration. Use secrets for client secret.
+
+```
+# Spring Security OIDC (Cognito)
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID=your_client_id
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET=your_client_secret
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_SCOPE=openid,profile,email
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI={baseUrl}/login/oauth2/code/cognito
+SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_AUTHORIZATION_GRANT_TYPE=authorization_code
+SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI=https://cognito-idp.<REGION>.amazonaws.com/<USER_POOL_ID>
+
+# Optional: Spring Boot server port fallback if PORT not set
+SERVER_PORT=8080
+```
+
+Notes:
+- issuer-uri uses your AWS region and user pool id (e.g., https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123).
+- {baseUrl} is typically your site origin (e.g., http://localhost:8080).
+- Environment variables override application.yml properties in Spring Boot.
+
