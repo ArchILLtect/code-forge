@@ -25,3 +25,24 @@ app:
   h2:
     tcp:
       enabled: true
+
+# Server port fallback (Elastic Beanstalk sets PORT env var)
+server:
+  port: ${PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# Minimal Actuator exposure for health/info
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
