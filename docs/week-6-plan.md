@@ -25,10 +25,8 @@ Source inputs: docs/project-plan.md (Week 6), Week 5 wrap-up notes, and deployme
 
 ### 4) AWS Elastic Beanstalk (Java SE, Corretto 17)
 - Create Procfile
-  - web: java -Xms256m -Xmx512m -Dserver.port=$PORT -jar codeforge-0.0.1-SNAPSHOT.jar
 - Health readiness
   - Ensure Spring Boot Actuator enabled and /actuator/health returns UP
-  - Add server.port=${PORT:8080} to application.properties (if not using -Dserver.port)
 - Packaging & smoke tests
   - Build locally; run jar with overridden port; verify health endpoint and basic pages
 
