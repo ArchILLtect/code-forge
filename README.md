@@ -39,7 +39,7 @@ CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to ex
 The CodeForge project leverages a modern **Enterprise Java** stack alongside supporting tools for development, testing, and deployment.
 
 - ### Backend
-  - **Java 17+** — Core language
+  - **Java 17 (LTS)** — Core language
   - **Spring Boot** — Primary framework for web tier, REST controllers, and DI
   - **JPA / Hibernate** — ORM layer for database persistence
   - **Project Lombok** — Reduces boilerplate (getters, setters, builders, etc.)
@@ -212,4 +212,3 @@ Notes:
 - issuer-uri uses your AWS region and user pool id (e.g., https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123).
 - {baseUrl} is typically your site origin (e.g., http://localhost:8080).
 - Environment variables override application.yml properties in Spring Boot.
-
