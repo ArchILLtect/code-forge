@@ -46,7 +46,7 @@ The project board groups all issues labeled `project:mvp` into a single executio
 
 ## Labels
 - Required: `project:mvp`
-- Common: `area:security`, `area:web`, `area:service`, `area:ci-cd`, `area:deployment`, `area:logging`, `feature:cognito-auth`, `feature:pagination-jquery`, `feature:drill-mode`, `documentation`
+- Common: `area:security`, `area:web`, `area:service`, `area:ci-cd`, `area:deployment`, `area:logging`, `feature:cognito-auth`, `feature:pagination-jquery`, `feature:drill-mode`, `area:documentation`
 
 ## Issue Templates to Use
 - Feature: Cognito, route protection, client-side pagination, drill submission
