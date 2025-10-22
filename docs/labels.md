@@ -64,6 +64,15 @@ This file lists new labels to add for CodeForge, plus a description for the exis
 - name: area:deployment
   - description: AWS Elastic Beanstalk, environments, and runtime configs.
   - color: bfdadc
+- name: area:logging
+  - description: Log4J configuration, structured logging, MDC, and log hygiene.
+  - color: f7c6c7
+- name: area:ui/ux
+  - description: UI layout, styling, accessibility, and UX flows (client-side behavior and visual polish).
+  - color: f9c2ff
+- name: area:documentation
+  - description: README, docs/, inline JavaDoc, and project planning artifacts.
+  - color: 0ea5e9
 
 ### Feature/Theme
 - name: feature:drill-mode
@@ -84,9 +93,6 @@ This file lists new labels to add for CodeForge, plus a description for the exis
 - name: api:external
   - description: Work related to external/public API selection, integration, and resilience.
   - color: 5f8b95
-- name: logging
-  - description: Log4J configuration, structured logging, MDC, and log hygiene.
-  - color: f7c6c7
 
 ### Project
 - name: project:mvp
