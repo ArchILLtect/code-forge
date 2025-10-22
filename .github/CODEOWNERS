@@ -1,0 +1,27 @@
+# CODEOWNERS
+# Reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# Replace placeholder handles with real org/team usernames as needed.
+
+# Default owner for everything in the repo
+*       @ArchILLtect
+
+# Web layer (controllers, JSP/JSTL, views)
+src/main/java/**/web/**        @ArchILLtect
+src/main/webapp/**             @ArchILLtect
+
+# Service layer (business logic)
+src/main/java/**/service/**    @ArchILLtect
+
+# Persistence layer (entities/DAOs)
+src/main/java/**/persistence/** @ArchILLtect
+
+# Security (Spring Security, Cognito)
+src/main/java/**/security/**   @ArchILLtect  @your-org/security-team
+
+# Deployment/CI (workflows, Procfile)
+.github/**                     @ArchILLtect  @your-org/deployment-team
+Procfile                        @ArchILLtect  @your-org/deployment-team
+
+# Docs
+/docs/**                       @ArchILLtect
+
