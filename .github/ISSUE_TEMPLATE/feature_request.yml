@@ -62,6 +62,9 @@ body:
         - area:security
         - area:deployment
         - area:ci-cd
+        - area:logging
+        - area:ui/ux
+        - area:documentation
     validations:
       required: false
   - type: input

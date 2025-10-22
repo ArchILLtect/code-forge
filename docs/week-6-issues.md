@@ -285,13 +285,13 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - [ ] Tests remain green
 
 - Area
-  - area:service, area:web, logging
+  - area:logging
 
 - Dependencies / related issue
   - None
 
 - Suggested labels
-  - status:triage, logging, priority:P3-low
+  - status:triage, area:logging, priority:P3-low
 
 ---
 
@@ -324,4 +324,4 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - None
 
 - Suggested labels
-  - status:triage, documentation, priority:P3-low
+  - status:triage, area:documentation, priority:P3-low
