@@ -2,6 +2,7 @@ name: "🐞 Bug report"
 description: Report a bug so we can fix it.
 title: "bug: <short summary>"
 labels:
+  - status:triage
   - bug
   - priority:P2-normal
 body:
@@ -81,4 +82,3 @@ body:
           required: true
         - label: I can work on a fix and will open a PR.
           required: false
-

@@ -2,6 +2,7 @@ name: "🧪 Test coverage"
 description: Add or improve tests for DAO, service, or web layers.
 title: "test: <short summary>"
 labels:
+  - status:triage
   - status:needs-tests
   - priority:P2-normal
 body:
@@ -46,4 +47,3 @@ body:
     attributes:
       label: Related issues/PRs
       placeholder: e.g., #123
-

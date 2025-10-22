@@ -2,6 +2,7 @@ name: "✨ Feature request"
 description: Propose a new feature or improvement.
 title: "feat: <short summary>"
 labels:
+  - status:triage
   - enhancement
   - priority:P2-normal
 body:
@@ -76,4 +77,3 @@ body:
           required: true
         - label: I can help implement this and open a PR.
           required: false
-

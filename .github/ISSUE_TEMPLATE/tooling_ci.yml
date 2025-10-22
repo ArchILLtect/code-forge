@@ -2,6 +2,7 @@ name: "🛠️ Tooling / CI"
 description: Changes to build scripts, CI workflows, packaging, or developer tooling.
 title: "ci/tooling: <short summary>"
 labels:
+  - status:triage
   - area:ci-cd
   - priority:P2-normal
 body:
@@ -45,4 +46,3 @@ body:
         - [ ] Docs updated if commands changed
     validations:
       required: true
-

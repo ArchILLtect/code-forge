@@ -2,6 +2,7 @@ name: "📝 Documentation"
 description: Request updates or additions to documentation.
 title: "docs: <short summary>"
 labels:
+  - status:triage
   - documentation
   - priority:P3-low
 body:
@@ -47,4 +48,3 @@ body:
         - label: Links checked (no 404s)
         - label: Screenshots updated if UI changed
         - label: Labels applied (documentation, area:*)
-
