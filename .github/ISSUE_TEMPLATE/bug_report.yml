@@ -23,6 +23,9 @@ body:
         - area:security
         - area:ci-cd
         - area:deployment
+        - area:logging
+        - area:ui/ux
+        - area:documentation
     validations:
       required: false
   - type: input

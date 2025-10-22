@@ -4,7 +4,7 @@ title: "docs: <short summary>"
 labels:
   - status:triage
   - project:mvp
-  - documentation
+  - area:documentation
   - priority:P3-low
 body:
   - type: markdown
