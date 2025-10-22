@@ -1,0 +1,50 @@
+name: "📝 Documentation"
+description: Request updates or additions to documentation.
+title: "docs: <short summary>"
+labels:
+  - documentation
+  - priority:P3-low
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to request README, docs/, or inline JavaDoc changes. Be specific and include target files.
+  - type: dropdown
+    id: doc_area
+    attributes:
+      label: Documentation area
+      options:
+        - README
+        - docs/project-plan.md
+        - docs/week-6-plan.md
+        - docs/reflections/*
+        - API/Architecture
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: files
+    attributes:
+      label: File(s) to update
+      placeholder: e.g., docs/project-plan.md, README.md
+  - type: textarea
+    id: current
+    attributes:
+      label: Current text (optional)
+      description: Paste the current snippet so reviewers can see what will change.
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed change
+      description: Provide the exact text or outline to add/change.
+      validations:
+        required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: Links checked (no 404s)
+        - label: Screenshots updated if UI changed
+        - label: Labels applied (documentation, area:*)
+

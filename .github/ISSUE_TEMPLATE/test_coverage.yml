@@ -1,0 +1,49 @@
+name: "🧪 Test coverage"
+description: Add or improve tests for DAO, service, or web layers.
+title: "test: <short summary>"
+labels:
+  - status:needs-tests
+  - priority:P2-normal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us keep quality high by adding focused, fast tests. Link to the related feature/bug if applicable.
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Layer
+      options:
+        - DAO / Persistence
+        - Service
+        - Web / Controller
+        - View / JSP
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What behavior needs tests? Include edge cases.
+      placeholder: |
+        - Happy path
+        - Edge cases (null/empty, invalid, time-bound)
+        - Error handling/logging
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] DAO: save/find/update/delete works for ...
+        - [ ] Service: records outcome and updates nextDueAt...
+        - [ ] Web: returns 200 and renders list without Pageable...
+    validations:
+      required: true
+  - type: input
+    id: related
+    attributes:
+      label: Related issues/PRs
+      placeholder: e.g., #123
+

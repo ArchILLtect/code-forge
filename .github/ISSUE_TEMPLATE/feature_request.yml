@@ -1,0 +1,79 @@
+name: "✨ Feature request"
+description: Propose a new feature or improvement.
+title: "feat: <short summary>"
+labels:
+  - enhancement
+  - priority:P2-normal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please provide enough context to scope and implement it.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / context
+      description: What problem are we solving? Who benefits?
+      placeholder: |
+        Describe the pain point or opportunity.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Outline the behavior, UI, and data changes.
+      placeholder: |
+        - User flow
+        - API or controller changes
+        - DAO/service changes
+        - UI/JSP updates
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: In scope / Out of scope
+      value: |
+        In scope:
+        - 
+        Out of scope:
+        -
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Define testable outcomes.
+      placeholder: |
+        - [ ] When X, then Y
+        - [ ] Edge case: ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - area:web
+        - area:service
+        - area:persistence
+        - area:security
+        - area:deployment
+        - area:ci-cd
+    validations:
+      required: false
+  - type: input
+    id: deps
+    attributes:
+      label: Dependencies / related issues
+      placeholder: e.g., #123
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I’ve checked existing issues for duplicates.
+          required: true
+        - label: I can help implement this and open a PR.
+          required: false
+
