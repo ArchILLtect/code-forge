@@ -22,3 +22,10 @@
   - [ ] Maintainers can override labels without them being re-applied incorrectly
   - [ ] Rules documented in the workflow file and/or CONTRIBUTING.md
 
+## Repository Hygiene
+
+3) Fill in CODEOWNERS with your actual team handles
+- Context: CODEOWNERS currently uses placeholders for security/deployment teams.
+- Acceptance Criteria:
+  - [ ] Replace `@your-org/security-team` and `@your-org/deployment-team` with real GitHub users/teams
+  - [ ] Verify review requests are auto-assigned when touching the relevant paths
