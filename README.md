@@ -210,5 +210,5 @@ SERVER_PORT=8080
 
 Notes:
 - issuer-uri uses your AWS region and user pool id (e.g., https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123).
-- {baseUrl} is typically your site origin (e.g., http://localhost:8080).
+- `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:8080). You do **not** need to replace it manually.
 - Environment variables override application.yml properties in Spring Boot.
