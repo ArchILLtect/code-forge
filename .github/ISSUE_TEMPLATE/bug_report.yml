@@ -3,6 +3,7 @@ description: Report a bug so we can fix it.
 title: "bug: <short summary>"
 labels:
   - status:triage
+  - project:mvp
   - bug
   - priority:P2-normal
 body:

@@ -3,6 +3,7 @@ description: Changes to build scripts, CI workflows, packaging, or developer too
 title: "ci/tooling: <short summary>"
 labels:
   - status:triage
+  - project:mvp
   - area:ci-cd
   - priority:P2-normal
 body:

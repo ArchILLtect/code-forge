@@ -3,6 +3,7 @@ description: Add or improve tests for DAO, service, or web layers.
 title: "test: <short summary>"
 labels:
   - status:triage
+  - project:mvp
   - status:needs-tests
   - priority:P2-normal
 body:

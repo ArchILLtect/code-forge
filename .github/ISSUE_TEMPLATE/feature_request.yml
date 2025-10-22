@@ -3,6 +3,7 @@ description: Propose a new feature or improvement.
 title: "feat: <short summary>"
 labels:
   - status:triage
+  - project:mvp
   - enhancement
   - priority:P2-normal
 body:
