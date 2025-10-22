@@ -26,9 +26,6 @@ app:
     tcp:
       enabled: true
 
-# Server port fallback (Elastic Beanstalk sets PORT env var)
-server:
-  port: ${PORT:8080}
   servlet:
     encoding:
       charset: UTF-8
