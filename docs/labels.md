@@ -87,3 +87,8 @@ This file lists new labels to add for CodeForge, plus a description for the exis
 - name: logging
   - description: Log4J configuration, structured logging, MDC, and log hygiene.
   - color: f7c6c7
+
+### Project
+- name: project:mvp
+  - description: Use for all issues and PRs that belong to the MVP release scope. Project workflow can auto-add labeled items to the "CodeForge – MVP Release" board.
+  - color: e6ffcc

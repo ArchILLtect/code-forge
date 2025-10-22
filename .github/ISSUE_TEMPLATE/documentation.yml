@@ -3,6 +3,7 @@ description: Request updates or additions to documentation.
 title: "docs: <short summary>"
 labels:
   - status:triage
+  - project:mvp
   - documentation
   - priority:P3-low
 body:
