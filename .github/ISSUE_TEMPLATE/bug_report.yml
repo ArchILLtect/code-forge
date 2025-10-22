@@ -1,0 +1,84 @@
+name: "🐞 Bug report"
+description: Report a bug so we can fix it.
+title: "bug: <short summary>"
+labels:
+  - status:triage
+  - bug
+  - priority:P2-normal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug! Please include clear steps and expected vs. actual behavior.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area/component
+      description: What part of the app is impacted?
+      options:
+        - area:web
+        - area:service
+        - area:persistence
+        - area:security
+        - area:ci-cd
+        - area:deployment
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: App version / commit SHA
+      description: e.g., v0.0.1-SNAPSHOT or commit hash
+      placeholder: abcdef1
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Java version, profile, DB, browser (if UI)
+      value: |
+        - OS:
+        - Java:
+        - Profile: dev/test/prod
+        - DB: H2/MySQL/Postgres
+        - Browser:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal, reproducible example if possible
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See error ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: What actually happened? Include stack traces or screenshots.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack traces
+      description: Redact secrets. Use Log4J output if available.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-checks
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I can reproduce this on the latest main.
+          required: true
+        - label: I can work on a fix and will open a PR.
+          required: false

@@ -36,38 +36,38 @@ According to the course calendar and project plan:
 
 ### 🔥 CodeForge – Indie Project Tasks
 - **DAO & Entities**
-  - [ ] Add DAO/CRUD for `Submission` entity.  
-  - [ ] Add DAO/CRUD for `DrillItem` entity.  
-  - [ ] Write JUnit tests for new DAOs (happy path + edge cases).  
+  - [x] Add DAO/CRUD for `Submission` entity.  
+  - [x] Add DAO/CRUD for `DrillItem` entity.  
+  - [x] Write JUnit tests for new DAOs (happy path + edge cases).  
 
 - **Service Layer**
-  - [ ] Implement service wiring between DAOs and controllers.  
-  - [ ] Create early `ChallengeRunService` (stub execution for now).  
+  - [x] Implement service wiring between DAOs and controllers.  
+  - [x] Create early `ChallengeRunService` (stub execution for now).  
 
 - **Web Tier (MVP User Stories 1–2)**  
-  - [ ] Build JSP for **Challenge List** page (with search/filter placeholders).  
-  - [ ] Build JSP for **Challenge Detail/Solve** page (prompt, code editor stub, submit button).  
-  - [ ] Controller methods to fetch data via DAO and serve to JSP.  
+  - [x] Build JSP for **Challenge List** page (pagination, sorting, filter by difficulty).  
+  - [x] Build JSP for **Challenge Detail** page.  
+  - [x] Controller methods to fetch data via DAO and serve to JSP.  
 
 - **User Experience**
-  - [ ] Add basic form validation (nulls, required fields).  
-  - [ ] Add error handling (friendly error JSP, log actual exceptions).  
+  - [x] Add basic form validation (required fields, unique title).  
+  - [x] Add error handling (friendly error JSPs for 404/500; log exceptions).  
 
 - **Testing**
-  - [ ] Expand integration tests (controller ↔ service ↔ DAO).  
-  - [ ] Verify persistence works across multiple entities (`User`, `Challenge`, `Submission`, `DrillItem`).  
+  - [x] Expand tests (WebMvc + Repo) for list, detail 404, create (ok/duplicate), update (ok/duplicate), delete (ok/not-found), and 500 handler.  
+  - [x] Verify persistence across multiple entities (`User`, `Challenge`, `Submission`, `DrillItem`).  
 
 - **Documentation**
   - [ ] Journal entry for Week 5 (what worked, what didn’t, hours logged).  
   - [ ] Update **Time Log** with CodeForge + Enterprise Java hours.  
-  - [ ] Keep ProjectPlan.md current with any shifts in schedule.  
+  - [x] Keep ProjectPlan.md current with any shifts in schedule.  
 
 ---
 
 ### 🏁 Goal by End of Week 5
 A learner should be able to:
-- View the **Challenge List**.
-- Click into a **Challenge Detail**.
-- Submit a solution (processed by a stub run service).
+- View the **Challenge List** with pagination/sorting and filter by difficulty. ✅
+- Click into a **Challenge Detail**. ✅
+- Submit a solution (processed by a stub run service). ⏩ Deferred to Week 6.
 
-This establishes a working end-to-end MVP foundation connecting the database, service layer, and JSP interface.
+This establishes a working web tier foundation (DAO ↔ Service ↔ Controller ↔ JSP) with validation, error handling, and tests. Submission flow and additional entities (Submission/DrillItem) are planned next.

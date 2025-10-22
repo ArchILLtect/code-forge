@@ -52,3 +52,35 @@ Week 4 Reflection – Checkpoint 1
 Working on both Enterprise Java and CodeForge this week highlighted some strong parallels. In Ent Java, I learned how Hibernate manages entities, abstracts SQL, and enforces safe practices like separating test and dev databases. In CodeForge, I set up guardrails in Git (branch protections, pre-commit hooks, CI workflow checks) to keep the repo stable. Both experiences emphasized the importance of separating environments, anticipating errors, and building in safety nets so that testing doesn’t accidentally corrupt production.
 
 Another similarity was the challenge of working with complex tooling. Hibernate’s configuration and silent warnings reminded me of Git’s quirks with branches, merges, and IntelliJ indexing issues in CodeForge. In both cases, I had to slow down, experiment, and build a mental model of how the system works. The key takeaway is that whether I’m dealing with data persistence or source control, success comes from the same habits: isolating states, protecting critical paths, and carefully troubleshooting when things don’t behave as expected.
+
+---
+
+## Week 5 – Fall 2025
+
+**10/05/25**
+
+This week I wrapped up the core Challenge management and error-handling work and aligned the docs/tests with the current app state.
+
+Highlights
+- Challenge admin CRUD completed (create, edit, delete) with validation (@Valid), unique title checks, friendly field errors, and flash messages.
+- Challenges list/detail delivered with sorting/filtering and initial server-side pagination; added simple UI indicators (▲/▼) and page-size selector.
+- Centralized error handling via @ControllerAdvice with JSP error pages for 404 and 500 (correct HTTP statuses).
+- Logging: Log4J2 console appender configured; clean INFO defaults across the app.
+- Service layer: Introduced ChallengeService to keep controllers thin and consolidate business logic.
+- Data layer: Added Submission and DrillItem DAOs (repos) plus tests; expanded data.sql to seed realistic dev data.
+- Fixes: H2 console 404 resolved; JSTL taglib issue fixed by adding Jakarta JSTL and correcting JSP taglib usage; clarified test profile behavior (create-drop, no dev seed load).
+
+Testing and docs
+- WebMvc tests cover list, 404, new, create (ok/duplicate), update (ok/duplicate), delete (ok/not-found), and 500 handler.
+- JPA tests for Challenge, Submission, and DrillItem are green.
+- Updated README and docs (project-plan, week-5-plan) to reflect delivered features and current expectations.
+
+Pushed to Week 6
+- Drill logic service layer: scheduling/nextDueAt updates, streak/timesSeen handling, and drill queue orchestration.
+- Submission UI/flow and a basic run/execute stub to record a Submission and update a DrillItem.
+- CI cleanup and switching from server-side pagination to jQuery-based pagination via CDN per course requirement.
+
+Reflection
+- Win: Admin CRUD and error pages feel solid; tests provide good coverage; seed data makes the UI useful.
+- Adjustment: Pagination approach will move to jQuery/CDN in Week 6 to match class goals.
+- Next: Implement DrillService basics, wire a minimal submit flow, and align CI/pagination changes.

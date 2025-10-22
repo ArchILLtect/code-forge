@@ -1,0 +1,45 @@
+name: build-and-package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Build (tests + repackage)
+        run: mvn -B -ntp clean verify
+
+      # Option A: keep server.port via Procfile JVM flag (your current setup)
+      - name: Create stable app.jar
+        run: |
+          cp target/*SNAPSHOT.jar app.jar
+
+      # If your Procfile is in repo root already, reuse it.
+      # Otherwise you can create one on-the-fly:
+      # - name: Write Procfile
+      #   run: |
+      #     echo 'web: java -Xms256m -Xmx512m -Dserver.port=$PORT -jar app.jar' > Procfile
+
+      - name: Make EB bundle
+        run: |
+          zip -q -9 eb-bundle.zip Procfile app.jar
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eb-bundle
+          path: eb-bundle.zip

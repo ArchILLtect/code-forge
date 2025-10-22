@@ -1,0 +1,48 @@
+name: "🛠️ Tooling / CI"
+description: Changes to build scripts, CI workflows, packaging, or developer tooling.
+title: "ci/tooling: <short summary>"
+labels:
+  - status:triage
+  - area:ci-cd
+  - priority:P2-normal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for GitHub Actions, Maven build changes, EB packaging, local dev tooling, linters, etc.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context / problem statement
+      placeholder: |
+        What needs to change and why? (e.g., EB bundle, caching, test matrix, flaky step)
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed changes
+      placeholder: |
+        - Update .github/workflows/build.yml to ...
+        - Add caching for Maven repo
+        - Produce eb-bundle.zip with Procfile
+    validations:
+      required: true
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - label: Affects build time
+        - label: Affects packaging/deployment
+        - label: Requires new secrets or environment variables
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] CI workflow publishes eb-bundle.zip artifact
+        - [ ] Build remains green on main
+        - [ ] Docs updated if commands changed
+    validations:
+      required: true
