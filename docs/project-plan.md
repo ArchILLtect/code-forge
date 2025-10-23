@@ -224,3 +224,17 @@ Indie Project Scope:
   - [ ] Evidence: release notes, video link, rubric checklist
 
 ---
+
+## Checkpoints
+
+### Checkpoint 1:
+
+- Problem statement, user stories, project plan, screen design and reflection statements pushed to GitHub. Be sure to identify which stories are part of the Minimum Viable Product (MVP). Link to your repository here. Week 4.
+
+### Checkpoint 2:
+
+- Database designed and created, at least one DAO with full CRUD (create, read, update, delete) implemented with Hibernate, DAO is fully unit tested, Log4J is implemented (no System.out.printlns). Week 7.
+
+### Checkpoint 3:
+
+- Deployed to AWS, at least one JSP that displays data from the database is implemented, authentication implemented. Add link to your deployed application here. Week 9.
