@@ -29,7 +29,7 @@ jobs:
           cp target/*SNAPSHOT.jar app.jar
 
       # If your Procfile is in repo root already, reuse it.
-      # Otherwise you can create one on-the-fly:
+      # Otherwise, you can create one on-the-fly:
       # - name: Write Procfile
       #   run: |
       #     echo 'web: java -Xms256m -Xmx512m -Dserver.port=$PORT -jar app.jar' > Procfile
@@ -41,5 +41,7 @@ jobs:
       - name: Upload bundle artifact
         uses: actions/upload-artifact@v4
         with:
-          name: eb-bundle
+          name: eb-bundle.zip
           path: eb-bundle.zip
+          if-no-files-found: error
+          overwrite: true
