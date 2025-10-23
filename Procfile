@@ -1,1 +1,1 @@
-web: java -Xms256m -Xmx512m -Dserver.port=$PORT -jar app.jar
+web: java -Xms256m -Xmx512m -jar app.jar

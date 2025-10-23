@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.h2.tools.Server;
+import org.springframework.context.annotation.Profile;
 
 import java.sql.SQLException;
 
@@ -12,6 +13,7 @@ import java.sql.SQLException;
  * Configuration class to set up an H2 TCP server if enabled in application properties.
  * This allows external tools (like IntelliJ) to connect to the in-memory H2 database.
  */
+@Profile("dev")
 @Configuration
 @ConditionalOnProperty(name = "app.h2.tcp.enabled", havingValue = "true")
 @ConditionalOnClass(Server.class)
