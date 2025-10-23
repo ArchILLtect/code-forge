@@ -22,6 +22,7 @@ app:
     tcp:
       enabled: true
 
+
 server:
   port: ${PORT:5000}
   servlet:
@@ -29,6 +30,9 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  error:
+    whitelabel:
+      enabled: false
 
 # Minimal Actuator exposure for health/info/mappings
 management:
