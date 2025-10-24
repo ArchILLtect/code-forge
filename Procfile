@@ -1,1 +1,0 @@
-web: java -Xms256m -Xmx512m -jar app.jar

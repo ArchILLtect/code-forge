@@ -12,7 +12,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>CodeForge</name>
   <description>CodeForge — Enterprise Java Indie Project</description>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <properties>
     <java.version>17</java.version>
   </properties>
