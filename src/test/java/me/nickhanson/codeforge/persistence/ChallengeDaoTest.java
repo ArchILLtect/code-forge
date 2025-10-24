@@ -55,14 +55,22 @@ class ChallengeDaoTest {
     }
 
     /**
-     * Tests that the findAllSorted() method returns a list of all saved Challenge entities.
+     * Tests that the findAll() method returns a list of all saved Challenge entities.
      */
     @Test
     void findAll_returns_list() {
         dao.save(sample());
         dao.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
-        List<Challenge> list = dao.findAllSorted("title", "asc");
+        List<Challenge> list = dao.findAll();
         assertThat(list).hasSize(2);
+    }
+
+    @Test
+    void findByDifficulty_filters_results() {
+        dao.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
+        dao.save(new Challenge("Binary Search", Difficulty.MEDIUM, "Search sorted array", "details..."));
+        List<Challenge> easy = dao.findByDifficulty(Difficulty.EASY);
+        assertThat(easy).extracting(Challenge::getDifficulty).containsOnly(Difficulty.EASY);
     }
 
     /**
