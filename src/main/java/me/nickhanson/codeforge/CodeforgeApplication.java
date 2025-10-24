@@ -11,6 +11,12 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication
 public class CodeforgeApplication extends SpringBootServletInitializer {
 
+    /**
+     * Configure the application when deployed as a WAR file.
+     *
+     * @param application the SpringApplicationBuilder
+     * @return the configured SpringApplicationBuilder
+     */
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(CodeforgeApplication.class);

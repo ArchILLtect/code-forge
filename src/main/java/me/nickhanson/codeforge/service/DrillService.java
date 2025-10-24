@@ -26,6 +26,13 @@ public class DrillService {
     private final SubmissionDao submissionDao;
     private final ChallengeDao challengeDao;
 
+    /**
+     * Constructs a DrillService with the necessary DAOs.
+     *
+     * @param drillItemDao the DrillItem DAO
+     * @param submissionDao the Submission DAO
+     * @param challengeDao the Challenge DAO
+     */
     public DrillService(DrillItemDao drillItemDao, SubmissionDao submissionDao, ChallengeDao challengeDao) {
         this.drillItemDao = drillItemDao;
         this.submissionDao = submissionDao;
@@ -38,6 +45,8 @@ public class DrillService {
      * - If none are due, return the single soonest upcoming item (min nextDueAt) to avoid an empty queue.
      *
      * @param limit Max number of items to return (must be > 0)
+     * @return List of due DrillItems, up to the specified limit
+     * @throws IllegalArgumentException if limit <= 0
      */
     @Transactional(readOnly = true)
     public List<DrillItem> getDueQueue(int limit) {
@@ -65,16 +74,18 @@ public class DrillService {
     /**
      * Records a submission outcome for a challenge and updates its DrillItem scheduling.
      * Creates the DrillItem if not present.
-     *
      * Scheduling rules (simple spaced repetition v1):
      * - CORRECT/ACCEPTABLE: increment streak; schedule based on new streak:
      *   streak 1 -> +30 minutes, 2 -> +1 day, 3 -> +3 days, 4+ -> +7 days
      * - INCORRECT: reset streak to 0; schedule to +5 minutes
      * - SKIPPED: keep streak as-is (no increment); schedule to +10 minutes
-     *
      * timesSeen always increments.
      *
+     * @param challengeId the ID of the Challenge
+     * @param outcome the outcome of the submission
+     * @param code the submitted code
      * @return the persisted Submission entity
+     * @throws IllegalArgumentException if the Challenge does not exist
      */
     @Transactional
     public Submission recordOutcome(Long challengeId, Outcome outcome, String code) {
@@ -105,6 +116,12 @@ public class DrillService {
         return submission;
     }
 
+    /**
+     * Retrieves the DrillItem for the given Challenge, creating it if it doesn't exist.
+     *
+     * @param challenge the Challenge entity
+     * @return the existing or newly created DrillItem
+     */
     private DrillItem getOrCreateDrillItem(Challenge challenge) {
         List<DrillItem> items = drillItemDao.findByChallengeId(challenge.getId());
         if (!items.isEmpty()) return items.get(0);
@@ -112,6 +129,13 @@ public class DrillService {
         return drillItemDao.save(created);
     }
 
+    /**
+     * Computes the next due time for a DrillItem based on the submission outcome and new streak.
+     *
+     * @param outcome the outcome of the submission
+     * @param newStreak the updated streak count
+     * @return the computed next due Instant
+     */
     private Instant computeNextDueAt(Outcome outcome, int newStreak) {
         Instant now = Instant.now();
         return switch (outcome) {
@@ -126,7 +150,13 @@ public class DrillService {
         };
     }
 
-    /** Convenience method to ensure a DrillItem exists for a challenge. */
+    /**
+     * Ensures a DrillItem exists for the given challengeId, creating it if necessary.
+     *
+     * @param challengeId the ID of the Challenge
+     * @return the existing or newly created DrillItem
+     * @throws IllegalArgumentException if the Challenge does not exist
+     */
     @Transactional
     public DrillItem ensureDrillItem(Long challengeId) {
         Challenge c = challengeDao.findById(challengeId)
@@ -135,7 +165,9 @@ public class DrillService {
     }
 
     /**
-     * Returns an Optional of the next due item (single), using the same rules as getDueQueue(1).
+     * Retrieves the next due DrillItem, if any.
+     *
+     * @return an Optional containing the next due DrillItem, or empty if none are due
      */
     @Transactional(readOnly = true)
     public Optional<DrillItem> nextDue() {
