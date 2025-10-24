@@ -1,0 +1,118 @@
+name: "🏁 Project Checkpoint"
+description: Track work and evidence for a course checkpoint (1, 2, or 3).
+title: "checkpoint: <1|2|3> – <short summary>"
+labels:
+  - status:triage
+  - checkpoint
+  - priority:P1-high
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to track and verify all items required for a course checkpoint. Include links and evidence so reviewers can validate quickly.
+
+  - type: dropdown
+    id: cp_number
+    attributes:
+      label: Checkpoint number
+      options:
+        - 1
+        - 2
+        - 3
+    validations:
+      required: true
+
+  - type: input
+    id: due
+    attributes:
+      label: Due week/date
+      placeholder: e.g., Week 7 (Oct 13–19)
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope per rubric / plan
+      description: Paste the checkpoint definition from docs/project-plan.md → Checkpoints
+      placeholder: |
+        Example (Checkpoint 2):
+        - Database designed and created
+        - At least one DAO with full CRUD using Hibernate
+        - DAO is fully unit tested
+        - Log4J is implemented (no System.out.println)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: cp1_checklist
+    attributes:
+      label: Checkpoint 1 – requirements (use if CP = 1)
+      options:
+        - label: Problem statement, user stories, project plan, screen designs, and reflections are in GitHub
+        - label: MVP stories identified
+        - label: Repo link documented
+
+  - type: checkboxes
+    id: cp2_checklist
+    attributes:
+      label: Checkpoint 2 – requirements (use if CP = 2)
+      options:
+        - label: Database designed and created (JPA config and tables present)
+        - label: At least one DAO with full CRUD implemented using Hibernate/JPA
+        - label: DAO unit/integration tests passing
+        - label: Log4J implemented (no System.out.println)
+
+  - type: checkboxes
+    id: cp3_checklist
+    attributes:
+      label: Checkpoint 3 – requirements (use if CP = 3)
+      options:
+        - label: Deployed to AWS (link available)
+        - label: At least one JSP displays DB data
+        - label: Authentication implemented
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (links, screenshots)
+      description: Add links to files, test reports, CI runs, screenshots (H2 console, deployed app), etc.
+      placeholder: |
+        - H2 console screenshot showing tables
+        - Surefire test report file(s) or CI summary
+        - Deployed URL and /actuator/health = UP (for CP3)
+        - Log snippet demonstrating Log4J configured
+
+  - type: textarea
+    id: links
+    attributes:
+      label: References
+      description: Link to docs, plan sections, and PRs
+      placeholder: |
+        - docs/project-plan.md (Week 7 – Checkpoint 2)
+        - docs/week-6-issues.md (related issues)
+        - PR(s) implementing DAO + tests
+
+  - type: textarea
+    id: demo
+    attributes:
+      label: Demo plan (optional)
+      description: Brief steps to demonstrate the checkpoint items live
+      placeholder: |
+        - Show H2 console tables
+        - Run tests and show reports
+        - Show logging output
+        - (CP3) Navigate to deployed app + JSP with DB data; show login works
+
+  - type: checkboxes
+    id: done
+    attributes:
+      label: Approval checklist
+      options:
+        - label: All checkpoint requirements checked above
+          required: true
+        - label: Evidence attached
+          required: true
+        - label: Links added (docs, PRs, CI run)
+          required: true
+        - label: Ready for review
+          required: true
+
