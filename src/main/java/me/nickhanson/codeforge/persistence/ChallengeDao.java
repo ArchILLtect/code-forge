@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import me.nickhanson.codeforge.entity.Challenge;
@@ -25,22 +24,20 @@ public class ChallengeDao {
         return Optional.ofNullable(em.find(Challenge.class, id));
     }
 
-    public List<Challenge> findAllSorted(String sort, String dir) {
+    public List<Challenge> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Challenge> cq = cb.createQuery(Challenge.class);
         Root<Challenge> root = cq.from(Challenge.class);
         cq.select(root);
-        applyOrder(cb, cq, root, sort, dir);
         return em.createQuery(cq).getResultList();
     }
 
-    public List<Challenge> findByDifficultySorted(Difficulty difficulty, String sort, String dir) {
+    public List<Challenge> findByDifficulty(Difficulty difficulty) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Challenge> cq = cb.createQuery(Challenge.class);
         Root<Challenge> root = cq.from(Challenge.class);
         Predicate p = cb.equal(root.get("difficulty"), difficulty);
         cq.select(root).where(p);
-        applyOrder(cb, cq, root, sort, dir);
         return em.createQuery(cq).getResultList();
     }
 
@@ -90,14 +87,5 @@ public class ChallengeDao {
         if (found == null) return false;
         em.remove(found);
         return true;
-    }
-
-    private static void applyOrder(CriteriaBuilder cb, CriteriaQuery<Challenge> cq, Root<Challenge> root,
-                                   String sort, String dir) {
-        Set<String> allowed = Set.of("id", "title", "difficulty", "createdAt");
-        String prop = (sort == null || !allowed.contains(sort)) ? "title" : sort;
-        boolean desc = dir != null && dir.equalsIgnoreCase("desc");
-        Order order = desc ? cb.desc(root.get(prop)) : cb.asc(root.get(prop));
-        cq.orderBy(order);
     }
 }

@@ -10,12 +10,11 @@
   <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/challenges.css" />
   <style>
-    body { margin: 0px 20% ; font-family: Arial, sans-serif; }
+    body { margin: 0 20% ; font-family: Arial, sans-serif; }
     table { border-collapse: collapse; border: 1px solid #000; }
     form { margin-bottom: unset; }
     .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
     .flash-error { background: #ffecec; border: 1px solid #ff3b30; padding: .5rem; margin-bottom: 1rem; }
-    .sort-ind { font-size: 0.85em; }
     .controls { display: flex; justify-content: center; align-items: center; gap: 10px; }
   </style>
 </head>
@@ -41,8 +40,6 @@
           <option value="HARD" ${difficultyValue == 'HARD' ? 'selected' : ''}>HARD</option>
         </select>
       </div>
-      <input type="hidden" name="sort" value="${sort}" />
-      <input type="hidden" name="dir" value="${dir}" />
       <button type="submit">Apply</button>
     </div>
   </form>

@@ -28,19 +28,16 @@ public class ChallengeService {
     }
 
     /**
-     * Retrieves a list of challenges, optionally filtered by difficulty, sorted by the given field/direction.
-     * This replaces server-side pagination to support client-side (jQuery) pagination.
+     * Retrieve challenges with optional difficulty filter (no server-side sorting/pagination).
      *
-     * @param difficulty The difficulty level to filter by (can be null for no filtering).
-     * @param sort       Property to sort by (id, title, difficulty, createdAt). Defaults applied in DAO if invalid.
-     * @param dir        Sort direction (asc/desc). Defaults to asc on invalid input.
-     * @return A list of challenges matching the criteria.
+     * @param difficulty The difficulty filter; null returns all.
+     * @return List of challenges.
      */
-    public List<Challenge> listChallenges(Difficulty difficulty, String sort, String dir) {
+    public List<Challenge> listChallenges(Difficulty difficulty) {
         if (difficulty == null) {
-            return dao.findAllSorted(sort, dir);
+            return dao.findAll();
         }
-        return dao.findByDifficultySorted(difficulty, sort, dir);
+        return dao.findByDifficulty(difficulty);
     }
 
     /**

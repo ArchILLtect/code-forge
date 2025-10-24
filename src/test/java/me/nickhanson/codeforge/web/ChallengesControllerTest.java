@@ -57,7 +57,7 @@ class ChallengesControllerTest {
      */
     @Test
     void list_shouldRenderListJsp() throws Exception {
-        when(service.listChallenges(nullable(Difficulty.class), anyString(), anyString()))
+        when(service.listChallenges(nullable(Difficulty.class)))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/challenges"))

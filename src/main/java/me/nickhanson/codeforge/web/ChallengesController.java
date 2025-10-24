@@ -39,31 +39,22 @@ public class ChallengesController {
     }
 
     /**
-     * Handles GET requests to list challenges with optional sorting and filtering.
+     * Handles GET requests to list challenges with optional difficulty filtering (no server-side sorting/pagination).
      *
-     * @param sort       The field to sort by (default is "title").
-     * @param dir        The sort direction ("asc" or "desc", default is "asc").
      * @param difficulty Optional filter by difficulty level.
      * @param model      The model to populate with data for the view.
      * @return The name of the view template for the challenge list.
      */
     @GetMapping
-    public String list(
-            @RequestParam(name = "sort", defaultValue = "title") String sort,
-            @RequestParam(name = "dir", defaultValue = "asc") String dir,
-            @RequestParam(name = "difficulty", required = false) Difficulty difficulty,
-            Model model
-    ) {
-        List<Challenge> challenges = service.listChallenges(difficulty, sort, dir);
+    public String list(@RequestParam(name = "difficulty", required = false) Difficulty difficulty,
+                       Model model) {
+        List<Challenge> challenges = service.listChallenges(difficulty);
 
-        log.info("Rendering challenge list sort={} dir={} difficulty={} count={}",
-                sort, dir, difficulty, challenges.size());
+        log.info("Rendering challenge list difficulty={} count={}", difficulty, challenges.size());
 
         model.addAttribute("challenges", challenges);
         model.addAttribute("difficulty", difficulty);
         model.addAttribute("difficultyValue", difficulty != null ? difficulty.name() : "");
-        model.addAttribute("sort", sort);
-        model.addAttribute("dir", dir);
         return "challenges/list";
     }
 
