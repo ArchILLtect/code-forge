@@ -230,28 +230,28 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 
 ---
 
-## 8) Tooling/CI: EB Bundle + Health Readiness
+## 8) Tooling/CI: EB Tomcat (WAR) + Health Readiness
 
 - Title
-  - ci(deploy): EB bundle (Procfile + app.jar) and /actuator/health UP
+  - ci(deploy): Produce WAR artifact for EB Tomcat and verify /actuator/health
 - Problem / context
-  - Ensure CI produces eb-bundle.zip (Procfile + app.jar) and that /actuator/health is UP for EB.
+  - We’ve switched from JAR + Procfile (Java SE) to WAR packaging for JSP support. Elastic Beanstalk should use a Tomcat platform (Corretto 17), and deployments should use the built WAR artifact.
 
 - Proposed solution
-  - Validate build.yml job uploads eb-bundle artifact.
-  - Verify application.yml exposes health and server.port uses EB $PORT.
-  - Optional smoke test step before upload.
+  - CI builds and uploads target/codeforge-0.0.1-SNAPSHOT.war as an artifact.
+  - Verify Actuator health endpoint is exposed and returns UP locally.
+  - Document EB environment setup (Tomcat platform) and manual WAR deploy step.
 
 - In scope
-  - CI packaging, artifact verification, health exposure.
+  - CI artifact upload (WAR), health exposure, minimal deployment notes.
 
 - Out of scope
   - Automated EB deployment (manual deploy acceptable this week).
 
 - Acceptance criteria
-  - [ ] CI run shows eb-bundle.zip uploaded
+  - [ ] CI run uploads the WAR artifact (e.g., codeforge-0.0.1-SNAPSHOT.war)
   - [ ] Local run shows /actuator/health UP
-  - [ ] Procfile uses app.jar and starts with $PORT
+  - [ ] EB environment uses a Tomcat platform (Corretto 17) and accepts the WAR
 
 - Area
   - area:ci-cd, area:deployment
@@ -314,7 +314,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - Detailed architecture write-ups (later).
 
 - Acceptance criteria
-  - [ ] Docs reflect Cognito envs, EB bundle/health, and jQuery pagination
+  - [ ] Docs reflect Cognito envs, EB Tomcat + WAR deployment, and jQuery pagination
   - [ ] Week 6 progress marked in plan
 
 - Area

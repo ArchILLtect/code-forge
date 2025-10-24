@@ -97,7 +97,7 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 ---
 ## 🚩 Milestone
 - **Project 1 checkpoint complete!**
-- App template is running and accessible locally (localhost:8080)
+- App template is running and accessible locally (localhost:5000)
 - H2 console enabled
 - Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
 - Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination/sorting and difficulty filtering, JSP error pages (404/500) via @ControllerAdvice, lightweight service layer, expanded seed data, and WebMvc + JPA tests all green.
@@ -152,7 +152,7 @@ mvn spring-boot:run
 
 Open in your browser at:
 ```bash
-http://localhost:8080
+http://localhost:5000
 ```
 
 ---
@@ -184,13 +184,14 @@ MIT License — feel free to use, fork, and improve CodeForge.
 - Authentication & Authorization: Implement OAuth2 login with Amazon Cognito (Spring Security OIDC) and protect routes.
 - Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService.
 - Pagination: Remove server-side Pageable and use jQuery pagination via CDN on listing pages.
-- Deployment (Elastic Beanstalk): Package jar + Procfile into eb-bundle.zip via GitHub Actions; verify /actuator/health returns UP; confirm PORT handling.
+- Deployment (Elastic Beanstalk): Build a WAR and deploy to an EB Tomcat platform (Corretto 17). Verify /actuator/health returns UP. No Procfile required.
 
 ### Deployment Notes (Elastic Beanstalk)
-- CI workflow: .github/workflows/build.yml builds and zips eb-bundle.zip (includes Procfile and app.jar).
-- Procfile (repo root) uses the EB-provided $PORT env var to start the app.
-- Health: Ensure Spring Boot Actuator is on the classpath and that /actuator/health returns UP.
-- Local smoke test: Run the jar and open http://localhost:8080 and http://localhost:8080/actuator/health.
+- Platform: Elastic Beanstalk Tomcat (e.g., Tomcat running on Corretto 17).
+- Artifact: Use the built WAR (e.g., target/codeforge-0.0.1-SNAPSHOT.war).
+- CI: The CI workflow uploads the WAR as an artifact for manual deploys.
+- Health: Ensure Spring Boot Actuator is on the classpath and /actuator/health returns UP.
+- Local: The app defaults to port 5000 locally (server.port in application.yml); EB Tomcat manages its own port.
 
 ### Environment Variables – Cognito OIDC (example)
 Set these in your environment (local .env, IDE run config) or in EB configuration. Use secrets for client secret.
@@ -204,11 +205,11 @@ SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_REDIRECT_URI={baseUrl}/login/
 SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_AUTHORIZATION_GRANT_TYPE=authorization_code
 SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_COGNITO_ISSUER_URI=https://cognito-idp.<REGION>.amazonaws.com/<USER_POOL_ID>
 
-# Optional: Spring Boot server port fallback if PORT not set
-SERVER_PORT=8080
+# Optional: Spring Boot server port fallback if running outside EB Tomcat
+SERVER_PORT=5000
 ```
 
 Notes:
 - issuer-uri uses your AWS region and user pool id (e.g., https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123).
-- `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:8080). You do **not** need to replace it manually.
+- `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:5000). You do **not** need to replace it manually.
 - Environment variables override application.yml properties in Spring Boot.

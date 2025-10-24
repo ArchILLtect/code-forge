@@ -37,3 +37,12 @@ jobs:
 
       - name: Build and run tests
         run: mvn -B -DskipTests=false verify
+
+      - name: Upload WAR artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeforge-war
+          path: |
+            target/*.war
+          if-no-files-found: ignore
