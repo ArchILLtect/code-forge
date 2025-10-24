@@ -17,7 +17,7 @@
     <java.version>17</java.version>
   </properties>
   <dependencies>
-    <!-- Web + MVC (embedded Tomcat) -->
+    <!-- Web + MVC (WAR on external Tomcat) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -26,7 +26,18 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
+        <!-- Use container-provided Tomcat for WAR deployments -->
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <!-- Bring Tomcat back as provided to match external container (EB Tomcat) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- JPA/Hibernate -->
