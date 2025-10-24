@@ -17,7 +17,7 @@
   </div>
   <ul>
     <li><a href="${pageContext.request.contextPath}/challenges">Browse Challenges</a></li>
-    <li><a href="${pageContext.request.contextPath}/healthz">Health Check</a></li>
+    <li><a href="${pageContext.request.contextPath}/actuator/health">Health Check</a></li>s
     <li><a href="${pageContext.request.contextPath}/h2-console">H2 Console</a> (dev)</li>
   </ul>
 </body>
