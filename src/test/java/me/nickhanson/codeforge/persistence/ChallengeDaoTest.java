@@ -8,6 +8,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -42,10 +45,10 @@ class ChallengeDaoTest {
      */
     @Test
     void save_and_findById_success() {
-        var saved = dao.save(sample());
+        Challenge saved = dao.save(sample());
         assertThat(saved.getId()).isNotNull();
 
-        var found = dao.findById(saved.getId());
+        Optional<Challenge> found = dao.findById(saved.getId());
         assertThat(found).isPresent();
         assertThat(found.get().getTitle()).isEqualTo("Two Sum");
         assertThat(found.get().getDifficulty()).isEqualTo(Difficulty.EASY);
@@ -58,7 +61,7 @@ class ChallengeDaoTest {
     void findAll_returns_list() {
         dao.save(sample());
         dao.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
-        var list = dao.findAllSorted("title", "asc");
+        List<Challenge> list = dao.findAllSorted("title", "asc");
         assertThat(list).hasSize(2);
     }
 
@@ -77,7 +80,7 @@ class ChallengeDaoTest {
      */
     @Test
     void deleteById_removes_entity() {
-        var saved = dao.save(sample());
+        Challenge saved = dao.save(sample());
         Long id = saved.getId();
         dao.deleteById(id);
         assertThat(dao.findById(id)).isEmpty();
