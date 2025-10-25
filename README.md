@@ -207,6 +207,22 @@ On login, the app redirects to the Cognito Hosted UI; on callback (`/auth`) it e
 - Client-side pagination is implemented with jQuery DataTables via CDN on the challenges list.
 
 ---
+## Week 6 — Status (Auth + Protected Routes + Pagination + Deploy)
+- Authentication (MVP): Cognito Hosted UI login via servlet flow is live; ID token verified; user stored in HTTP session; /me displays user.
+- Route protection: AuthGuardFilter enforces login for challenge create/edit/delete and edit form. JSP UI now hides Create/Edit/Delete when logged out.
+- Pagination: Client-side via jQuery DataTables on the challenges list (no server-side Pageable).
+- CI packaging: GitHub Actions workflow (`.github/workflows/ci.yml`) builds and uploads the WAR artifact. Latest run is green.
+- Deployment: WAR deployed to Elastic Beanstalk Tomcat (Corretto 17). `/actuator/health` reports UP.
+- Secret hygiene: Cognito client secret set via EB environment variable for now; a follow-up issue tracks moving to SSM/Secrets Manager.
+- Deferred to Week 7: Drill submission UI/flow wiring to create Submissions and update DrillItem.
+
+Evidence (screenshots/artifacts):
+- Login flow success (placeholder): `docs/screenshots/week6-auth-login.png`
+- Challenges list with client-side pagination (placeholder): `docs/screenshots/week6-challenges-list.png`
+- EB health check UP (placeholder): `docs/screenshots/week6-eb-health-up.png`
+- GitHub Actions artifact (WAR) — see latest CI run in Actions tab
+
+---
 ## Week 6 Scope (Auth + Hosting + Drill UI)
 - Authentication & Authorization: (Deferred) Spring Security OIDC route protection. For MVP, servlet-based Cognito login + session persistence is implemented.
 - Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService. (pending)
@@ -241,7 +257,7 @@ Notes:
 - `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:5000). You do **not** need to replace it manually.
 - Environment variables override application.yml properties in Spring Boot.
 
----
+ap---
 # Production setup (Elastic Beanstalk)
 
 Use a Tomcat platform (Corretto 17) and the built WAR artifact. You must provide environment variables for production:
