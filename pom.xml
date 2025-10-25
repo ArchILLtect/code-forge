@@ -135,6 +135,25 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- JWT (Auth0) -->
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>java-jwt</artifactId>
+      <version>4.4.0</version>
+    </dependency>
+
+    <!-- JWK resolver for RSA keys (needed to verify Cognito tokens) -->
+    <dependency>
+      <groupId>com.auth0</groupId>
+      <artifactId>jwks-rsa</artifactId>
+      <version>0.22.1</version>
+    </dependency>
+    <!-- JSON library for test assertions -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20240303</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
