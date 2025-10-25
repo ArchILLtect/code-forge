@@ -11,7 +11,7 @@
 <body>
 <c:choose>
     <c:when test="${empty user}">
-        <a href = "logIn">Log in</a>
+        <a href = "${pageContext.request.contextPath}/logIn">Log in</a>
     </c:when>
     <c:otherwise>
         <h3>Welcome ${user.userName}</h3>
