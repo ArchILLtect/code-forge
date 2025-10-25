@@ -29,3 +29,12 @@
 - Acceptance Criteria:
   - [ ] Replace `@your-org/security-team` and `@your-org/deployment-team` with real GitHub users/teams
   - [ ] Verify review requests are auto-assigned when touching the relevant paths
+
+4) Add @ControllerAdvice to inject session user into all views
+- Context: Controllers currently add the session user per endpoint. A global model attribute will simplify views.
+- Approach:
+  - Create a `GlobalModelAttributes` class annotated with `@ControllerAdvice`
+  - Add a `@ModelAttribute("user")` method that returns the session user if present
+- Acceptance Criteria:
+  - [ ] All JSPs can reference `${user}` without per-controller boilerplate
+  - [ ] No behavior change for unauthenticated users (user remains null)

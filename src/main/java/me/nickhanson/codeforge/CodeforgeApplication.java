@@ -3,12 +3,14 @@ package me.nickhanson.codeforge;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
  * The main entry point for the Codeforge application.
  */
 @SpringBootApplication
+@ServletComponentScan
 public class CodeforgeApplication extends SpringBootServletInitializer {
 
     /**

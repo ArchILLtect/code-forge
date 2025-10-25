@@ -180,10 +180,37 @@ MIT License — feel free to use, fork, and improve CodeForge.
 - Built for students who want less confusion, more clarity, and stronger fundamentals.
 
 ---
+## Authentication status (MVP)
+- For MVP/class requirements, the app uses a servlet-based Cognito login flow (no Spring Security OIDC yet).
+- The Cognito ID token is verified, and the authenticated user is stored in the HTTP session; controllers/JSPs read the session user.
+- Spring Security OIDC + route protection is deferred to a later week; tracked in Week 6 issues as a follow-up.
+
+### Environment Variables – Servlet-based Cognito
+Set your Cognito client secret via an environment variable (do not commit it to source control). Non-secret values remain in `src/main/resources/cognito.properties`.
+
+Required env var:
+- `COGNITO_CLIENT_SECRET` — your Cognito App Client secret
+
+Used properties (non-secret):
+- `client.id`, `oAuthURL`, `loginURL`, `logoutURL`, `redirectURL.*`, `logoutRedirectURL.*`, `region`, `pool.id` (in `cognito.properties`)
+
+Example (Windows cmd.exe):
+```
+set COGNITO_CLIENT_SECRET=your_client_secret
+mvn spring-boot:run
+```
+
+On login, the app redirects to the Cognito Hosted UI; on callback (`/auth`) it exchanges the code for tokens using your `client.id` and `COGNITO_CLIENT_SECRET`, validates the ID token, stores the user in the session, and redirects to `/me`.
+
+### Pagination status (MVP)
+- Server-side Pageable has been removed.
+- Client-side pagination is implemented with jQuery DataTables via CDN on the challenges list.
+
+---
 ## Week 6 Scope (Auth + Hosting + Drill UI)
-- Authentication & Authorization: Implement OAuth2 login with Amazon Cognito (Spring Security OIDC) and protect routes.
-- Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService.
-- Pagination: Remove server-side Pageable and use jQuery pagination via CDN on listing pages.
+- Authentication & Authorization: (Deferred) Spring Security OIDC route protection. For MVP, servlet-based Cognito login + session persistence is implemented.
+- Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService. (pending)
+- Pagination: Remove server-side Pageable and use jQuery pagination via CDN on listing pages. (done)
 - Deployment (Elastic Beanstalk): Build a WAR and deploy to an EB Tomcat platform (Corretto 17). Verify /actuator/health returns UP. No Procfile required.
 
 ### Deployment Notes (Elastic Beanstalk)
@@ -193,8 +220,8 @@ MIT License — feel free to use, fork, and improve CodeForge.
 - Health: Ensure Spring Boot Actuator is on the classpath and /actuator/health returns UP.
 - Local: The app defaults to port 5000 locally (server.port in application.yml); EB Tomcat manages its own port.
 
-### Environment Variables – Cognito OIDC (example)
-Set these in your environment (local .env, IDE run config) or in EB configuration. Use secrets for client secret.
+### Environment Variables – Cognito OIDC (deferred)
+The Spring Security OIDC variables remain documented here for the future migration, but are not used in the current MVP.
 
 ```
 # Spring Security OIDC (Cognito)
@@ -213,3 +240,70 @@ Notes:
 - issuer-uri uses your AWS region and user pool id (e.g., https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123).
 - `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:5000). You do **not** need to replace it manually.
 - Environment variables override application.yml properties in Spring Boot.
+
+---
+# Production setup (Elastic Beanstalk)
+
+Use a Tomcat platform (Corretto 17) and the built WAR artifact. You must provide environment variables for production:
+
+Required EB Environment properties:
+- APP_ENV=prod
+- COGNITO_CLIENT_SECRET=your_prod_cognito_client_secret
+
+EB Console steps:
+1) Elastic Beanstalk → Environments → your environment → Configuration → Software → Edit.
+2) Under Environment properties add:
+   - Name: APP_ENV, Value: prod
+   - Name: COGNITO_CLIENT_SECRET, Value: <your secret>
+3) Save. EB will restart the app.
+
+Better secret handling (recommended):
+- Instead of Plain text, store the secret in AWS Secrets Manager or SSM Parameter Store and select that as the Source.
+- Ensure the EB instance role has permission to read the secret/parameter.
+- Rotate the Cognito App Client secret if it was ever shared inadvertently.
+
+Verification:
+- Visit /actuator/health (should be UP).
+- Start login from the home page; on success you should land on /me with your user.
+
+---
+
+# Local environment quickstart
+
+We provide a `.env.example` you can copy and fill for local development. Spring Boot doesn’t auto-load `.env`—use your shell/IDE to export variables or an EnvFile/direnv plugin.
+
+1) Copy and edit the example
+```
+copy .env.example .env   # Windows cmd
+# or
+cp .env.example .env     # bash
+```
+Set your values in `.env` (do NOT commit this file).
+
+2) Set env vars and run locally
+- Windows cmd.exe
+```
+set COGNITO_CLIENT_SECRET=your_secret
+set APP_ENV=dev
+mvn spring-boot:run
+```
+- PowerShell
+```
+$env:COGNITO_CLIENT_SECRET="your_secret"
+$env:APP_ENV="dev"
+mvn spring-boot:run
+```
+- bash
+```
+export COGNITO_CLIENT_SECRET=your_secret
+export APP_ENV=dev
+mvn spring-boot:run
+```
+- IntelliJ IDEA
+  - Run/Debug Configurations → Environment → Environment variables:
+    - COGNITO_CLIENT_SECRET=your_secret; APP_ENV=dev
+
+Notes:
+- Non-secret Cognito values (client.id, URLs, region, pool id, redirect URLs) are in `src/main/resources/cognito.properties`.
+- The Cognito client secret is only read from the environment (`COGNITO_CLIENT_SECRET`).
+- For team collaboration, share secrets via a password manager or use separate per-developer Cognito App Clients for dev.

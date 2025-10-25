@@ -10,6 +10,12 @@
 </head>
 <body>
   <h1>Welcome to CodeForge</h1>
+  <c:if test="${not empty user}">
+    <h2>Welcome, ${user.userName}!</h2>
+    <p>Your email: ${user.email}</p>
+    <p>Your user ID: ${user.sub}</p>
+    <a href="${pageContext.request.contextPath}/logout" aria-label="Log out of your account">Log out</a>
+  </c:if>
   <p>This home page is served via JSP.</p>
   <h2>Quick quote:</h2>
   <div class="mt-6 text-gray-700 italic text-sm">
@@ -20,5 +26,11 @@
     <li><a href="${pageContext.request.contextPath}/actuator/health">Health Check</a></li>
     <li><a href="${pageContext.request.contextPath}/h2-console">H2 Console</a> (dev)</li>
   </ul>
+
+  <div class="auth-actions" style="margin-top: 1rem;">
+    <a href="${pageContext.request.contextPath}/logIn" class="btn btn-primary" role="button">
+      Login with Cognito
+    </a>
+  </div>
 </body>
 </html>

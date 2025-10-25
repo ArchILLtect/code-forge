@@ -4,38 +4,47 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 
 ---
 
-## 1) Feature: Cognito OAuth2/OIDC Login (Spring Security)
+## 1) Authentication (MVP): Cognito Hosted UI + servlet callback + session persistence
 
 - Title
-  - feat(security): Cognito OAuth2/OIDC login via Spring Security
+  - feat(auth-mvp): Cognito Hosted UI login (servlet-based) + ID token verify + session persistence
 - Problem / context
-  - We need user authentication via AWS Cognito to meet the Week 6 auth goals and protect routes. No login flow exists yet.
+  - We need login working now for MVP/class demos, without migrating the whole app to Spring Security yet.
 
 - Proposed solution
-  - Configure Spring Security OAuth2 client for Cognito.
-  - Add OIDC login endpoints (/login, /logout) and a minimal success/failure handler.
-  - Read secrets via environment variables (see README env section).
+  - Keep the current servlet-based flow:
+    - /logIn → redirect to Cognito Hosted UI (includes scope and encoded params)
+    - /auth → exchange code for tokens, verify ID token (JWKS), store AuthenticatedUser in HTTP session
+    - /me → display user from session; HomeController also exposes session user
+  - Remove secrets from source; read Cognito client secret from env (COGNITO_CLIENT_SECRET).
 
-- In scope
-  - Spring Security config, client registration/provider properties, basic login/logout.
-  - Local test using Cognito-hosted UI; verify ID token and principal mapping.
+- In scope (MVP)
+  - Hosted UI redirect, code→token exchange, JWKS verification
+  - Session persistence for user across requests
+  - README/docs for local + EB env vars
 
-- Out of scope
-  - Custom user provisioning, roles DB, or advanced claims mapping (later weeks if needed).
+- Out of scope (Deferred → see Post‑MVP issue)
+  - Spring Security OIDC configuration and route protection
+  - Role/authority mapping and admin protections
 
-- Acceptance criteria
-  - [ ] Visiting a protected route redirects to Cognito login and returns to the app on success
-  - [ ] Authenticated principal available in controllers
-  - [ ] No secrets committed; properties read from env
+- Acceptance criteria (MVP)
+  - [x] Clicking “Login with Cognito” starts Hosted UI flow and returns to /auth
+  - [x] /auth verifies ID token, stores user in session, redirects to /me
+  - [x] /me shows the user; navigating away/back still shows user (until logout or timeout)
+  - [x] No secrets in repo; COGNITO_CLIENT_SECRET read from env (local + EB)
+  - [x] README updated with local/EB env setup and .env.example added
 
 - Area
-  - area:security
+  - area:security, area:web
 
 - Dependencies / related issue
-  - Cognito user pool, app client, and domain configured in AWS
+  - Follow‑up: Post‑MVP migration to Spring Security OIDC (see new issue below)
 
 - Suggested labels
-  - status:triage, enhancement, feature:cognito-auth, area:security, priority:P1-high
+  - status:done, area:security, area:web, priority:P1-high
+
+- Closing comment (paste into the existing GitHub Issue 1)
+  - “Resolution: Implemented servlet-based Cognito login for MVP. The app redirects to Hosted UI (/logIn), exchanges the code on /auth, verifies the ID token, and stores the user in the HTTP session; /me and home read the session user. Secrets are no longer in source; COGNITO_CLIENT_SECRET is provided via env (local + EB). Further work to migrate to Spring Security OIDC + route protection is tracked separately in ‘Post‑MVP: Spring Security OIDC + route protection’. Closing this issue as completed for MVP.”
 
 ---
 
@@ -65,7 +74,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - area:security
 
 - Dependencies / related issue
-  - Depends on: Feature: Cognito OAuth2/OIDC Login
+  - Depends on: Post‑MVP: Spring Security OIDC migration (see Issue 12)
 
 - Suggested labels
   - status:triage, enhancement, feature:cognito-auth, area:security, priority:P1-high
@@ -325,3 +334,77 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 
 - Suggested labels
   - status:triage, area:documentation, priority:P3-low
+
+---
+
+## 11) Security: Secret hygiene (rotate + SSM/Secrets Manager)
+
+- Title
+  - chore(security): Rotate Cognito client secret (if needed) and move EB env secret to SSM/Secrets Manager
+- Problem / context
+  - The Cognito client secret must not be shared in plaintext; use AWS-managed secrets and least-privilege access. EB currently uses plain-text env vars which are visible to console users.
+
+- Proposed solution
+  - (If ever exposed) Rotate the Cognito App Client secret in AWS.
+  - Store the secret in AWS Secrets Manager or SSM Parameter Store.
+  - Update EB environment property Source to reference the managed secret/parameter.
+  - Ensure the EB instance role has permission (IAM policy) to read the secret/parameter.
+
+- In scope
+  - Secret rotation (if needed), SSM/Secrets Manager setup, EB env property update, IAM permission check.
+
+- Out of scope
+  - Spring Security OIDC migration.
+
+- Acceptance criteria
+  - [ ] Cognito client secret not stored in plaintext in EB
+  - [ ] EB environment reads secret from SSM/Secrets Manager
+  - [ ] Instance role can read secret and app starts cleanly
+
+- Area
+  - area:security, area:deployment
+
+- Dependencies / related issue
+  - Week 6 Issue 1 (Cognito auth) for context
+
+- Suggested labels
+  - status:triage, area:security, area:deployment, priority:P2-normal
+
+---
+
+## 12) Post‑MVP: Spring Security OIDC + route protection
+
+- Title
+  - feat(security-post-mvp): Migrate to Spring Security OIDC and protect routes
+- Problem / context
+  - MVP uses a servlet-based Cognito flow for speed. For robustness and standardized security, migrate to Spring Security OIDC, put user in SecurityContext, and secure routes centrally.
+
+- Proposed solution
+  - Configure Spring Security OIDC for Cognito (issuer-uri or full provider/client config).
+  - Replace servlet callback logic with Spring Security’s OAuth2 login flow (or run in parallel during transition).
+  - Add HttpSecurity rules: permitAll for public pages, authenticated for drill/submission, ADMIN for admin CRUD.
+  - Map OIDC claims to authorities (e.g., email/roles) and expose principal in controllers as needed.
+  - Keep secrets in env/SSM; remove any unused servlet auth code post-migration.
+
+- In scope
+  - Security config, route protection, principal mapping, docs updates.
+
+- Out of scope
+  - Advanced RBAC, custom user provisioning.
+
+- Acceptance criteria
+  - [ ] Visiting protected routes redirects to Cognito and returns successfully
+  - [ ] SecurityContext holds the authenticated principal; controllers can inject it
+  - [ ] Public vs. protected vs. admin routes behave as expected
+  - [ ] Secrets are read from env/SSM (no repo secrets)
+  - [ ] Legacy servlet-based auth removed (or clearly deprecated) after migration
+
+- Area
+  - area:security
+
+- Dependencies / related issue
+  - Relates to: 2) Protect Routes and Challenge Data
+  - Supersedes: 1) Authentication (MVP) for long-term auth strategy
+
+- Suggested labels
+  - status:triage, enhancement, area:security, post-mvp, priority:P2-normal
