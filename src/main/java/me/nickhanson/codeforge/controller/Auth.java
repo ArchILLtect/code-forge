@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -67,7 +66,12 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         properties = loadProperties("/cognito.properties");
 
         CLIENT_ID = properties.getProperty("client.id");
-        CLIENT_SECRET = properties.getProperty("client.secret");
+        // Read secret from environment variable only
+        CLIENT_SECRET = System.getenv("COGNITO_CLIENT_SECRET");
+        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+            logger.error("COGNITO_CLIENT_SECRET is not set. Refusing to start Auth servlet.");
+            throw new ServletException("Missing COGNITO_CLIENT_SECRET environment variable");
+        }
         OAUTH_URL = properties.getProperty("oAuthURL");
         LOGIN_URL = properties.getProperty("loginURL");
         REDIRECT_URL = EnvConfig.get(logger, properties, "redirectURL");
@@ -262,4 +266,3 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         }
     }
 }
-
