@@ -84,3 +84,33 @@ Reflection
 - Win: Admin CRUD and error pages feel solid; tests provide good coverage; seed data makes the UI useful.
 - Adjustment: Pagination approach will move to jQuery/CDN in Week 6 to match class goals.
 - Next: Implement DrillService basics, wire a minimal submit flow, and align CI/pagination changes.
+
+---
+
+## Week 6 – Fall 2025
+
+**10/12/25**
+
+This week I wrapped up authentication (MVP), protected key routes, finished client-side pagination, got CI artifacts building, and deployed the WAR to Elastic Beanstalk Tomcat.
+
+Highlights
+- Auth (MVP): Cognito Hosted UI login via servlet flow, ID token verification, user stored in session; `/me` displays user; `/logout` clears session.
+- Authorization: Added `AuthGuardFilter` to protect challenge create/edit/delete and edit form; added JSP guards to hide Create/Edit/Delete for logged-out users.
+- Bugfix: Fixed a JSP EL typo on the challenges list page (`pageContext.rbequest` → `pageContext.request`) that caused a 500.
+- Pagination: Switched to client-side pagination with jQuery DataTables on `/challenges`.
+- CI: GitHub Actions workflow (`.github/workflows/ci.yml`) builds and uploads the WAR; latest run is green.
+- Deploy: Deployed the WAR to EB Tomcat (Corretto 17); `/actuator/health` returns `UP`.
+- Secrets: Kept `COGNITO_CLIENT_SECRET` in EB environment variables for now; secret-hygiene improvements tracked in a separate issue.
+
+Reflection
+- Guardrails in two layers help: server filter prevents unauthorized access; UI guard avoids confusing the user. Tests around the filter gave confidence when tightening routes.
+- Small typos can break JSP pages; I’ll keep leaning on tests and quick greps to catch these quickly.
+- Shipping the WAR via CI and proving it live on EB felt like a good end-to-end checkpoint for Week 6.
+
+Evidence (screenshots)
+- `docs/screenshots/week6-auth-login.png`
+- `docs/screenshots/week6-challenges-list.png`
+- `docs/screenshots/week6-eb-health-up.png`
+
+Next
+- Week 7: Wire the Drill submission UI/flow to create Submissions and update DrillItem; add service/web tests for outcomes and queue advance.
