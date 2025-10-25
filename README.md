@@ -180,10 +180,37 @@ MIT License — feel free to use, fork, and improve CodeForge.
 - Built for students who want less confusion, more clarity, and stronger fundamentals.
 
 ---
+## Authentication status (MVP)
+- For MVP/class requirements, the app uses a servlet-based Cognito login flow (no Spring Security OIDC yet).
+- The Cognito ID token is verified, and the authenticated user is stored in the HTTP session; controllers/JSPs read the session user.
+- Spring Security OIDC + route protection is deferred to a later week; tracked in Week 6 issues as a follow-up.
+
+### Environment Variables – Servlet-based Cognito
+Set your Cognito client secret via an environment variable (do not commit it to source control). Non-secret values remain in `src/main/resources/cognito.properties`.
+
+Required env var:
+- `COGNITO_CLIENT_SECRET` — your Cognito App Client secret
+
+Used properties (non-secret):
+- `client.id`, `oAuthURL`, `loginURL`, `logoutURL`, `redirectURL.*`, `logoutRedirectURL.*`, `region`, `pool.id` (in `cognito.properties`)
+
+Example (Windows cmd.exe):
+```
+set COGNITO_CLIENT_SECRET=your_client_secret
+mvn spring-boot:run
+```
+
+On login, the app redirects to the Cognito Hosted UI; on callback (`/auth`) it exchanges the code for tokens using your `client.id` and `COGNITO_CLIENT_SECRET`, validates the ID token, stores the user in the session, and redirects to `/me`.
+
+### Pagination status (MVP)
+- Server-side Pageable has been removed.
+- Client-side pagination is implemented with jQuery DataTables via CDN on the challenges list.
+
+---
 ## Week 6 Scope (Auth + Hosting + Drill UI)
-- Authentication & Authorization: Implement OAuth2 login with Amazon Cognito (Spring Security OIDC) and protect routes.
-- Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService.
-- Pagination: Remove server-side Pageable and use jQuery pagination via CDN on listing pages.
+- Authentication & Authorization: (Deferred) Spring Security OIDC route protection. For MVP, servlet-based Cognito login + session persistence is implemented.
+- Drill Mode: Wire submit flow and UI to the existing Drill scheduling logic and stub ChallengeRunService. (pending)
+- Pagination: Remove server-side Pageable and use jQuery pagination via CDN on listing pages. (done)
 - Deployment (Elastic Beanstalk): Build a WAR and deploy to an EB Tomcat platform (Corretto 17). Verify /actuator/health returns UP. No Procfile required.
 
 ### Deployment Notes (Elastic Beanstalk)
@@ -193,8 +220,8 @@ MIT License — feel free to use, fork, and improve CodeForge.
 - Health: Ensure Spring Boot Actuator is on the classpath and /actuator/health returns UP.
 - Local: The app defaults to port 5000 locally (server.port in application.yml); EB Tomcat manages its own port.
 
-### Environment Variables – Cognito OIDC (example)
-Set these in your environment (local .env, IDE run config) or in EB configuration. Use secrets for client secret.
+### Environment Variables – Cognito OIDC (deferred)
+The Spring Security OIDC variables remain documented here for the future migration, but are not used in the current MVP.
 
 ```
 # Spring Security OIDC (Cognito)
