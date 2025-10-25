@@ -20,7 +20,10 @@
 </head>
 <body>
   <h1>Challenges</h1>
-  <p><a href="${pageContext.request.contextPath}/">Home</a> | <a href="${pageContext.request.contextPath}/challenges/new">Create New</a></p>
+  <p>
+    <a href="${pageContext.request.contextPath}/">Home</a>
+    <c:if test="${not empty sessionScope.user}"> | <a href="${pageContext.request.contextPath}/challenges/new">Create New</a></c:if>
+  </p>
 
   <c:if test="${not empty success}">
     <div class="flash-success">${success}</div>

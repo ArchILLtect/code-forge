@@ -12,7 +12,13 @@
   </style>
 </head>
 <body>
-  <p><a href="${pageContext.request.contextPath}/">Home</a> | <a href="${pageContext.request.contextPath}/challenges">All Challenges</a> | <a href="${pageContext.request.contextPath}/challenges/${challenge.id}/edit">Edit</a></p>
+  <p>
+    <a href="${pageContext.request.contextPath}/">Home</a> |
+    <a href="${pageContext.request.contextPath}/challenges">All Challenges</a>
+    <c:if test="${not empty sessionScope.user}"> |
+      <a href="${pageContext.request.contextPath}/challenges/${challenge.id}/edit">Edit</a>
+    </c:if>
+  </p>
 
   <c:if test="${not empty success}">
     <div class="flash-success">${success}</div>
