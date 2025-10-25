@@ -14,7 +14,7 @@
     <h2>Welcome, ${user.userName}!</h2>
     <p>Your email: ${user.email}</p>
     <p>Your user ID: ${user.sub}</p>
-    <a href="${pageContext.request.contextPath}/logout">Log out</a>
+    <a href="${pageContext.request.contextPath}/logout" aria-label="Log out of your account">Log out</a>
   </c:if>
   <p>This home page is served via JSP.</p>
   <h2>Quick quote:</h2>

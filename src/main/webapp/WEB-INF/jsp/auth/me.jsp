@@ -11,14 +11,14 @@
 <body>
 <c:choose>
     <c:when test="${empty user}">
-        <a href = "${pageContext.request.contextPath}/logIn">Log in</a>
+        <a href="${pageContext.request.contextPath}/logIn">Log in</a>
     </c:when>
     <c:otherwise>
         <h3>Welcome ${user.userName}</h3>
         <h4>eMail:</h4><p>${user.email}</p>
         <h4>userId:</h4><p>${user.sub}</p>
 
-        <a href = "${pageContext.request.contextPath}/logout">Log out</a>
+        <a href="${pageContext.request.contextPath}/logout">Log out</a>
     </c:otherwise>
 </c:choose>
 </body>
