@@ -96,3 +96,8 @@ https-instance.config
 /src/main/resources/hibernate.cfg.xml
 /src/main/.platform/httpd/conf.d/00_force_https.conf
 /src/main/.platform/hooks/postdeploy/10_cert_setup.sh
+
+# Local dotenv files (do not commit secrets)
+.env
+.env.*
+!.env.example
