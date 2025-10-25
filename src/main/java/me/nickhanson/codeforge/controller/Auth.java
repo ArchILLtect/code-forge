@@ -226,7 +226,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("grant_type", "authorization_code");
-        parameters.put("client-secret", CLIENT_SECRET);
+        parameters.put("client_secret", CLIENT_SECRET);
         parameters.put("client_id", CLIENT_ID);
         parameters.put("code", authCode);
         parameters.put("redirect_uri", REDIRECT_URL);
