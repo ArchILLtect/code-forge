@@ -87,7 +87,7 @@ class ChallengesControllerTest {
      */
     @Test
     void newForm_shouldRenderNewJsp() throws Exception {
-        mockMvc.perform(get("/challenges/new"))
+        mockMvc.perform(get("/challenges/new").sessionAttr("user", "test"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("challenges/new"));
     }
@@ -106,6 +106,7 @@ class ChallengesControllerTest {
         when(service.create(any(ChallengeForm.class))).thenReturn(saved);
 
         mockMvc.perform(post("/challenges")
+                        .sessionAttr("user", "test")
                         .param("title", "Unique Title")
                         .param("difficulty", "EASY")
                         .param("blurb", "A short summary")
@@ -126,6 +127,7 @@ class ChallengesControllerTest {
         when(service.titleExists(anyString())).thenReturn(true);
 
         mockMvc.perform(post("/challenges")
+                        .sessionAttr("user", "test")
                         .param("title", "Duplicate Title")
                         .param("difficulty", "EASY")
                         .param("blurb", "A short summary")
@@ -149,6 +151,7 @@ class ChallengesControllerTest {
         when(service.update(eq(id), any(ChallengeForm.class))).thenReturn(Optional.of(updated));
 
         mockMvc.perform(post("/challenges/" + id)
+                        .sessionAttr("user", "test")
                         .param("title", "New Title")
                         .param("difficulty", "MEDIUM")
                         .param("blurb", "A short summary")
@@ -170,6 +173,7 @@ class ChallengesControllerTest {
         when(service.titleExistsForOther(anyString(), eq(id))).thenReturn(true);
 
         mockMvc.perform(post("/challenges/" + id)
+                        .sessionAttr("user", "test")
                         .param("title", "Duplicate Title")
                         .param("difficulty", "EASY")
                         .param("blurb", "A short summary")
@@ -189,7 +193,7 @@ class ChallengesControllerTest {
         long id = 55L;
         when(service.delete(id)).thenReturn(true);
 
-        mockMvc.perform(post("/challenges/" + id + "/delete"))
+        mockMvc.perform(post("/challenges/" + id + "/delete").sessionAttr("user", "test"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/challenges"))
                 .andExpect(flash().attributeExists("success"));
@@ -206,7 +210,7 @@ class ChallengesControllerTest {
         long id = 56L;
         when(service.delete(id)).thenReturn(false);
 
-        mockMvc.perform(post("/challenges/" + id + "/delete"))
+        mockMvc.perform(post("/challenges/" + id + "/delete").sessionAttr("user", "test"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/challenges"))
                 .andExpect(flash().attributeExists("error"));

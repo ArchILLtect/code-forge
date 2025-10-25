@@ -43,9 +43,10 @@
     </div>
   </form:form>
 
-  <form method="post" action="${pageContext.request.contextPath}/challenges/${challengeId}/delete" style="margin-top: 1rem;">
-    <button type="submit" onclick="return confirm('Delete this challenge?');">Delete</button>
-  </form>
+  <c:if test="${not empty sessionScope.user}">
+    <form method="post" action="${pageContext.request.contextPath}/challenges/${challengeId}/delete" style="margin-top: 1rem;">
+      <button type="submit" onclick="return confirm('Delete this challenge?');">Delete</button>
+    </form>
+  </c:if>
 </body>
 </html>
-

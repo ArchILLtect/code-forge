@@ -18,6 +18,8 @@
         <h4>eMail:</h4><p>${user.email}</p>
         <h4>userId:</h4><p>${user.sub}</p>
 
+        <a href="${pageContext.request.contextPath}/">Home</a>
+
         <a href="${pageContext.request.contextPath}/logout">Log out</a>
     </c:otherwise>
 </c:choose>
