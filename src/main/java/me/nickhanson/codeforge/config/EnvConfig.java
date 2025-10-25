@@ -24,7 +24,7 @@ public final class EnvConfig {
      */
     public static String get(Logger logger, Properties props, String baseKey) {
         // Matches property keys with environment suffixes.
-        // For exmaple: baseKey="redirectURL" -> looks for "redirectURL.dev" or "redirectURL.prod"
+        // For example: baseKey="redirectURL" -> looks for "redirectURL.dev" or "redirectURL.prod"
         // depending on the ENV value.
         logger.info("Fetching property for environment: " + ENV);
         String key = baseKey + "." + ENV;
