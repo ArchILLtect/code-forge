@@ -105,7 +105,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
                 session.setAttribute("user", user);
 
             } catch (SecurityException se) {
-                req.setAttribute("errorMessage", "Your session could not be verified. Please sign in again.");
+                req.setAttribute("errorMessage", "Authentication failed: " + se.getMessage());
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 req.getRequestDispatcher(ERROR_URL).forward(req, resp);
                 return;
@@ -134,7 +134,6 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
         response = client.send(authRequest, HttpResponse.BodyHandlers.ofString());
 
-
         logger.debug("Response headers: {}", response.headers().toString());
         logger.debug("Response body: {}", response.body().toString());
 
@@ -143,7 +142,6 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         logger.debug("Id token: {}", tokenResponse.getIdToken());
 
         return tokenResponse;
-
     }
 
     /**

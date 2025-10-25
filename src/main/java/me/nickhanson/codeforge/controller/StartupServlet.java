@@ -12,7 +12,7 @@ public class StartupServlet implements ServletContextListener, PropertiesLoader 
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        Properties props = loadProperties("/application.properties");
+        Properties props = loadProperties("/cognito.properties");
         sce.getServletContext().setAttribute("cognitoProperties", props);
     }
 

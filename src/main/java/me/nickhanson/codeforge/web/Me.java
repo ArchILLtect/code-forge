@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Controller to handle requests for the home page.
- * Maps "/me" to the "me" view.
+ * Controller to handle requests for the "/me" endpoint, showing authenticated user details.
+ * Maps "/me" to the "auth/me" view.
  */
 @Controller
 public class Me {

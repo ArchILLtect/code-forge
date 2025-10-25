@@ -20,9 +20,9 @@ import java.util.Properties;
 // Servlet to route to the AWS Cognito-hosted login page.
 public class LogIn extends HttpServlet implements PropertiesLoader {
 
-    public static String CLIENT_ID;
-    public static String LOGIN_URL;
-    public static String REDIRECT_URL;
+    private static String CLIENT_ID;
+    private static String LOGIN_URL;
+    private static String REDIRECT_URL;
 
     private final Logger logger = LogManager.getLogger(this.getClass());
     Properties properties;
