@@ -89,3 +89,12 @@ crashlytics-build.properties
 fabric.properties
 /docs/agent-summaries/
 /logs/
+
+# props files that I do not want shared
+cognito.properties
+jwks.json
+https-instance.config
+.idea/copilot.*
+/src/main/resources/hibernate.cfg.xml
+/src/main/.platform/httpd/conf.d/00_force_https.conf
+/src/main/.platform/hooks/postdeploy/10_cert_setup.sh
