@@ -32,7 +32,7 @@ public class AuthGuardFilter extends HttpFilter {
                 needsAuth = true;
             }
             // Updating or deleting a challenge: /challenges/{id} and /challenges/{id}/delete
-            else if (path.matches("^/challenges/\\d+$") || path.matches("^/challenges/\\d+/delete$")) {
+            else if (path.matches("^/challenges/\\d+(/delete)?$")) {
                 needsAuth = true;
             }
         } else if ("GET".equalsIgnoreCase(method)) {
