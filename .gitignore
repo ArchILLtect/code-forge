@@ -101,3 +101,5 @@ https-instance.config
 .env
 .env.*
 !.env.example
+/.run/
+.run/CodeForge (dev).run.xml
