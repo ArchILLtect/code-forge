@@ -240,3 +240,70 @@ Notes:
 - issuer-uri uses your AWS region and user pool id (e.g., https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc123).
 - `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:5000). You do **not** need to replace it manually.
 - Environment variables override application.yml properties in Spring Boot.
+
+---
+# Production setup (Elastic Beanstalk)
+
+Use a Tomcat platform (Corretto 17) and the built WAR artifact. You must provide environment variables for production:
+
+Required EB Environment properties:
+- APP_ENV=prod
+- COGNITO_CLIENT_SECRET=your_prod_cognito_client_secret
+
+EB Console steps:
+1) Elastic Beanstalk → Environments → your environment → Configuration → Software → Edit.
+2) Under Environment properties add:
+   - Name: APP_ENV, Value: prod
+   - Name: COGNITO_CLIENT_SECRET, Value: <your secret>
+3) Save. EB will restart the app.
+
+Better secret handling (recommended):
+- Instead of Plain text, store the secret in AWS Secrets Manager or SSM Parameter Store and select that as the Source.
+- Ensure the EB instance role has permission to read the secret/parameter.
+- Rotate the Cognito App Client secret if it was ever shared inadvertently.
+
+Verification:
+- Visit /actuator/health (should be UP).
+- Start login from the home page; on success you should land on /me with your user.
+
+---
+
+# Local environment quickstart
+
+We provide a `.env.example` you can copy and fill for local development. Spring Boot doesn’t auto-load `.env`—use your shell/IDE to export variables or an EnvFile/direnv plugin.
+
+1) Copy and edit the example
+```
+copy .env.example .env   # Windows cmd
+# or
+cp .env.example .env     # bash
+```
+Set your values in `.env` (do NOT commit this file).
+
+2) Set env vars and run locally
+- Windows cmd.exe
+```
+set COGNITO_CLIENT_SECRET=your_secret
+set APP_ENV=dev
+mvn spring-boot:run
+```
+- PowerShell
+```
+$env:COGNITO_CLIENT_SECRET="your_secret"
+$env:APP_ENV="dev"
+mvn spring-boot:run
+```
+- bash
+```
+export COGNITO_CLIENT_SECRET=your_secret
+export APP_ENV=dev
+mvn spring-boot:run
+```
+- IntelliJ IDEA
+  - Run/Debug Configurations → Environment → Environment variables:
+    - COGNITO_CLIENT_SECRET=your_secret; APP_ENV=dev
+
+Notes:
+- Non-secret Cognito values (client.id, URLs, region, pool id, redirect URLs) are in `src/main/resources/cognito.properties`.
+- The Cognito client secret is only read from the environment (`COGNITO_CLIENT_SECRET`).
+- For team collaboration, share secrets via a password manager or use separate per-developer Cognito App Clients for dev.
