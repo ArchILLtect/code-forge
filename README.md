@@ -257,7 +257,7 @@ Notes:
 - `{baseUrl}` is a Spring Security placeholder that will be automatically resolved at runtime to your application's base URL (e.g., http://localhost:5000). You do **not** need to replace it manually.
 - Environment variables override application.yml properties in Spring Boot.
 
-ap---
+---
 # Production setup (Elastic Beanstalk)
 
 Use a Tomcat platform (Corretto 17) and the built WAR artifact. You must provide environment variables for production:
