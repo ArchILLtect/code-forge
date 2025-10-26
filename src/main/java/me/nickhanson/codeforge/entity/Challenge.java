@@ -8,7 +8,6 @@ import java.time.Instant;
 @Table(name = "CHALLENGES")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)   // JPA default ctor
-@AllArgsConstructor                                  // convenience ctor (you can also use @Builder later)
 @ToString(onlyExplicitlyIncluded = true)            // we’ll include selectively (see below)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)   // avoid using all fields by default
 public class Challenge {
@@ -18,20 +17,21 @@ public class Challenge {
     @EqualsAndHashCode.Include
     @ToString.Include
     private Long id;
-
-    @NonNull
     @ToString.Include
+    @Column(nullable = false, unique = true, length = 100)
     private String title;
-
     @Enumerated(EnumType.STRING)
-    @NonNull
     @ToString.Include
+    @Column(nullable = false, length = 20)
     private Difficulty difficulty;
+    @Lob
+    @Column(nullable = false)
     private String blurb;
+    @Lob
+    @Column(nullable = false)
     private String promptMd;
-
-    @Column(updatable = false)
     @ToString.Include
+    @Column(updatable = false)
     private Instant createdAt;
 
     public Challenge(String title, Difficulty difficulty, String blurb, String promptMd) {
