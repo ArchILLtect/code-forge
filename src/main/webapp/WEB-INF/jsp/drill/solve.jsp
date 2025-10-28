@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solve – <c:out value="${challenge.title}"/></title>
   <style>
-    body { margin: 0 20% ; font-family: Arial, sans-serif; }
+    body { margin: 0 20%; font-family: Arial, sans-serif; }
     .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
     .flash-error { background: #ffecec; border: 1px solid #ff3b30; padding: .5rem; margin-bottom: 1rem; }
     .flash-info { background: #eef5ff; border: 1px solid #3b82f6; padding: .5rem; margin-bottom: 1rem; }
