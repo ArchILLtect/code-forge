@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,7 +56,6 @@ public class DrillController {
      * @param model The model to populate with data for the view.
      * @return The name of the view template for the drill queue.
      */
-    @Transactional(readOnly = true)
     @GetMapping
     public String queue(@RequestParam(name = "limit", defaultValue = "10") int limit, Model model) {
         log.debug("GET /drill queue limit={}", limit);
@@ -80,7 +78,6 @@ public class DrillController {
      * @param ra Redirect attributes for flash messages.
      * @return A redirect to the next drill item or the drill queue if no items are due.
      */
-    @Transactional(readOnly = true)
     @GetMapping("/next")
     public String next(RedirectAttributes ra) {
         log.debug("GET /drill/next");

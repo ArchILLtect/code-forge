@@ -32,6 +32,13 @@ public class DrillItem {
     private Long id;
 
     /**
+     * Optimistic locking version field.
+     * Managed by JPA/Hibernate; incremented on each update to prevent lost updates under concurrency.
+     */
+    @Version
+    private Long version;
+
+    /**
      * The Challenge associated with this DrillItem.
      * This is a many-to-one relationship, as multiple DrillItems can be associated with a single Challenge.
      * The association is mandatory (not optional) and uses lazy loading for performance optimization.
@@ -78,4 +85,3 @@ public class DrillItem {
         this.challenge = challenge;
     }
 }
-
