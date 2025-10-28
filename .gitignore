@@ -103,3 +103,4 @@ https-instance.config
 !.env.example
 /.run/
 .run/CodeForge (dev).run.xml
+/mvn-test.log
