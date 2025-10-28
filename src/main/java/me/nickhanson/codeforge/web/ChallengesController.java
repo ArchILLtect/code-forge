@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.Difficulty;
 import me.nickhanson.codeforge.service.ChallengeService;
+import me.nickhanson.codeforge.service.DrillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -28,18 +29,21 @@ public class ChallengesController {
 
     // Service for managing challenges
     private final ChallengeService service;
+    private final DrillService drillService;
 
     /**
      * Constructor for ChallengesController.
      *
      * @param service The ChallengeService used for business logic and data access.
+     * @param drillService The DrillItemDao used for accessing drill-related data.
      */
-    public ChallengesController(ChallengeService service) {
+    public ChallengesController(ChallengeService service, DrillService drillService) {
         this.service = service;
+        this.drillService = drillService;
     }
 
     /**
-     * Handles GET requests to list challenges with optional difficulty filtering (no server-side sorting/pagination).
+     * Handles GET requests to list challenges with optional difficulty filtering.
      *
      * @param difficulty Optional filter by difficulty level.
      * @param model      The model to populate with data for the view.
@@ -71,8 +75,10 @@ public class ChallengesController {
             log.warn("Challenge not found id={}", id);
             return new ResponseStatusException(HttpStatus.NOT_FOUND, "Challenge not found");
         });
-        log.info("Rendering challenge detail id={} title={} difficulty={}", id, challenge.getTitle(), challenge.getDifficulty());
+        boolean drillEnrolled = drillService.isEnrolledInDrill(id);
+        log.info("Rendering challenge detail id={} title={} difficulty={} drillEnrolled={}", id, challenge.getTitle(), challenge.getDifficulty(), drillEnrolled);
         model.addAttribute("challenge", challenge);
+        model.addAttribute("drillEnrolled", drillEnrolled);
         return "challenges/detail";
     }
 
