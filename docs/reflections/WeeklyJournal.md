@@ -114,3 +114,29 @@ Evidence (screenshots)
 
 Next
 - Week 7: Wire the Drill submission UI/flow to create Submissions and update DrillItem; add service/web tests for outcomes and queue advance.
+
+---
+
+## Week 7 – Fall 2025
+
+**10/19/25**
+
+This week I delivered the Drill submission flow and tightened security around Drill routes.
+
+Highlights
+- Implemented Drill flow end-to-end: queue page → next redirect → solve page → submit.
+- Submission now persists outcomes and updates scheduling via `DrillService` and `ChallengeRunService` (Issue 27).
+- Protected all Drill routes with `AuthGuardFilter` (GET `/drill`, `/drill/*`, POST `/drill/*/submit`); added tests for unauthenticated redirects and authenticated pass-through (Issue 28).
+- Verified the full test suite is green locally.
+
+Reflection
+- Wiring the submit flow uncovered a few edge cases (e.g., streak resets on `INCORRECT`, null `nextDueAt` ordering). Dedicated service tests helped lock these down.
+- The filter-based guard plus JSP visibility checks continue to provide a good UX and secure defaults.
+- Next step is to expand Drill Mode persistence/metrics and start prepping for the Week 9 deployment criteria.
+
+Evidence
+- Test reports show green for DrillItem/Submission DAOs and services:
+  - `target/surefire-reports/me.nickhanson.codeforge.persistence.DrillItemDaoTest.txt`
+  - `target/surefire-reports/me.nickhanson.codeforge.persistence.SubmissionDaoTest.txt`
+  - `target/surefire-reports/TEST-me.nickhanson.codeforge.service.DrillServiceTest.xml`
+  - `target/surefire-reports/me.nickhanson.codeforge.web.AuthGuardFilterTest.txt`

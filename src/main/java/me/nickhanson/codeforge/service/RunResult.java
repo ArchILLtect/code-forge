@@ -18,7 +18,7 @@ public class RunResult {
     /**
      * Constructs a new RunResult with the specified outcome and message.
      *
-     * @param outcome The outcome of the code run (e.g., SUCCESS, FAILURE).
+     * @param outcome The outcome of the code run (e.g., CORRECT, ACCEPTABLE, INCORRECT, SKIPPED).
      * @param message A descriptive message about the result of the code run.
      */
     public RunResult(Outcome outcome, String message) {

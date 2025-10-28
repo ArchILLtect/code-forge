@@ -112,6 +112,88 @@ class AuthGuardFilterTest {
         assertThat(chain.called).isTrue();
     }
 
+    @Test
+    void unauthenticated_get_drill_redirects_to_login() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "/drill");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        FilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isEqualTo("/logIn");
+    }
+
+    @Test
+    void unauthenticated_get_drill_next_redirects_to_login() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "/drill/next");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        FilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isEqualTo("/logIn");
+    }
+
+    @Test
+    void unauthenticated_get_drill_solve_redirects_to_login() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "/drill/42");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        FilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isEqualTo("/logIn");
+    }
+
+    @Test
+    void unauthenticated_post_drill_submit_redirects_to_login() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", "/drill/42/submit");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        FilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isEqualTo("/logIn");
+    }
+
+    @Test
+    void authenticated_get_drill_allows_through() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "/drill");
+        req.getSession(true).setAttribute("user", "tester");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        TrackingFilterChain chain = new TrackingFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isNull();
+        assertThat(chain.called).isTrue();
+    }
+
+    @Test
+    void authenticated_post_drill_submit_allows_through() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", "/drill/42/submit");
+        req.getSession(true).setAttribute("user", "tester");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        TrackingFilterChain chain = new TrackingFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isNull();
+        assertThat(chain.called).isTrue();
+    }
+
+    // Bonus: add is also protected for POST
+    @Test
+    void unauthenticated_post_drill_add_redirects_to_login() throws ServletException, IOException {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", "/drill/42/add");
+        MockHttpServletResponse resp = new MockHttpServletResponse();
+        FilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, resp, chain);
+
+        assertThat(resp.getRedirectedUrl()).isEqualTo("/logIn");
+    }
+
     static class TrackingFilterChain extends MockFilterChain {
         boolean called = false;
         @Override

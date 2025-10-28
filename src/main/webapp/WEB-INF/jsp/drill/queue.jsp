@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Drill Queue</title>
   <style>
-    body { margin: 0 20% ; font-family: Arial, sans-serif; }
+    body { margin: 0 20%; font-family: Arial, sans-serif; }
     table { border-collapse: collapse; border: 1px solid #000; width: 100%; }
     th, td { padding: 6px 8px; border: 1px solid #aaa; }
     .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
