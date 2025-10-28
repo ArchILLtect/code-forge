@@ -3,6 +3,7 @@ package me.nickhanson.codeforge.web;
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.Difficulty;
 import me.nickhanson.codeforge.service.ChallengeService;
+import me.nickhanson.codeforge.service.DrillService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,6 +34,8 @@ class ChallengesControllerTest {
 
     @MockBean
     private ChallengeService service;
+    @MockBean
+    private DrillService drillService;
 
     /**
      * Configuration to set up a view resolver for testing.
