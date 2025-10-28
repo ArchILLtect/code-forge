@@ -1,5 +1,24 @@
 <h2 align="center">CodeForge ⚒️ README</h2>
-  
+
+<div align="center">
+  <a href="https://github.com/ArchILLtect/code-forge/actions/workflows/ci.yml">
+    <img alt="CI" src="https://github.com/ArchILLtect/code-forge/actions/workflows/ci.yml/badge.svg">
+  </a>
+  <img alt="Java" src="https://img.shields.io/badge/Java-17-007396?logo=java&logoColor=white">
+  <img alt="Spring Boot" src="https://img.shields.io/badge/Spring_Boot-3.3.3-6DB33F?logo=springboot&logoColor=white">
+  <img alt="Maven" src="https://img.shields.io/badge/Maven-3%2B-C71A36?logo=apachemaven&logoColor=white">
+  <a href="https://opensource.org/licenses/MIT">
+    <img alt="License" src="https://img.shields.io/badge/License-MIT-blue">
+  </a>
+</div>
+
+<div align="center">
+  <a href="http://codeforge-env-war.eba-h9i9qmbf.us-east-2.elasticbeanstalk.com/actuator/health">
+    <img alt="EB Health" src="https://img.shields.io/website?url=http%3A%2F%2Fcodeforge-env-war.eba-h9i9qmbf.us-east-2.elasticbeanstalk.com%2Factuator%2Fhealth&label=EB%20health&up_message=UP&down_message=DOWN&cacheSeconds=60">
+  </a>
+</div>
+
+
 Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
 
 ---
@@ -22,7 +41,7 @@ CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to ex
 
 - **Drill Mode**  
   A “flashcard for code” system. Missed or skipped problems come back in future cycles until you solve them correctly — with some solved ones mixed in to re-check your mastery.
-  - Backend DrillService (scheduling + due queue) implemented in Week 5; UI wiring and submit flow coming in Week 6.
+  - Week 7: Drill UI + controller + submit flow wired end-to-end (Issues 27 & 28). Queue page, next redirect, solve page, and submit now work; outcomes persist and scheduling updates.
 
 - **Progress Tracking**
   Track your problem status (`Correct`, `Acceptable`, `Incorrect`, `Skipped`) and see your overall improvement over time.
@@ -56,7 +75,8 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 
 - ### Authentication & Security
   - **AWS Cognito** — Authentication & authorization service (user registration, login, tokens)
-  - **Spring Security** (integration) — Protects endpoints and enforces role-based access
+  - **Servlet filter (MVP)** — `AuthGuardFilter` protects admin routes and all Drill routes (redirects to `/logIn`)
+  - **Spring Security** (migration later) — OIDC integration tracked for a future milestone
 
 - ### Testing
   - **JUnit 5** — Unit and integration testing
@@ -102,8 +122,8 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 - Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
 - Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination/sorting and difficulty filtering, JSP error pages (404/500) via @ControllerAdvice, lightweight service layer, expanded seed data, and WebMvc + JPA tests all green.
 - Week 5: Added DrillService for scheduling (nextDueAt), streak/timesSeen updates, and a due queue; dedicated service tests added and passing.
-- Week 5: Added stub ChallengeRunService to simulate solution execution (supports simple CORRECT/INCORRECT/SKIPPED outcomes) and unit tests.
-- Next (Week 6): Wire Drill UI and submit flow (uses stub run service), optional API spike and CI pipeline per course schedule.
+- Week 5: Added stub ChallengeRunService to simulate solution execution and unit tests.
+- Week 7: Implemented Drill submission flow (Issue 27) and protected Drill routes via AuthGuardFilter (Issue 28). Added unit tests for filter coverage and run heuristics.
 
 ---
 ## ℹ️ Drill Scheduling (v1)
@@ -124,7 +144,7 @@ The backend DrillService applies simple spaced-repetition-style rules when recor
   - Returns items due now (or unscheduled) sorted with null nextDueAt first, then past due by time.
   - If none are due, returns the single soonest upcoming item to avoid an empty queue.
 
-This powers the upcoming Drill mode UI planned for Week 6.
+This powers the Drill mode UI.
 
 ---
 ## 💪 Challenge Topics
@@ -157,12 +177,15 @@ http://localhost:5000
 
 ---
 
-## 🧪 Stub Run Service (Week 5)
-The early runner does not compile or execute code. It deterministically simulates outcomes to unblock UI wiring:
-- Unsupported language or blank language → ok=false, outcome=SKIPPED
-- Code contains "SKIP" (case-insensitive) → ok=true, outcome=SKIPPED
-- Code contains "FAIL" or "assert false" → ok=false, outcome=INCORRECT
-- Otherwise → ok=true, outcome=CORRECT
+## 🧪 Stub Run Service (Heuristics)
+The early runner does not compile or execute code. It deterministically simulates outcomes to unblock UI wiring. Heuristics (order matters):
+- Unsupported or blank language → outcome=SKIPPED
+- Empty/blank code → outcome=SKIPPED
+- Code contains "skip" (case-insensitive) → outcome=SKIPPED
+- Code contains "fail" or "assert false" → outcome=INCORRECT
+- Code contains "// correct" or "// pass" → outcome=CORRECT
+- Code contains "// ok" → outcome=ACCEPTABLE
+- Otherwise → outcome=INCORRECT
 
 ---
 ## ⚠️ Project Purpose
@@ -183,7 +206,7 @@ MIT License — feel free to use, fork, and improve CodeForge.
 ## Authentication status (MVP)
 - For MVP/class requirements, the app uses a servlet-based Cognito login flow (no Spring Security OIDC yet).
 - The Cognito ID token is verified, and the authenticated user is stored in the HTTP session; controllers/JSPs read the session user.
-- Spring Security OIDC + route protection is deferred to a later week; tracked in Week 6 issues as a follow-up.
+- Route protection (MVP): `AuthGuardFilter` enforces login for challenge create/edit/delete and for all Drill routes (GET /drill, /drill/*, POST /drill/*/submit), redirecting unauthenticated users to `/logIn`.
 
 ### Environment Variables – Servlet-based Cognito
 Set your Cognito client secret via an environment variable (do not commit it to source control). Non-secret values remain in `src/main/resources/cognito.properties`.
@@ -205,6 +228,12 @@ On login, the app redirects to the Cognito Hosted UI; on callback (`/auth`) it e
 ### Pagination status (MVP)
 - Server-side Pageable has been removed.
 - Client-side pagination is implemented with jQuery DataTables via CDN on the challenges list.
+
+---
+## Week 7 — Status (Drill UI + Security)
+- Drill submission flow implemented: queue, next redirect, solve page, submit; outcomes persisted and scheduling updated (Issue 27).
+- Drill routes protected via AuthGuardFilter; unauthenticated users are redirected to `/logIn` (Issue 28). Added unit tests covering these paths.
+- Local tests are green; CI pipeline remains a stretch goal for a later week.
 
 ---
 ## Week 6 — Status (Auth + Protected Routes + Pagination + Deploy)
@@ -286,7 +315,7 @@ Verification:
 
 # Local environment quickstart
 
-We provide a `.env.example` you can copy and fill for local development. Spring Boot doesn’t auto-load `.env`—use your shell/IDE to export variables or an EnvFile/direnv plugin.
+We provide a `.env.example` you can copy and fill for local development. Spring Boot doesn’t autoload `.env`—use your shell/IDE to export variables or an EnvFile/direnv plugin.
 
 1) Copy and edit the example
 ```

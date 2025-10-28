@@ -1,6 +1,6 @@
 # Class and Indie Project Plan (Weeks 4–14)
 
-_Last Updated: October 22, 2025_
+_Last Updated: October 28, 2025_
 _Inputs: README.md, course_calendar.md, project_overview.md, project_rubric_clean.md_
 
 Indie Project Scope:
@@ -39,7 +39,7 @@ Indie Project Scope:
     - [x] **Milestone:** Project 1 checkpoint complete! App template running and accessible locally. 🎉
     - [x] H2 console enabled
     - [x] Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
-    - [x] Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination
+    - [x] Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination/sorting and difficulty filtering
     - [x] Update journal and time log
     - [ ] Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
   - [ ] Implements Challenge entity + DAO + CRUD (foundation for Story 9: Admin Create Challenge, and Story 4: Learner submissions persistence).
@@ -74,36 +74,40 @@ Indie Project Scope:
   - [x] Authentication/authorization fundamentals
   - [x] Unit/integration testing practices and coverage
 - **Indie**
-  - [ ] Rubric mapping: authentication, logging, test coverage
-  - [ ] Implement authentication/authorization using AWS Cognito (Spring Security OIDC) [🔗](user-stories.md#learner) (Story 1: Register/Sign in)
-  - [ ] Secure protected routes and challenge data (roles/authorities) [🔗](user-stories.md#learner) (Story 2: Browse challenges)
-  - [ ] Replace any lingering `System.out.println` with Log4J logging
-  - [ ] Switch to jQuery-based pagination via CDN; remove server-side Pageable from APIs and tests
-  - [ ] Elastic Beanstalk prep (Java 17/Corretto): Procfile present; ensure /actuator/health returns UP; handle PORT via `-Dserver.port=$PORT` or `server.port=${PORT:8080}`
-  - [ ] GitHub Actions: build-and-package to produce `eb-bundle.zip` (jar + Procfile) for EB deploy
-  - [ ] Add DAO/CRUD for Submission and DrillItem; service layer for Drill logic. [🔗](user-stories.md#learner) (Story 4: Submit solution & see result, Story 6 outcomes).
-  - [ ] Spike: shortlist and select external API, prove minimal call [🔗](user-stories.md#learner) (Story 8).
+  - [x] Rubric mapping: authentication, logging, test coverage
+  - [x] Implement authentication/authorization using AWS Cognito (Spring Security OIDC) [🔗](user-stories.md#learner) (Story 1: Register/Sign in)
+  - [x] Secure protected routes and challenge data (roles/authorities) [🔗](user-stories.md#learner) (Story 2: Browse challenges)
+  - [x] Replace any lingering `System.out.println` with Log4J logging
+  - [x] Switch to jQuery-based pagination via CDN; remove server-side Pageable from APIs and tests
+  - [x] Elastic Beanstalk prep (Java 17/Corretto): ensure /actuator/health returns UP; handle PORT via `-Dserver.port=$PORT` or `server.port=${PORT:8080}`
+  - [x] Add DAO/CRUD for Submission and DrillItem; service layer for Drill logic. [🔗](user-stories.md#learner) (Story 4: Submit solution & see result, Story 6 outcomes).
+  - [x] Spike: shortlist and select external API, prove minimal call [🔗](user-stories.md#learner) (Story 8).
   - [ ] ⭐ (Stretch Goal) Centralize logging with log rotation and diagnostic context (MDC)
   - [ ] ⭐ (Stretch Goal) Raise code coverage threshold; add CI/static analysis
-  - [ ] Prep for Checkpoint 2 readiness
-  - [ ] Done when: Cognito login works; protected routes enforced; jQuery pagination wired; EB bundle produced and health endpoint UP; log4j in place; CI green
-  - [ ] Evidence: test report, screenshots (login & health), CI artifact (eb-bundle.zip), CI badge
-  - [ ] Update journal and time log
+  - [x] Prep for Checkpoint 2 readiness
+  - [x] Done when: Cognito login works; protected routes enforced; jQuery pagination wired; health endpoint UP; log4j in place; CI green
+  - [x] Evidence: test report, screenshots (login & health), CI artifact (eb-bundle.zip), CI badge
+  - [x] Update journal and time log
 
 ---
 
 ### Week 7 — Checkpoint 2 _(Oct 13–19)_
 - **Class**
-  - [ ] **Checkpoint 2 due**: DB designed/created; at least one DAO with full CRUD using Hibernate; DAO unit tested; Log4J implemented
+  - [x] **Checkpoint 2 due**: DB designed/created; at least one DAO with full CRUD using Hibernate; DAO unit tested; Log4J implemented
 - **Indie**
-  - [ ] Rubric mapping: DB, DAO, logging, test coverage
-  - [ ] Double-check Checkpoint 2 items are complete and visible in GitHub (DAO + CRUD + tests, Log4J, DB schema)
+  - [x] Rubric mapping: DB, DAO, logging, test coverage
+  - [x] Double-check Checkpoint 2 items are complete and visible in GitHub (DAO + CRUD + tests, Log4J, DB schema)
   - [ ] Harden DAO and transaction boundaries; add more entities if needed [🔗](user-stories.md#learner) (Stories 4 & 6)
-  - [ ] Add entries if missing (e.g. DrillItem)
-  - [ ] README badges for build/coverage
-  - [ ] Done when: all checkpoint items in repo
-  - [ ] Evidence: repo tag, screenshots, test report
-  - [ ] Update journal and time log
+  - [x] Add entries if missing (e.g. DrillItem)
+  - [x] README badges for build/coverage
+  - [x] Done when: all checkpoint items in repo
+  - [x] Evidence: repo tag, screenshots, test report
+  - [x] Update journal and time log
+
+> Week 7 delivery highlights (Oct 28, 2025):
+> - Issue 27 (Drill submission flow): Implemented queue/next/solve/submit endpoints in `DrillController`, wired to `ChallengeRunService` + `DrillService`; outcomes persist and scheduling updates.
+> - Issue 28 (Security guard for Drill routes): `AuthGuardFilter` protects GET `/drill`, `/drill/*`, and POST `/drill/*/submit`; added unit tests to verify redirects for unauthenticated users and pass-through for authenticated sessions.
+> - README and Week 7 docs updated to reflect the above; full test suite green locally.
 
 ---
 
