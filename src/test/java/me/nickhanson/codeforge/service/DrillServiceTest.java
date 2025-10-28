@@ -131,4 +131,22 @@ class DrillServiceTest {
         assertThat(queue).hasSize(1);
         assertThat(queue.get(0).getId()).isEqualTo(diD.getId());
     }
+
+    @Test
+    void version_increments_on_update() {
+        Challenge ch = newChallenge("Version Check");
+
+        // First write should create the DrillItem and set initial version
+        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
+        DrillItem first = drillItemDao.findByChallengeId(ch.getId()).get(0);
+        Long v1 = first.getVersion();
+        assertThat(v1).as("version after first save").isNotNull();
+
+        // Second write should increment version
+        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
+        DrillItem second = drillItemDao.findByChallengeId(ch.getId()).get(0);
+        Long v2 = second.getVersion();
+        assertThat(v2).as("version after second save").isNotNull();
+        assertThat(v2).isGreaterThan(v1);
+    }
 }
