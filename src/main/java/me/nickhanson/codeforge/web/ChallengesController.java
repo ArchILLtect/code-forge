@@ -35,7 +35,7 @@ public class ChallengesController {
      * Constructor for ChallengesController.
      *
      * @param service The ChallengeService used for business logic and data access.
-     * @param drillService The DrillItemDao used for accessing drill-related data.
+     * @param drillService The DrillService used for managing drill-related operations.
      */
     public ChallengesController(ChallengeService service, DrillService drillService) {
         this.service = service;
@@ -44,8 +44,9 @@ public class ChallengesController {
 
     /**
      * Handles GET requests to list challenges with optional difficulty filtering.
+     * Note: This endpoint does not support server-side sorting or pagination.
      *
-     * @param difficulty Optional filter by difficulty level.
+     * @param difficulty Optional query parameter to filter challenges by difficulty level.
      * @param model      The model to populate with data for the view.
      * @return The name of the view template for the challenge list.
      */
