@@ -97,7 +97,7 @@ Indie Project Scope:
 - **Indie**
   - [x] Rubric mapping: DB, DAO, logging, test coverage
   - [x] Double-check Checkpoint 2 items are complete and visible in GitHub (DAO + CRUD + tests, Log4J, DB schema)
-  - [ ] Harden DAO and transaction boundaries; add more entities if needed [🔗](user-stories.md#learner) (Stories 4 & 6)
+  - [x] Harden DAO and transaction boundaries; add more entities if needed [🔗](user-stories.md#learner) (Stories 4 & 6)
   - [x] Add entries if missing (e.g. DrillItem)
   - [x] README badges for build/coverage
   - [x] Done when: all checkpoint items in repo
@@ -107,6 +107,7 @@ Indie Project Scope:
 > Week 7 delivery highlights (Oct 28, 2025):
 > - Issue 27 (Drill submission flow): Implemented queue/next/solve/submit endpoints in `DrillController`, wired to `ChallengeRunService` + `DrillService`; outcomes persist and scheduling updates.
 > - Issue 28 (Security guard for Drill routes): `AuthGuardFilter` protects GET `/drill`, `/drill/*`, and POST `/drill/*/submit`; added unit tests to verify redirects for unauthenticated users and pass-through for authenticated sessions.
+> - Issue 38 (DAO hardening for MVP): Moved transactions to the service/DAO layers, removed controller-level @Transactional on GETs, added `@Version Long version` to `DrillItem`, and added a version-increment test; full suite green.
 > - README and Week 7 docs updated to reflect the above; full test suite green locally.
 
 ---
@@ -117,7 +118,11 @@ Indie Project Scope:
   - [ ] REST/Web Services consumption patterns
 - **Indie**
   - [ ] Rubric mapping: deployment, external API, configs
-  - [ ] Create project DB on AWS and migrate schema (Flyway/Liquibase)
+  - [ ] Create AWS RDS database and bootstrap schema using Hibernate auto-DDL
+    - Configure RDS instance and connect app via environment variables (url, username, password).
+    - Set `spring.jpa.hibernate.ddl-auto=update` for first deploy to let Hibernate create/update schema.
+    - After schema verification, switch to `spring.jpa.hibernate.ddl-auto=validate` to lock structure.
+    - Document plan to adopt Flyway post-MVP for versioned migrations (export verified schema as `V1__init_schema.sql`).
   - [ ] Update configs for AWS; externalize secrets
   - [ ] Deploy app to AWS; verify health and logs
   - [ ] Consume at least one external/public API using Java (rubric requirement) [🔗](user-stories.md#learner) (Story 8: External API)
