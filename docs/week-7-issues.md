@@ -259,3 +259,51 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
   - 27) Drill submission flow
 - Suggested labels
   - status:triage, enhancement, area:web, area:ux, priority:P3-low
+
+---
+
+## 35) Hardening: DAO + Transaction Boundaries (Stories 4 & 6)
+
+- Title
+  - chore(persistence): Harden DAO/service transaction boundaries; enforce one DrillItem per Challenge; add optimistic locking
+
+- Problem / context
+  - Current flow works, but under concurrency two requests could create duplicate DrillItems for the same Challenge, and concurrent outcome updates could overwrite each other (lost updates). Transactions on controller methods also blur boundaries and complicate debugging.
+
+- Proposed solution
+  - Transaction boundaries
+    - Remove `@Transactional` from controller methods (e.g., DrillController). Keep transactions only at service/DAO layers: read-only for queries, read/write for mutations.
+  - Uniqueness & race handling
+    - Enforce a unique DrillItem per Challenge: add a unique constraint on `drill_items.challenge_id` (DDL/migration later; JPA `@Table(uniqueConstraints=...)` for dev).
+    - Add DAO method to fetch a single DrillItem by challengeId. In `getOrCreateDrillItem`, on persist duplicate (DataIntegrityViolationException) refetch and return the existing row.
+  - Optimistic locking
+    - Add `@Version` (e.g., `Long version`) to DrillItem to prevent lost updates on `timesSeen`/`streak`/`nextDueAt`.
+  - Tests (service/DAO)
+    - Concurrent create: simulate two near-simultaneous creates and assert only one DrillItem exists.
+    - Concurrent updates: recordOutcome from two threads for the same challenge; assert no silent overwrite and consistent counters.
+  - Index
+    - Ensure index/unique index on `drill_items.challenge_id` (unique index preferred; covered by migration when added).
+
+- In scope
+  - Code changes in service/DAO and entity; small schema change (dev JPA DDL). Add focused tests.
+
+- Out of scope
+  - Full Flyway/Liquibase rollout to RDS (tracked under Week 8); adding new domain entities.
+
+- Acceptance criteria
+  - [ ] No `@Transactional` on controller methods; transactions are at service/DAO boundaries only.
+  - [ ] Unique constraint exists for one DrillItem per Challenge (dev via JPA; future via migration).
+  - [ ] DrillItem uses `@Version`; concurrent outcome updates don’t silently overwrite.
+  - [ ] `getOrCreateDrillItem` safely handles races; tests show no duplicate rows.
+  - [ ] New tests pass; existing suite remains green.
+
+- Area
+  - area:persistence, area:service, area:web, hardening
+
+- Dependencies / related issues
+  - 27) Drill submission flow (uses DrillService)
+  - 31) Persistence hygiene (fetch/cascade review)
+  - Week 8 deployment/migration tasks
+
+- Suggested labels
+  - status:triage, priority:P1-high, hardening, area:persistence

@@ -17,7 +17,7 @@ Source inputs: week-6-plan carry-overs, current services (`DrillService`, `Chall
 ## Scope
 
 ### Endpoints (proposed)
-- GET `/drill` — Show the due queue (top N, e.g., 10) with a CTA to "Start"/"Continue".
+- GET `/drill` — Show the due queue (top N, e.g., 10) with a CTA to "Start"/"Continue`".
 - GET `/drill/next` — Resolve the next due item and redirect to `/drill/{challengeId}` (or show a friendly empty state).
 - GET `/drill/{challengeId}` — Render a solve page with challenge prompt, and a submit form (language + code).
 - POST `/drill/{challengeId}/submit` — Run stub (`ChallengeRunService.run`) → map to Outcome → `DrillService.recordOutcome` → redirect to `/drill/next` with a flash message summarizing the outcome.
@@ -46,7 +46,7 @@ Notes
 ### Tests
 - Service tests (DrillService)
   - `recordOutcome`: verify streak/timesSeen/nextDueAt per Outcome (CORRECT/ACCEPTABLE/INCORRECT/SKIPPED).
-  - `getDueQueue`: due-first ordering, fallback to soonest if none due.
+  - `getDueQueue`: due-first ordering, fallback to the soonest if none due.
 - WebMvc tests (DrillController)
   - GET `/drill/next` when due exists → redirect to `/drill/{id}`.
   - GET `/drill/{id}` renders solve JSP (authenticated session).
@@ -63,12 +63,12 @@ Notes
 - Screenshots: `docs/screenshots/week7-drill-queue.png`, `docs/screenshots/week7-drill-submit.png`.
 
 ## Acceptance Criteria
-- [ ] Navigating to `/drill/next` sends the user to the next due item (or friendly message if none).
-- [ ] Posting to `/drill/{id}/submit` saves a `Submission` and updates that challenge's `DrillItem` according to rules.
-- [ ] After submit, user lands on the next due item (or friendly message if queue is empty), with a flash showing the outcome.
-- [ ] Filter protects Drill routes: unauthenticated users are redirected to `/logIn`.
-- [ ] Unit tests cover at least: one happy-path submission (CORRECT) and one edge (SKIPPED/INCORRECT); plus a couple of DrillService scheduling checks.
-- [ ] CI is green and WAR artifact still uploads.
+- [x] Navigating to `/drill/next` sends the user to the next due item (or friendly message if none).
+- [x] Posting to `/drill/{id}/submit` saves a `Submission` and updates that challenge's `DrillItem` according to rules.
+- [x] After submit, user lands on the next due item (or friendly message if queue is empty), with a flash showing the outcome.
+- [x] Filter protects Drill routes: unauthenticated users are redirected to `/logIn`.
+- [x] Unit tests cover at least: one happy-path submission (CORRECT) and one edge (SKIPPED/INCORRECT); plus a couple of DrillService scheduling checks.
+- [x] CI is green and WAR artifact still uploads.
 
 ## Nice-to-haves (if time allows)
 - Show basic Drill stats on the solve page (current streak, timesSeen).
@@ -93,3 +93,6 @@ Notes
 - Test report: WebMvc + service tests for drill submission.
 - Actions run: green build with WAR artifact.
 
+---
+
+Status: Completed for Issues 27 & 28 — routes protected via AuthGuardFilter; Drill submission flow functional; unit tests added and green locally.
