@@ -100,12 +100,12 @@ public class DrillService {
 
         // Update DrillItem metrics
         drillItem.setTimesSeen(drillItem.getTimesSeen() + 1);
-        int newStreak = drillItem.getStreak();
-        switch (outcome) {
-            case CORRECT, ACCEPTABLE -> newStreak = drillItem.getStreak() + 1;
-            case INCORRECT -> newStreak = 0;
-            case SKIPPED -> newStreak = drillItem.getStreak();
-        }
+        int currentStreak = drillItem.getStreak();
+        int newStreak = switch (outcome) {
+            case CORRECT, ACCEPTABLE -> currentStreak + 1;
+            case INCORRECT -> 0;
+            case SKIPPED -> currentStreak;
+        };
         drillItem.setStreak(newStreak);
         drillItem.setNextDueAt(computeNextDueAt(outcome, newStreak));
 
@@ -148,6 +148,12 @@ public class DrillService {
                 yield now.plus(Duration.ofDays(7));
             }
         };
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isEnrolledInDrill(Long challengeId) {
+        // If you add a Spring Data method: return drillItemDao.existsByChallengeId(challengeId);
+        return !drillItemDao.findByChallengeId(challengeId).isEmpty();
     }
 
     /**

@@ -9,6 +9,8 @@
   <style>
     .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
     .flash-error { background: #ffecec; border: 1px solid #ff3b30; padding: .5rem; margin-bottom: 1rem; }
+    .actions { margin: 10px 0; }
+    .hint { color: #555; }
   </style>
 </head>
 <body>
@@ -31,6 +33,26 @@
   <p>
     <strong>Difficulty:</strong> <c:out value="${challenge.difficulty}"/>
   </p>
+  <div class="actions">
+    <c:choose>
+      <c:when test="${not empty sessionScope.user}">
+        <c:choose>
+          <c:when test="${drillEnrolled}">
+            <a href="${pageContext.request.contextPath}/drill/${challenge.id}">Open in Drill</a>
+          </c:when>
+          <c:otherwise>
+            <form method="post" action="${pageContext.request.contextPath}/drill/${challenge.id}/add" style="display:inline;">
+              <button type="submit">Add to Drill</button>
+            </form>
+          </c:otherwise>
+        </c:choose>
+      </c:when>
+      <c:otherwise>
+        <span class="hint">Log in to access Drill Mode.</span>
+        <a href="${pageContext.request.contextPath}/logIn" style="margin-left: 8px;">Log in</a>
+      </c:otherwise>
+    </c:choose>
+  </div>
   <p>
     <strong>Summary:</strong> <c:out value="${challenge.blurb}"/>
   </p>

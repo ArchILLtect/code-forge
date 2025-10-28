@@ -23,6 +23,17 @@
   </div>
   <ul>
     <li><a href="${pageContext.request.contextPath}/challenges">Browse Challenges</a></li>
+    <c:choose>
+      <c:when test="${not empty sessionScope.user}">
+        <li><a href="${pageContext.request.contextPath}/drill">Drill Mode</a></li>
+      </c:when>
+      <c:otherwise>
+        <li>
+          <a href="${pageContext.request.contextPath}/logIn">Log in</a>
+          <span> to access Drill Mode.</span>
+        </li>
+      </c:otherwise>
+    </c:choose>
     <li><a href="${pageContext.request.contextPath}/actuator/health">Health Check</a></li>
     <li><a href="${pageContext.request.contextPath}/h2-console">H2 Console</a> (dev)</li>
   </ul>
