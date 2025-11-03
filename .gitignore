@@ -104,3 +104,4 @@ https-instance.config
 /.run/
 .run/CodeForge (dev).run.xml
 /mvn-test.log
+/src/main/resources/cognito.properties
