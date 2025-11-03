@@ -13,6 +13,7 @@ import java.time.Instant;
  * the user's progress in a drill. This entity includes fields for tracking the
  * number of times the item has been seen, the current streak of correct answers,
  * and the next scheduled appearance of the item.
+ * @author Nick Hanson
  */
 @Entity
 @Table(name = "drill_items")
@@ -25,7 +26,6 @@ public class DrillItem {
      * The unique identifier for the DrillItem.
      * This ID is auto-generated.
      * This ID serves as the primary key for the DrillItem entity.
-     *
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,20 +51,21 @@ public class DrillItem {
      * The number of times this DrillItem has been seen by the user.
      * This field is initialized to zero and cannot be null.
      */
-    @Column(nullable = false)
+    @Column(name = "TIMES_SEEN", nullable = false)
     private int timesSeen = 0;
 
     /**
      * The current streak of consecutive correct or acceptable answers for this DrillItem.
      * This field is initialized to zero and cannot be null.
      */
-    @Column(nullable = false)
+    @Column(name = "STREAK", nullable = false)
     private int streak = 0; // consecutive correct/acceptable answers
 
     /**
      * The timestamp for when this DrillItem is next due to appear in a drill session.
      * This field is optional and can be null if the item is not scheduled for future appearance.
      */
+    @Column(name = "NEXT_DUE_AT")
     private Instant nextDueAt; // optional scheduling for next appearance
 
     /**

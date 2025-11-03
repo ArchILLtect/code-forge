@@ -7,6 +7,8 @@ import java.time.Instant;
 /**
  * Entity representing a coding challenge.
  * This class is mapped to the CHALLENGES table in the database.
+ * @author Nick Hanson
+ * TODO: needs better Lombok implementation
  */
 @Entity
 @Table(name = "CHALLENGES")
@@ -16,40 +18,56 @@ import java.time.Instant;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)   // avoid using all fields by default
 public class Challenge {
 
+    /**
+     * The unique identifier for the Challenge.
+     * This ID is auto-generated.
+     * This ID serves as the primary key for the Challenge entity.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include // Includes the ID field in equals and hashCode
     @ToString.Include // Includes the ID field in toString
     private Long id;
 
+    /**
+     * The title of the Challenge.
+     */
     @ToString.Include // Includes the title field in toString
     @Column(nullable = false, unique = true, length = 100) // Maps to a non-null, unique column with max length 100
     private String title;
 
+    /**
+     * The difficulty level of the Challenge.
+     */
     @Enumerated(EnumType.STRING) // Maps the enum to a database column as a string
     @ToString.Include // Includes the difficulty field in toString
     @Column(nullable = false, length = 20) // Maps to a non-null column with max length 20
     private Difficulty difficulty;
 
+    /**
+     * A short description or blurb about the Challenge.
+     */
     @Lob // Maps to a large object column for storing long text
     @Column(nullable = false) // Maps to a non-null column
     private String blurb;
 
+    /**
+     * The full prompt of the Challenge in Markdown format.
+     */
     @Lob // Maps to a large object column for storing long text
-    @Column(nullable = false) // Maps to a non-null column
+    @Column(name = "PROMPT_MD", nullable = false) // Maps to a non-null column
     private String promptMd;
 
+    /**
+     * The timestamp when the Challenge was created.
+     * This field is automatically populated with the current timestamp when the entity is created.
+     * It is not updatable after creation.
+     */
     @ToString.Include // Includes the createdAt field in toString
     @Column(updatable = false) // Maps to a column that cannot be updated after creation
     private Instant createdAt;
 
-    /**
-     * Constructor for creating a new Challenge.
-     * @param title The title of the challenge.
-     * @param difficulty The difficulty level of the challenge.
-     * @param blurb A short description of the challenge.
-     * @param promptMd The full prompt in Markdown format.
-     */
+    // Constructor to create a Challenge with all required fields
     public Challenge(String title, Difficulty difficulty, String blurb, String promptMd) {
         this.title = title;
         this.difficulty = difficulty;
