@@ -104,6 +104,7 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 - ✅ [Screen Designs (Low-Fi)](docs/screen-designs.md)
 - ✅ [Reflections](docs/reflections/WeeklyJournal.md)
 - ✅ [Time Log](docs/reflections/TimeLog.md)
+- ✅ ER Diagram (ERD): [docs/erd.png](docs/erd.png)
 
 ---
 ## 🗺️ Roadmap
@@ -352,3 +353,39 @@ Notes:
 - Non-secret Cognito values (client.id, URLs, region, pool id, redirect URLs) are in `src/main/resources/cognito.properties`.
 - The Cognito client secret is only read from the environment (`COGNITO_CLIENT_SECRET`).
 - For team collaboration, share secrets via a password manager or use separate per-developer Cognito App Clients for dev.
+
+---
+# CodeForge – Servlet/JSP + Hibernate (MVP)
+
+This is the initial project setup for CodeForge, demonstrating a full-stack Java web app with a focus on coding practice challenges.
+
+## Configuration required by QuoteService (non‑Spring)
+QuoteService loads settings from `src/main/resources/application.properties` at runtime.
+
+Required keys:
+- `quote.api.url` — endpoint URL returning JSON array of quotes compatible with ZenQuotes shape.
+- `quote.timeout.seconds` — HTTP connect timeout in seconds (default 5 if missing).
+
+Example `application.properties` (already committed with sane defaults):
+```
+quote.api.url=https://zenquotes.io/api/random
+quote.timeout.seconds=5
+```
+
+Response mapping (JSON → POJO):
+The service maps each element to a Java record:
+```
+record ApiResponse(String q, String a, String h) {}
+```
+The endpoint returns an array like:
+```
+[ { "q": "Quote text", "a": "Author", "h": "<blockquote>…</blockquote>" } ]
+```
+The home page uses `HomeServlet` to call `QuoteService#getRandomQuote()` and forwards the `quote` string to `WEB-INF/jsp/home.jsp`.
+
+## Running locally on Tomcat 9
+- Build the WAR and deploy to Tomcat 9.
+- Ensure `application.properties` is on the classpath (it is, under `src/main/resources`).
+- If outbound HTTP is blocked, the home page will show a fallback quote.
+
+---
