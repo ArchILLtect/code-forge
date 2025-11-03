@@ -14,12 +14,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.URI;
@@ -38,11 +39,15 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/**
+ * Servlet handling the OAuth2 authentication flow with AWS Cognito.
+ * It exchanges authorization codes for tokens, validates ID tokens,
+ * and manages authenticated user sessions.
+ * @author Nick Hanson
+ */
 @WebServlet(
         urlPatterns = {"/auth"}
 )
-// Servlet to handle the callback from AWS Cognito after user login.
 public class Auth extends HttpServlet implements PropertiesLoader {
 
     Properties properties;
@@ -57,20 +62,57 @@ public class Auth extends HttpServlet implements PropertiesLoader {
     String ERROR_URL = "/WEB-INF/jsp/error/500.jsp";
     Keys jwks;
 
+    // Reuse a single HttpClient instance (HttpClient is not AutoCloseable)
+    private HttpClient httpClient;
+
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+    /**
+     * Initializes the servlet by loading properties and resolving the client secret.
+     * @throws ServletException if initialization fails
+     * TODO: clean up secret sourcing logic
+     */
     @Override
     public void init() throws ServletException {
         super.init();
+        // Initialize a reusable HttpClient (no need for try-with-resources)
+        httpClient = HttpClient.newHttpClient();
+
+        // Load properties
         logger.debug("Initializing Auth servlet and loading properties.");
         properties = loadProperties("/cognito.properties");
 
+        // Use the same client id as LogIn (from properties)
         CLIENT_ID = properties.getProperty("client.id");
-        // Read secret from environment variable only
+
+        // Resolve secret from multiple sources (env -> sysprop -> web.xml context-param -> properties)
         CLIENT_SECRET = System.getenv("COGNITO_CLIENT_SECRET");
         if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+            CLIENT_SECRET = System.getProperty("COGNITO_CLIENT_SECRET");
+            if (CLIENT_SECRET != null && !CLIENT_SECRET.isBlank()) {
+                logger.info("Using COGNITO_CLIENT_SECRET from Java system property (-DCOGNITO_CLIENT_SECRET)");
+            }
+        } else {
+            logger.info("Using COGNITO_CLIENT_SECRET from environment variable");
+        }
+        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+            ServletContext ctx = getServletContext();
+            String ctxSecret = ctx.getInitParameter("COGNITO_CLIENT_SECRET");
+            if (ctxSecret != null && !ctxSecret.isBlank()) {
+                CLIENT_SECRET = ctxSecret;
+                logger.warn("Using COGNITO_CLIENT_SECRET from web.xml <context-param> (dev only)");
+            }
+        }
+        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+            String propSecret = properties.getProperty("client.secret");
+            if (propSecret != null && !propSecret.isBlank()) {
+                CLIENT_SECRET = propSecret;
+                logger.warn("Using client.secret from cognito.properties (dev only; do not use in prod)");
+            }
+        }
+        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
             logger.error("COGNITO_CLIENT_SECRET is not set. Refusing to start Auth servlet.");
-            throw new ServletException("Missing COGNITO_CLIENT_SECRET environment variable");
+            throw new ServletException("Missing COGNITO_CLIENT_SECRET (env, -D, context-param, or properties)");
         }
         OAUTH_URL = properties.getProperty("oAuthURL");
         LOGIN_URL = properties.getProperty("loginURL");
@@ -83,6 +125,10 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
     /**
      * Gets the auth code from the request and exchanges it for a token containing user info.
+     * @param req the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws ServletException - if a servlet-specific error occurs
+     * @throws IOException - if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -129,19 +175,20 @@ public class Auth extends HttpServlet implements PropertiesLoader {
      * @throws InterruptedException - if the operation is interrupted
      */
     private TokenResponse getToken(HttpRequest authRequest) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<?> response = null;
 
-        response = client.send(authRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = httpClient.send(authRequest, HttpResponse.BodyHandlers.ofString());
 
-        logger.debug("Response headers: {}", response.headers().toString());
-        logger.debug("Response body: {}", response.body().toString());
+        int status = response.statusCode();
+        logger.debug("Token response status: {}", status);
+        logger.debug("Response headers: {}", response.headers());
+        logger.debug("Response body: {}", response.body());
+
+        if (status != 200) {
+            throw new SecurityException("Token endpoint returned status " + status + ": " + response.body());
+        }
 
         ObjectMapper mapper = new ObjectMapper();
-        TokenResponse tokenResponse = mapper.readValue(response.body().toString(), TokenResponse.class);
-        logger.debug("Id token: {}", tokenResponse.getIdToken());
-
-        return tokenResponse;
+        return mapper.readValue(response.body(), TokenResponse.class);
     }
 
     /**
@@ -161,7 +208,6 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
         // Header should have kid and alg- https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-the-id-token.html
         String keyId = tokenHeader.getKid();
-        String alg = tokenHeader.getAlg();
 
         // Find the corresponding JWK by key ID
         KeysItem jwk = jwks.getKeys().stream()
@@ -214,8 +260,8 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         return new AuthenticatedUser(userName, email, sub);
     }
 
-    /** Create the auth url and use it to build the request.
-     *
+    /**
+     * Create the auth url and use it to build the request.
      * @param authCode auth code received from Cognito as part of the login process
      * @return the constructed oauth request
      */
@@ -243,11 +289,6 @@ public class Auth extends HttpServlet implements PropertiesLoader {
     /**
      * Gets the JSON Web Key Set (JWKS) for the user pool from cognito and loads it
      * into objects for easier use.
-     * JSON Web Key Set (JWKS) location: https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json
-     * Demo url: https://cognito-idp.us-east-2.amazonaws.com/us-east-2_XaRYHsmKB/.well-known/jwks.json
-     *
-     * @see Keys
-     * @see KeysItem
      */
     private void loadKey() {
         ObjectMapper mapper = new ObjectMapper();
