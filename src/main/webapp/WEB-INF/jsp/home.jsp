@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +10,20 @@
 </head>
 <body>
   <h1>Welcome to CodeForge</h1>
-  <c:if test="${not empty user}">
-    <h2>Welcome, ${user.userName}!</h2>
-    <p>Your email: ${user.email}</p>
-    <p>Your user ID: ${user.sub}</p>
-    <a href="${pageContext.request.contextPath}/logout" aria-label="Log out of your account">Log out</a>
-  </c:if>
+<c:choose>
+    <c:when test="${empty user}">
+      <span>Please </span>
+      <a href="${pageContext.request.contextPath}/logIn">Log in</a>
+      <span> to access Drill Mode.</span>
+    </c:when>
+    <c:otherwise>
+      <h2>Welcome, ${user.userName}!</h2>
+      <p>Your email: ${user.email}</p>
+      <p>Your user ID: ${user.sub}</p>
+      <a href="${pageContext.request.contextPath}/logout" aria-label="Log out of your account">Log out</a>
+    </c:otherwise>
+</c:choose>
+
   <p>This home page is served via JSP.</p>
   <h2>Quick quote:</h2>
   <div class="mt-6 text-gray-700 italic text-sm">
@@ -34,14 +42,6 @@
         </li>
       </c:otherwise>
     </c:choose>
-    <li><a href="${pageContext.request.contextPath}/actuator/health">Health Check</a></li>
-    <li><a href="${pageContext.request.contextPath}/h2-console">H2 Console</a> (dev)</li>
   </ul>
-
-  <div class="auth-actions" style="margin-top: 1rem;">
-    <a href="${pageContext.request.contextPath}/logIn" class="btn btn-primary" role="button">
-      Login with Cognito
-    </a>
-  </div>
 </body>
 </html>

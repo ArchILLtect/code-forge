@@ -1,6 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,37 +10,35 @@
   <p><a href="${pageContext.request.contextPath}/">Home</a> | <a href="${pageContext.request.contextPath}/challenges">All Challenges</a></p>
   <h1>Edit Challenge</h1>
 
-  <form:form method="post" modelAttribute="form" action="${pageContext.request.contextPath}/challenges/${challengeId}">
+  <form method="post" action="${pageContext.request.contextPath}/challenges/${challengeId}">
     <div>
       <label for="title">Title</label><br/>
-      <form:input path="title" id="title" />
-      <div style="color: #b00;"><form:errors path="title"/></div>
+      <input type="text" id="title" name="title" value="${title}" />
     </div>
 
     <div>
       <label for="difficulty">Difficulty</label><br/>
-      <form:select path="difficulty" id="difficulty">
-        <form:options items="${difficulties}" />
-      </form:select>
-      <div style="color: #b00;"><form:errors path="difficulty"/></div>
+      <select id="difficulty" name="difficulty">
+        <c:forEach items="${difficulties}" var="d">
+          <option value="${d}" ${d == difficulty ? 'selected' : ''}>${d}</option>
+        </c:forEach>
+      </select>
     </div>
 
     <div>
       <label for="blurb">Summary</label><br/>
-      <form:textarea path="blurb" id="blurb" rows="3" cols="60"/>
-      <div style="color: #b00;"><form:errors path="blurb"/></div>
+      <textarea id="blurb" name="blurb" rows="3" cols="60">${blurb}</textarea>
     </div>
 
     <div>
       <label for="promptMd">Prompt (Markdown)</label><br/>
-      <form:textarea path="promptMd" id="promptMd" rows="10" cols="80"/>
-      <div style="color: #b00;"><form:errors path="promptMd"/></div>
+      <textarea id="promptMd" name="promptMd" rows="10" cols="80">${promptMd}</textarea>
     </div>
 
     <div style="margin-top: 1rem;">
       <button type="submit">Update</button>
     </div>
-  </form:form>
+  </form>
 
   <c:if test="${not empty sessionScope.user}">
     <form method="post" action="${pageContext.request.contextPath}/challenges/${challengeId}/delete" style="margin-top: 1rem;">
