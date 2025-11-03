@@ -8,7 +8,19 @@ public class QuoteResponse{
 	@JsonProperty("QuoteResponse")
 	private List<QuoteResponseItem> quoteResponse;
 
+	public void setQuoteResponse(List<QuoteResponseItem> quoteResponse){
+		this.quoteResponse = quoteResponse;
+	}
+
 	public List<QuoteResponseItem> getQuoteResponse(){
 		return quoteResponse;
 	}
+
+	@Override
+ 	public String toString(){
+		return 
+			"QuoteResponse{" + 
+			"quoteResponse = '" + quoteResponse + '\'' + 
+			"}";
+		}
 }

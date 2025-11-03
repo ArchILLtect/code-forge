@@ -8,10 +8,15 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -19,25 +24,43 @@ import java.util.Properties;
  * @author Nick Hanson
  */
 public class QuoteService implements PropertiesLoader {
-    private static final Logger log = LogManager.getLogger(QuoteService.class);
+    private static final Logger logger = LogManager.getLogger(QuoteService.class);
     private static final String FALLBACK = "Keep it simple. — CodeForge";
-    private static final long CACHE_DURATION_MS = 60_000; // 1 minute cache duration
 
-    private final String apiUrl;
+    private final String apiBaseUrl;
     private final HttpClient http;
     private final ObjectMapper mapper;
 
+    //
+    private final Duration requestTimeout;
+
     // simple cache
+    private long cacheDuration;
     private String lastQuote;
     private long lastFetchTime = 0;
 
-    // Constructor initializes HttpClient and loads configuration properties
+    // User preferences
+    private String userAuthor = null;
+    private List<String> orTags;
+    private List<String> andTags;
+
+        // Constructor initializes HttpClient and loads configuration properties
     public QuoteService() {
+        logger.info("Java={}, Vendor={}", System.getProperty("java.version"), System.getProperty("java.vendor"));
         Properties props = loadProperties("/application.properties");
-        this.apiUrl = props.getProperty("quote.api.url", "https://zenquotes.io/api/random");
-        int timeout = Integer.parseInt(props.getProperty("quote.timeout.seconds", "5"));
+        this.apiBaseUrl = props.getProperty("quote.api.url", "https://zenquotes.io/api/random");
+        boolean allowInsecure = Boolean.parseBoolean(props.getProperty("quote.api.allowInsecure","false"));
+        if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
+            logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
+        }
+        this.cacheDuration = Long.parseLong(props.getProperty("quote.cache.duration.ms", "60000")); // 1 minute default
+        this.userAuthor = props.getProperty("quote.author", "").trim();
+        this.orTags  = parseCsv(props.getProperty("quote.tags.or", ""));
+        this.andTags = parseCsv(props.getProperty("quote.tags.and", ""));
+        int timeout = Integer.parseInt(props.getProperty("quote.api.timeout.seconds", "5"));
+        this.requestTimeout = Duration.ofSeconds(timeout);
         this.http = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(timeout))
+                .connectTimeout(requestTimeout)
                 .build();
         this.mapper = new ObjectMapper();
     }
@@ -52,7 +75,9 @@ public class QuoteService implements PropertiesLoader {
         long now = System.currentTimeMillis();
 
         // If cached quote is still valid, return it
-        if (lastQuote != null && (now - lastFetchTime) < CACHE_DURATION_MS) {
+        if (lastQuote != null && (now - lastFetchTime) < cacheDuration) {
+            // Log the current time passed since last fetch
+            logger.info("Using cached quote, {} ms since last fetch", (now - lastFetchTime));
             return lastQuote;
         }
 
@@ -60,9 +85,11 @@ public class QuoteService implements PropertiesLoader {
         String author;
 
         try {
+            URI uri = buildQuoteUri();
+            logger .debug("Fetching quote from URI: {}", uri);
             HttpRequest req = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl))
-                    .timeout(Duration.ofSeconds(5))
+                    .uri(uri)
+                    .timeout(requestTimeout)
                     .header("Accept", "application/json")
                     .GET()
                     .build();
@@ -72,23 +99,23 @@ public class QuoteService implements PropertiesLoader {
 
             // Handle non-200 responses gracefully
             if (status != 200) {
-                log.warn("Quote API returned status {}: {}", status, truncate(resp.body()));
+                logger.warn("Quote API returned status {}: {}", status, truncate(resp.body()));
                 return FALLBACK;
             }
 
             QuoteResponseItem[] responseArray = mapper.readValue(resp.body(), QuoteResponseItem[].class);
             if (responseArray == null || responseArray.length == 0 || responseArray[0] == null) {
-                log.warn("Quote API returned empty payload");
+                logger.warn("Quote API returned empty payload");
                 return FALLBACK;
             }
             if (responseArray.length == 1) {
-                text = responseArray[0].getQ();
-                author = responseArray[0].getA();
+                text = responseArray[0].getContent();
+                author = responseArray[0].getAuthor();
             } else {
                 // Pick a random quote from the array if multiple are returned
                 int index = (int) (Math.random() * responseArray.length);
-                text = responseArray[index].getQ();
-                author = responseArray[index].getA();
+                text = responseArray[index].getContent();
+                author = responseArray[index].getAuthor();
             }
             if (text == null || text.isBlank()) return FALLBACK;
             if (author == null || author.isBlank()) author = "Unknown";
@@ -99,12 +126,56 @@ public class QuoteService implements PropertiesLoader {
 
             return "\u201c" + text + "\u201d — " + author; // “text” — Author
         } catch (IOException | InterruptedException ie) {
-            log.warn("Quote fetch failed: {}", ie.toString());
+            logger.warn("Quote fetch failed: {}", ie.toString());
             return FALLBACK;
         } catch (Exception e) {
-            log.error("Unexpected error fetching quote", e);
+            logger.error("Unexpected error fetching quote", e);
             return FALLBACK;
         }
+    }
+
+    private URI buildQuoteUri() {
+        StringBuilder url = new StringBuilder(apiBaseUrl);
+        List<String> params = new ArrayList<>();
+
+         if (userAuthor != null && !userAuthor.isBlank()) {
+            params.add("author=" + URLEncoder.encode(userAuthor, StandardCharsets.UTF_8));
+        } else {
+            // tags only if no keyword/author
+            String orPart  = String.join("|", orTags);
+            String andPart = String.join(",", andTags);
+
+            String tagsValue = null;
+            if (!orPart.isBlank() && !andPart.isBlank()) {
+                tagsValue = orPart + "," + andPart;       // (OR) AND (AND)
+            } else if (!orPart.isBlank()) {
+                tagsValue = orPart;                        // OR only
+            } else if (!andPart.isBlank()) {
+                tagsValue = andPart;                       // AND only
+            }
+
+            if (tagsValue != null && !tagsValue.isBlank()) {
+                params.add("tags=" + URLEncoder.encode(tagsValue, StandardCharsets.UTF_8));
+            }
+        }
+
+        if (!params.isEmpty()) {
+            url.append("?").append(String.join("&", params));
+        }
+        return URI.create(url.toString());
+    }
+
+    /**
+     * Parses a comma-separated string into a list of trimmed strings.
+     * @param string The comma-separated string.
+     * @return A list of trimmed strings.
+     */
+    private static List<String> parseCsv(String string) {
+        if (string == null || string.isBlank()) return List.of();
+        return Arrays.stream(string.split(","))
+                .map(String::trim)
+                .filter(str -> !str.isBlank())
+                .toList();
     }
 
     /**
