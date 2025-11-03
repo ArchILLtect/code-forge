@@ -23,7 +23,6 @@ public class DrillQueueRow {
 
     /**
      * Constructs a new DrillQueueRow with the specified details.
-     *
      * @param challengeId The ID of the challenge.
      * @param title       The title of the challenge.
      * @param difficulty  The difficulty level of the challenge.
