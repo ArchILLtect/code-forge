@@ -25,6 +25,9 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: status:backlog
   - description: Parked for later. Important, but not in the current milestone.
   - color: 777777
+- name: status:backlog
+  - description: Not scheduled for the current milestone; parked for future planning.
+  - color: d1d5da
 
 ## Priority
 - name: priority:P0-critical
@@ -102,3 +105,10 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: project:mvp
   - description: Use for all issues and PRs that belong to the MVP release scope. Project workflow can auto-add labeled items to the "CodeForge – MVP Release" board.
   - color: e6ffcc
+### Cross-cutting / Initiative
+- name: hardening
+  - description: Stabilization, safety, and resilience work (e.g., transaction boundaries, locking, validation, error handling).
+  - color: 6f42c1
+- name: migration
+  - description: Schema/data migrations and related tasks (e.g., Flyway/Liquibase scripts, rollout coordination).
+  - color: 1f6feb
