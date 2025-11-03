@@ -96,3 +96,5 @@ Notes
 ---
 
 Status: Completed for Issues 27 & 28 — routes protected via AuthGuardFilter; Drill submission flow functional; unit tests added and green locally.
+
+Additional status: Issue 38 (DAO hardening for MVP) — Transactions moved to service/DAO layers; removed controller-level `@Transactional` on GETs; added `@Version Long version` to `DrillItem`; added a version-increment test. Full suite green.

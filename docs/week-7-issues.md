@@ -10,7 +10,7 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Checkpoint number
   - 2
 
-- Due week/date
+- Due date/week
   - Week 7 (Oct 13–19, 2025)
 
 - Scope per rubric / plan
@@ -109,7 +109,7 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Area
   - area:security, area:web
 - Dependencies / related issue
-  - 27) Drill submission flow (routes must be protected)
+  - #27) Drill submission flow (routes must be protected)
 - Suggested labels
   - status:triage, enhancement, area:security, priority:P1-high
 
@@ -135,7 +135,7 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Area
   - area:service, status:needs-tests
 - Dependencies / related issue
-  - 27) Drill submission flow (uses these rules)
+  - #27) Drill submission flow (uses these rules)
 - Suggested labels
   - status:triage, area:service, status:needs-tests, priority:P2-normal
 
@@ -162,7 +162,7 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Area
   - area:web, status:needs-tests
 - Dependencies / related issue
-  - 27) Drill submission flow, 28) Security guard
+  - #27) Drill submission flow, 28) Security guard
 - Suggested labels
   - status:triage, area:web, status:needs-tests, priority:P2-normal
 
@@ -210,7 +210,7 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Area
   - area:documentation
 - Dependencies / related issue
-  - 27) Drill submission flow
+  - #27) Drill submission flow
 - Suggested labels
   - status:triage, area:documentation, priority:P3-low
 
@@ -233,7 +233,7 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Area
   - area:web, area:ux
 - Dependencies / related issue
-  - 27) Drill submission flow
+  - #27) Drill submission flow
 - Suggested labels
   - status:triage, enhancement, area:web, area:ux, priority:P3-low
 
@@ -256,54 +256,96 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 - Area
   - area:web, area:ux
 - Dependencies / related issue
-  - 27) Drill submission flow
+  - #27) Drill submission flow
 - Suggested labels
   - status:triage, enhancement, area:web, area:ux, priority:P3-low
 
 ---
 
-## 35) Hardening: DAO + Transaction Boundaries (Stories 4 & 6)
+## 38) Hardening: DAO MVP Implementation – Transaction boundaries and optimistic locking prep
 
 - Title
-  - chore(persistence): Harden DAO/service transaction boundaries; enforce one DrillItem per Challenge; add optimistic locking
+  - chore(persistence): Move transactions to service layer; prep DrillItem for future locking
 
 - Problem / context
-  - Current flow works, but under concurrency two requests could create duplicate DrillItems for the same Challenge, and concurrent outcome updates could overwrite each other (lost updates). Transactions on controller methods also blur boundaries and complicate debugging.
+  - Current flow works, but transactions are declared at the controller level (e.g., DrillController), which can blur service boundaries and complicate debugging. For the MVP, transactions should be applied only where data access actually occurs.
 
 - Proposed solution
   - Transaction boundaries
-    - Remove `@Transactional` from controller methods (e.g., DrillController). Keep transactions only at service/DAO layers: read-only for queries, read/write for mutations.
-  - Uniqueness & race handling
-    - Enforce a unique DrillItem per Challenge: add a unique constraint on `drill_items.challenge_id` (DDL/migration later; JPA `@Table(uniqueConstraints=...)` for dev).
-    - Add DAO method to fetch a single DrillItem by challengeId. In `getOrCreateDrillItem`, on persist duplicate (DataIntegrityViolationException) refetch and return the existing row.
-  - Optimistic locking
-    - Add `@Version` (e.g., `Long version`) to DrillItem to prevent lost updates on `timesSeen`/`streak`/`nextDueAt`.
-  - Tests (service/DAO)
-    - Concurrent create: simulate two near-simultaneous creates and assert only one DrillItem exists.
-    - Concurrent updates: recordOutcome from two threads for the same challenge; assert no silent overwrite and consistent counters.
-  - Index
-    - Ensure index/unique index on `drill_items.challenge_id` (unique index preferred; covered by migration when added).
+    - Remove @Transactional annotations from controller methods.
+    - Keep transactions only at the service or DAO layer.
+    - Mark read-only methods explicitly with @Transactional(readOnly = true) when appropriate.
+
+  - Preparation for future hardening
+    - Add @Version Long version; field to DrillItem entity to enable future optimistic locking.
+    - No schema migration yet—just annotate and verify compile/test pass.
 
 - In scope
-  - Code changes in service/DAO and entity; small schema change (dev JPA DDL). Add focused tests.
+  - Code updates in DrillService and other service classes to manage transaction boundaries.
+  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).Add @Version to DrillItem (no Flyway/Liquibase changes yet).
 
 - Out of scope
-  - Full Flyway/Liquibase rollout to RDS (tracked under Week 8); adding new domain entities.
+  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).Database-level unique constraints or race-condition handling.
+  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).Concurrency tests and full Flyway migration (deferred to later issue).
 
 - Acceptance criteria
-  - [ ] No `@Transactional` on controller methods; transactions are at service/DAO boundaries only.
-  - [ ] Unique constraint exists for one DrillItem per Challenge (dev via JPA; future via migration).
-  - [ ] DrillItem uses `@Version`; concurrent outcome updates don’t silently overwrite.
-  - [ ] `getOrCreateDrillItem` safely handles races; tests show no duplicate rows.
-  - [ ] New tests pass; existing suite remains green.
+  - [ ] Controllers have no @Transactional annotations.
+  - [ ] All service/DAO methods use appropriate transactional annotations.
+  - [ ] DrillItem includes a @Version field for later optimistic locking.
+  - [ ] Application builds and tests pass without behavioral regressions.
 
 - Area
   - area:persistence, area:service, area:web, hardening
 
 - Dependencies / related issues
-  - 27) Drill submission flow (uses DrillService)
-  - 31) Persistence hygiene (fetch/cascade review)
-  - Week 8 deployment/migration tasks
+  - #27) Drill submission flow (uses DrillService)
+  - #31) Persistence hygiene (fetch/cascade review)
+  - Week 8 deployment (Hibernate auto-DDL); Flyway adoption post-MVP
 
 - Suggested labels
   - status:triage, priority:P1-high, hardening, area:persistence
+
+
+## 40) Post-MVP Hardening
+
+- Title
+  - feat(persistence): Enforce one DrillItem per Challenge; handle concurrency and race conditions
+
+- Problem / context
+  - Under concurrent load, duplicate DrillItem rows could be created for the same Challenge, and concurrent updates might overwrite streak/nextDueAt values (lost updates).
+
+- Proposed solution
+  - Uniqueness & race handling
+    - Enforce one DrillItem per Challenge via a unique constraint (drill_items.challenge_id).
+    - Update getOrCreateDrillItem to catch DataIntegrityViolationException and re-fetch the existing record.
+  - Optimistic locking
+    - Utilize the @Version field added in MVP.
+  - Tests
+    - Add DAO/service concurrency tests for create/update race scenarios.
+  - Index
+    - Add unique index on drill_items.challenge_id in Flyway/Liquibase migration (post-MVP; not in Week 8 scope).
+
+- In scope
+  - Service/DAO concurrency handling and tests.
+  - Schema constraint via migration (post-MVP milestone).
+
+- Out of scope
+  - Refactoring unrelated domain entities.
+  - Non-persistence optimizations.
+
+- Acceptance criteria
+  - [ ] Unique constraint prevents duplicate DrillItem per Challenge.
+  - [ ] Concurrent updates use optimistic locking (@Version).
+  - [ ] Concurrency tests confirm correctness and stability.
+  - [ ] All existing tests remain green.
+
+- Area
+  - area:persistence, hardening, concurrency
+
+- Dependencies / related issues
+  - #38) DAO MVP Implementation (adds @Version)
+  - Post-MVP migration plan (Flyway)
+
+- Suggested labels
+  - status:backlog, priority:P3-low, hardening, migration
+
