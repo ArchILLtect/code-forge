@@ -4,7 +4,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Properties;
 
-
+/**
+ * Utility class for fetching environment-specific configuration properties.
+ * The environment is determined by the "APP_ENV" environment variable,
+ * defaulting to "dev" if not set.
+ * @author Nick Hanson
+ * TODO: Is this still needed, now that spring is gone?
+ */
 public final class EnvConfig {
 
     /**

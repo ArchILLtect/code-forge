@@ -5,19 +5,21 @@ import me.nickhanson.codeforge.config.PropertiesLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+/**
+ * Servlet that handles routing users to the AWS Cognito hosted login page.
+ * @author Nick Hanson
+ */
 @WebServlet(urlPatterns = {"/logIn"})
-
-// Servlet to route to the AWS Cognito-hosted login page.
 public class LogIn extends HttpServlet implements PropertiesLoader {
 
     private static String CLIENT_ID;
@@ -27,6 +29,7 @@ public class LogIn extends HttpServlet implements PropertiesLoader {
     private final Logger logger = LogManager.getLogger(this.getClass());
     Properties properties;
 
+    // Load properties on servlet initialization
     @Override
     public void init() throws ServletException {
         super.init();

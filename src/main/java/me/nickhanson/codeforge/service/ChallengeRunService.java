@@ -1,20 +1,19 @@
 package me.nickhanson.codeforge.service;
 
 import me.nickhanson.codeforge.entity.Outcome;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Service class that provides a stubbed implementation for evaluating challenge submissions.
- * This service uses simple heuristics to determine the outcome of a code submission.
- * Note: This implementation does not compile or execute the code; it is purely for demonstration/testing purposes.
+ * Represents the result of a code run for a challenge.
+ * Includes the outcome and an optional message.
+ * Used by ChallengeRunService to return the result of code evaluation.
+ * Only a placeholder for demonstration purposes.
+ * @author Nick Hanson
  */
-@Service
 public class ChallengeRunService {
 
-    private static final Logger log = LoggerFactory.getLogger(ChallengeRunService.class);
+    private static final Logger log = LogManager.getLogger(ChallengeRunService.class);
 
     /**
      * Evaluates the submitted code for a specific challenge using predefined heuristics.
@@ -36,45 +35,38 @@ public class ChallengeRunService {
         long start = System.currentTimeMillis();
         log.info("Simulating run for challengeId={} language={}", challengeId, language);
 
-        // Check for unsupported language or blank language
-        if (!StringUtils.hasText(language) || !"java".equalsIgnoreCase(language)) {
+        if (language == null || language.isBlank() || !"java".equalsIgnoreCase(language)) {
             RunResult rr = new RunResult(Outcome.SKIPPED, "Unsupported language: " + language);
             log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
-        // Check for empty or blank code
-        if (!StringUtils.hasText(code)) {
+        if (code == null || code.isBlank()) {
             RunResult rr = new RunResult(Outcome.SKIPPED, "No code provided – counted as skipped.");
             log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
 
         String normalized = code.toLowerCase();
-        // Check for skip indicators
         if (normalized.contains("skip")) {
             RunResult rr = new RunResult(Outcome.SKIPPED, "Stub runner: marked as SKIPPED.");
             log.info("Run finished: ok=true outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
-        // Check for failure indicators
         if (normalized.contains("fail") || normalized.contains("assert false")) {
             RunResult rr = new RunResult(Outcome.INCORRECT, "Stub runner: marked as INCORRECT.");
             log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
-        // Check for correct indicators
         if (normalized.contains("// correct") || normalized.contains("// pass")) {
             RunResult rr = new RunResult(Outcome.CORRECT, "Stub runner: marked as CORRECT.");
             log.info("Run finished: ok=true outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
-        // Check for acceptable indicators
         if (normalized.contains("// ok")) {
             RunResult rr = new RunResult(Outcome.ACCEPTABLE, "Stub runner: marked as ACCEPTABLE.");
             log.info("Run finished: ok=true outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
-        // Default case: incorrect
         RunResult rr = new RunResult(Outcome.INCORRECT, "Stub runner: marked as INCORRECT.");
         log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
         return rr;

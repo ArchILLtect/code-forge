@@ -1,91 +1,85 @@
 package me.nickhanson.codeforge.persistence;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.Difficulty;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
 
-import java.util.*;
+import java.util.List;
 
-@Repository
-@Transactional(readOnly = true)
+/**
+ * Data Access Object (DAO) for the Challenge entity.
+ * Provides methods to perform CRUD operations and custom queries on Challenge entities.
+ * @author Nick Hanson
+ */
 public class ChallengeDao {
 
-    @PersistenceContext
-    private EntityManager em;
+    private static final Logger log = LogManager.getLogger(ChallengeDao.class);
 
-    public Optional<Challenge> findById(Long id) {
-        return Optional.ofNullable(em.find(Challenge.class, id));
+    private final EntityData<Challenge> data = new EntityData<>(Challenge.class);
+
+    // Constructor
+    public ChallengeDao() {
+        super();
+        log.info("ChallengeDao using SessionFactory identity: {}",
+                System.identityHashCode(SessionFactoryProvider.getSessionFactory()));
     }
 
-    public List<Challenge> findAll() {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Challenge> cq = cb.createQuery(Challenge.class);
-        Root<Challenge> root = cq.from(Challenge.class);
-        cq.select(root);
-        return em.createQuery(cq).getResultList();
+    public Challenge getById(Long id)                  { return data.getById(id); }
+    public List<Challenge> getAll()                    { return data.getAll(); }
+    public void saveOrUpdate(Challenge challenge)      { data.saveOrUpdate(challenge); }
+    public void delete(Challenge challenge)            { data.delete(challenge); }
+
+    /**
+     * Finds challenges by their title.
+     * @param title The title of the challenge to search for.
+     * @return A list of challenges matching the given title.
+     */
+    public List<Challenge> findByTitle(String title) {
+        return data.findByPropertyEqual("title", title);
     }
 
+    /**
+     * Finds challenges by their difficulty level.
+     * @param difficulty The difficulty level to search for.
+     * @return A list of challenges matching the given difficulty level.
+     */
     public List<Challenge> findByDifficulty(Difficulty difficulty) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Challenge> cq = cb.createQuery(Challenge.class);
-        Root<Challenge> root = cq.from(Challenge.class);
-        Predicate p = cb.equal(root.get("difficulty"), difficulty);
-        cq.select(root).where(p);
-        return em.createQuery(cq).getResultList();
+        return data.findByPropertyEqual("difficulty", difficulty);
     }
 
-    public Optional<Challenge> findByTitle(String title) {
-        List<Challenge> results = em.createQuery(
-                        "SELECT c FROM Challenge c WHERE LOWER(c.title) = LOWER(:title)", Challenge.class)
-                .setParameter("title", title)
-                .setMaxResults(1)
-                .getResultList();
-        return results.stream().findFirst();
-    }
-
-    public boolean existsByTitleIgnoreCase(String title) {
-        Long count = em.createQuery(
-                        "SELECT COUNT(c) FROM Challenge c WHERE LOWER(c.title) = LOWER(:title)", Long.class)
-                .setParameter("title", title)
-                .getSingleResult();
-        return count != null && count > 0;
-    }
-
-    public boolean existsByTitleIgnoreCaseAndIdNot(String title, Long id) {
-        Long count = em.createQuery(
-                        "SELECT COUNT(c) FROM Challenge c WHERE LOWER(c.title) = LOWER(:title) AND c.id <> :id", Long.class)
-                .setParameter("title", title)
-                .setParameter("id", id)
-                .getSingleResult();
-        return count != null && count > 0;
-    }
-
-    public boolean existsById(Long id) {
-        return em.find(Challenge.class, id) != null;
-    }
-
-    @Transactional
-    public Challenge save(Challenge challenge) {
-        if (challenge.getId() == null) {
-            em.persist(challenge);
-            return challenge;
-        } else {
-            return em.merge(challenge);
+    /**
+     * Checks if a challenge with the given title exists, ignoring case.
+     * @param title The title to check for existence.
+     * @return True if a challenge with the given title exists, false otherwise.
+     */
+    public boolean existsTitleIgnoreCase(String title) {
+        try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
+            Long count = s.createQuery(
+                            "select count(c) from Challenge c where lower(c.title) = lower(:t)", Long.class)
+                    .setParameter("t", title)
+                    .getSingleResult();
+            return count != null && count > 0;
         }
     }
 
-    @Transactional
-    public boolean deleteById(Long id) {
-        Challenge found = em.find(Challenge.class, id);
-        if (found == null) return false;
-        em.remove(found);
-        return true;
+    /**
+     * Checks if a challenge with the given title exists, ignoring case,
+     * excluding a specific challenge by its ID.
+     * @param title The title to check for existence.
+     * @param excludeId The ID of the challenge to exclude from the check.
+     * @return True if a challenge with the given title exists (excluding the specified ID), false otherwise.
+     */
+    public boolean existsTitleForOtherIgnoreCase(String title, Long excludeId) {
+        try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
+            Long count = s.createQuery(
+                            "select count(c) from Challenge c where lower(c.title) = lower(:t) and c.id <> :id",
+                            Long.class)
+                    .setParameter("t", title)
+                    .setParameter("id", excludeId)
+                    .getSingleResult();
+            return count != null && count > 0;
+        }
     }
 }

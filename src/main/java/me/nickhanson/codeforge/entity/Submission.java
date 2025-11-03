@@ -12,9 +12,10 @@ import java.time.Instant;
  * Represents a Submission entity, which tracks the outcome of a user's attempt
  * to solve a Challenge. This entity includes fields for the associated Challenge,
  * the result of the submission, and optional solution code.
+ * @author Nick Hanson
  */
 @Entity
-@Table(name = "submissions")
+@Table(name = "SUBMISSIONS")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -65,7 +66,6 @@ public class Submission {
 
     /**
      * Constructs a new Submission with the specified challenge, outcome, and optional code.
-     *
      * @param challenge The Challenge associated with this submission.
      * @param outcome   The outcome of the submission.
      * @param code      Optional solution code for the submission.
@@ -76,4 +76,3 @@ public class Submission {
         this.code = code;
     }
 }
-

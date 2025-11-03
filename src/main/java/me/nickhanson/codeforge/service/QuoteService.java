@@ -1,63 +1,191 @@
 package me.nickhanson.codeforge.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import me.nickhanson.codeforge.entity.QuoteResponseItem;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import me.nickhanson.codeforge.config.PropertiesLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
-@Service
-public class QuoteService {
-
-    private static final Logger log = LoggerFactory.getLogger(QuoteService.class);
-
-    @Value("${app.quote.apiUrl:https://zenquotes.io/api/random}")
-    private String apiUrl;
-
+/**
+ * Service for fetching random inspirational quotes from an external API.
+ * @author Nick Hanson
+ */
+public class QuoteService implements PropertiesLoader {
+    private static final Logger logger = LogManager.getLogger(QuoteService.class);
     private static final String FALLBACK = "Keep it simple. — CodeForge";
 
-    private final RestTemplate http;
+    private final String apiBaseUrl;
+    private final HttpClient http;
+    private final ObjectMapper mapper;
 
+    //
+    private final Duration requestTimeout;
+
+    // simple cache
+    private long cacheDuration;
+    private String lastQuote;
+    private long lastFetchTime = 0;
+
+    // User preferences
+    private String userAuthor = null;
+    private List<String> orTags;
+    private List<String> andTags;
+
+        // Constructor initializes HttpClient and loads configuration properties
     public QuoteService() {
-        this.http = new RestTemplate();
+        logger.info("Java={}, Vendor={}", System.getProperty("java.version"), System.getProperty("java.vendor"));
+        Properties props = loadProperties("/application.properties");
+        this.apiBaseUrl = props.getProperty("quote.api.url", "https://zenquotes.io/api/random");
+        boolean allowInsecure = Boolean.parseBoolean(props.getProperty("quote.api.allowInsecure","false"));
+        if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
+            logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
+        }
+        this.cacheDuration = Long.parseLong(props.getProperty("quote.cache.duration.ms", "60000")); // 1 minute default
+        this.userAuthor = props.getProperty("quote.author", "").trim();
+        this.orTags  = parseCsv(props.getProperty("quote.tags.or", ""));
+        this.andTags = parseCsv(props.getProperty("quote.tags.and", ""));
+        int timeout = Integer.parseInt(props.getProperty("quote.api.timeout.seconds", "5"));
+        this.requestTimeout = Duration.ofSeconds(timeout);
+        this.http = HttpClient.newBuilder()
+                .connectTimeout(requestTimeout)
+                .build();
+        this.mapper = new ObjectMapper();
     }
 
     /**
-     * Fetches a random inspirational quote from the external API.
-     * If the API call fails or returns unexpected data, a fallback quote is returned.
-     *
-     * @return A quote string in the format "“Quote text” — Author"
+     * Fetches a random inspirational quote using HttpClient and Jackson, with resilient fallbacks.
+     * @return A quote string formatted as: “text” — Author
      */
     public String getRandomQuote() {
-        log.info("Fetching random quote from {}", apiUrl);
-        try {
-            ResponseEntity<List<Map<String, Object>>> response = http.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<>() {}
-            );
 
-            List<Map<String, Object>> body = response.getBody();
-            if (body != null && !body.isEmpty()) {
-                Map<String, Object> q = body.get(0);
-                String text = (String) q.get("q");
-                String author = (String) q.get("a");
-                return "“" + text + "” — " + author;
-            } else {
-                log.error("Unexpected response: status={} body={}", response.getStatusCode(), body);
-            }
-        } catch (RestClientException ex) {
-            log.error("API call failed: {}", ex.getMessage(), ex);
+        // Return cached quote if within cache duration
+        long now = System.currentTimeMillis();
+
+        // If cached quote is still valid, return it
+        if (lastQuote != null && (now - lastFetchTime) < cacheDuration) {
+            // Log the current time passed since last fetch
+            logger.info("Using cached quote, {} ms since last fetch", (now - lastFetchTime));
+            return lastQuote;
         }
-        log.info("Returning fallback quote");
-        return FALLBACK;
+
+        String text;
+        String author;
+
+        try {
+            URI uri = buildQuoteUri();
+            logger .debug("Fetching quote from URI: {}", uri);
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .timeout(requestTimeout)
+                    .header("Accept", "application/json")
+                    .GET()
+                    .build();
+
+            HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
+            int status = resp.statusCode();
+
+            // Handle non-200 responses gracefully
+            if (status != 200) {
+                logger.warn("Quote API returned status {}: {}", status, truncate(resp.body()));
+                return FALLBACK;
+            }
+
+            QuoteResponseItem[] responseArray = mapper.readValue(resp.body(), QuoteResponseItem[].class);
+            if (responseArray == null || responseArray.length == 0 || responseArray[0] == null) {
+                logger.warn("Quote API returned empty payload");
+                return FALLBACK;
+            }
+            if (responseArray.length == 1) {
+                text = responseArray[0].getContent();
+                author = responseArray[0].getAuthor();
+            } else {
+                // Pick a random quote from the array if multiple are returned
+                int index = (int) (Math.random() * responseArray.length);
+                text = responseArray[index].getContent();
+                author = responseArray[index].getAuthor();
+            }
+            if (text == null || text.isBlank()) return FALLBACK;
+            if (author == null || author.isBlank()) author = "Unknown";
+
+            // format and cache result
+            lastQuote = "“" + text + "” — " + author;
+            lastFetchTime = now;
+
+            return "\u201c" + text + "\u201d — " + author; // “text” — Author
+        } catch (IOException | InterruptedException ie) {
+            logger.warn("Quote fetch failed: {}", ie.toString());
+            return FALLBACK;
+        } catch (Exception e) {
+            logger.error("Unexpected error fetching quote", e);
+            return FALLBACK;
+        }
+    }
+
+    private URI buildQuoteUri() {
+        StringBuilder url = new StringBuilder(apiBaseUrl);
+        List<String> params = new ArrayList<>();
+
+         if (userAuthor != null && !userAuthor.isBlank()) {
+            params.add("author=" + URLEncoder.encode(userAuthor, StandardCharsets.UTF_8));
+        } else {
+            // tags only if no keyword/author
+            String orPart  = String.join("|", orTags);
+            String andPart = String.join(",", andTags);
+
+            String tagsValue = null;
+            if (!orPart.isBlank() && !andPart.isBlank()) {
+                tagsValue = orPart + "," + andPart;       // (OR) AND (AND)
+            } else if (!orPart.isBlank()) {
+                tagsValue = orPart;                        // OR only
+            } else if (!andPart.isBlank()) {
+                tagsValue = andPart;                       // AND only
+            }
+
+            if (tagsValue != null && !tagsValue.isBlank()) {
+                params.add("tags=" + URLEncoder.encode(tagsValue, StandardCharsets.UTF_8));
+            }
+        }
+
+        if (!params.isEmpty()) {
+            url.append("?").append(String.join("&", params));
+        }
+        return URI.create(url.toString());
+    }
+
+    /**
+     * Parses a comma-separated string into a list of trimmed strings.
+     * @param string The comma-separated string.
+     * @return A list of trimmed strings.
+     */
+    private static List<String> parseCsv(String string) {
+        if (string == null || string.isBlank()) return List.of();
+        return Arrays.stream(string.split(","))
+                .map(String::trim)
+                .filter(str -> !str.isBlank())
+                .toList();
+    }
+
+    /**
+     * Truncates a string to 200 characters for logging purposes.
+     * Makes sure logs aren't flooded with gigantic payloads.
+     * @param string The string to truncate.
+     * @return The truncated string.
+     */
+    private static String truncate(String string) {
+        if (string == null) return "";
+        return string.length() > 200 ? string.substring(0, 200) + "…" : string;
     }
 }

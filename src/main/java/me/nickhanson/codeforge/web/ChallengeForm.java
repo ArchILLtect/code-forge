@@ -1,8 +1,8 @@
 package me.nickhanson.codeforge.web;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +11,8 @@ import me.nickhanson.codeforge.entity.Difficulty;
 /**
  * DTO (Data Transfer Object) for creating or updating a Challenge entity.
  * This class is used to capture and validate user input from forms.
+ *
+ * @author Nick Hanson
  */
 @Getter
 @Setter
