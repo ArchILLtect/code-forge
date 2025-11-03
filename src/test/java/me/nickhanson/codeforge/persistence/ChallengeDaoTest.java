@@ -2,95 +2,107 @@ package me.nickhanson.codeforge.persistence;
 
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.Difficulty;
+import me.nickhanson.codeforge.entity.DrillItem;
+import me.nickhanson.codeforge.entity.Submission;
+import me.nickhanson.codeforge.entity.Outcome;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * DAO tests for ChallengeDao using JPA slice.
- */
-@DataJpaTest
-@ActiveProfiles("test")
-@Import(ChallengeDao.class)
-class ChallengeDaoTest {
+class ChallengeDaoTest extends DaoTestBase {
 
-    @Autowired
-    private ChallengeDao dao;
+    private final ChallengeDao dao = new ChallengeDao();
+    private final DrillItemDao drillDao = new DrillItemDao();
+    private final SubmissionDao submissionDao = new SubmissionDao();
 
-    /**
-     * Creates a sample Challenge entity for testing purposes.
-     *
-     * @return a Challenge object with predefined values.
-     */
-    private Challenge sample() {
-        return new Challenge(
-                "Two Sum",
-                Difficulty.EASY,
-                "Find indices of two numbers that add up to target.",
-                "## Prompt\nGiven an array nums and an integer target..."
-        );
-    }
-
-    /**
-     * Tests that a Challenge entity can be saved and retrieved by its ID.
-     * Verifies that the saved entity has a non-null ID and that the retrieved
-     * entity matches the saved entity's properties.
-     */
     @Test
-    void save_and_findById_success() {
-        Challenge saved = dao.save(sample());
-        assertThat(saved.getId()).isNotNull();
-
-        Optional<Challenge> found = dao.findById(saved.getId());
-        assertThat(found).isPresent();
-        assertThat(found.get().getTitle()).isEqualTo("Two Sum");
-        assertThat(found.get().getDifficulty()).isEqualTo(Difficulty.EASY);
-    }
-
-    /**
-     * Tests that the findAll() method returns a list of all saved Challenge entities.
-     */
-    @Test
-    void findAll_returns_list() {
-        dao.save(sample());
-        dao.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
-        List<Challenge> list = dao.findAll();
-        assertThat(list).hasSize(2);
+    void create_assignsId() {
+        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "Find two numbers sum to target", "...");
+        dao.saveOrUpdate(c1);
+        assertNotNull(c1.getId());
     }
 
     @Test
-    void findByDifficulty_filters_results() {
-        dao.save(new Challenge("Reverse String", Difficulty.EASY, "Reverse characters", "details..."));
-        dao.save(new Challenge("Binary Search", Difficulty.MEDIUM, "Search sorted array", "details..."));
-        List<Challenge> easy = dao.findByDifficulty(Difficulty.EASY);
-        assertThat(easy).extracting(Challenge::getDifficulty).containsOnly(Difficulty.EASY);
+    void read_getById_returnsSavedEntity() {
+        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "Find two numbers sum to target", "...");
+        dao.saveOrUpdate(c1);
+        Challenge found = dao.getById(c1.getId());
+        assertNotNull(found);
+        assertEquals("Two Sum", found.getTitle());
+        assertEquals(Difficulty.EASY, found.getDifficulty());
     }
 
-    /**
-     * Tests that the findByTitle() method returns an empty result when no Challenge
-     * entity matches the given title.
-     */
     @Test
-    void findByTitle_missing_returns_empty() {
-        assertThat(dao.findByTitle("Nope")).isEmpty();
+    void update_persistsChanges() {
+        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "Find two numbers sum to target", "...");
+        dao.saveOrUpdate(c1);
+        c1.setTitle("Two Sum v2");
+        dao.saveOrUpdate(c1);
+        Challenge updated = dao.getById(c1.getId());
+        assertEquals("Two Sum v2", updated.getTitle());
     }
 
-    /**
-     * Tests that the deleteById() method removes a Challenge entity from the repository.
-     * Verifies that the entity is no longer present after deletion.
-     */
     @Test
-    void deleteById_removes_entity() {
-        Challenge saved = dao.save(sample());
-        Long id = saved.getId();
-        dao.deleteById(id);
-        assertThat(dao.findById(id)).isEmpty();
+    void getAll_returnsAll() {
+        dao.saveOrUpdate(new Challenge("Two Sum", Difficulty.EASY, "", "..."));
+        dao.saveOrUpdate(new Challenge("Three Sum", Difficulty.MEDIUM, "", "..."));
+        List<Challenge> all = dao.getAll();
+        assertEquals(2, all.size());
+    }
+
+    @Test
+    void existsTitleIgnoreCase_trueAfterInsert() {
+        dao.saveOrUpdate(new Challenge("Two Sum", Difficulty.EASY, "", "..."));
+        assertTrue(dao.existsTitleIgnoreCase("two sum"));
+    }
+
+    @Test
+    void existsTitleForOtherIgnoreCase_falseForSameEntity() {
+        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "", "...");
+        dao.saveOrUpdate(c1);
+        assertFalse(dao.existsTitleForOtherIgnoreCase("two sum", c1.getId()));
+    }
+
+    @Test
+    void findByDifficulty_returnsOnlyMatching() {
+        dao.saveOrUpdate(new Challenge("Two Sum", Difficulty.EASY, "", "..."));
+        dao.saveOrUpdate(new Challenge("Three Sum", Difficulty.MEDIUM, "", "..."));
+        assertEquals(1, dao.findByDifficulty(Difficulty.EASY).size());
+    }
+
+    @Test
+    void delete_removesRow() {
+        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "", "...");
+        dao.saveOrUpdate(c1);
+        Long id = c1.getId();
+        dao.delete(c1);
+        assertNull(dao.getById(id));
+        assertEquals(0, dao.getAll().size());
+    }
+
+    @Test
+    void delete_withDependents_failsWithoutCleaning() {
+        Challenge ch = new Challenge("Dependent Test", Difficulty.EASY, "", "...");
+        dao.saveOrUpdate(ch);
+
+        DrillItem di = new DrillItem(ch);
+        drillDao.saveOrUpdate(di);
+        Submission s = new Submission(ch, Outcome.CORRECT, null);
+        submissionDao.saveOrUpdate(s);
+
+        // When / Then – should throw some persistence-level exception
+        assertThrows(Exception.class, () -> dao.delete(ch));
+
+        // Verify parent and children still exist
+        assertNotNull(dao.getById(ch.getId()));
+        assertEquals(1, drillDao.listByChallengeId(ch.getId()).size());
+        assertEquals(1, submissionDao.listByChallengeId(ch.getId()).size());
+
+        // Clean up for test isolation
+        drillDao.delete(di);
+        submissionDao.delete(s);
+        dao.delete(ch);
     }
 }
