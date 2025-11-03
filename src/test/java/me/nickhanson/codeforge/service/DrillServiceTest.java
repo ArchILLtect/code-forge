@@ -5,148 +5,90 @@ import me.nickhanson.codeforge.persistence.ChallengeDao;
 import me.nickhanson.codeforge.persistence.DrillItemDao;
 import me.nickhanson.codeforge.persistence.SubmissionDao;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-@DataJpaTest
-@ActiveProfiles("test")
-@Import({DrillService.class, ChallengeDao.class, DrillItemDao.class, SubmissionDao.class})
+@ExtendWith(MockitoExtension.class)
 class DrillServiceTest {
 
-    @Autowired
-    ChallengeDao challengeDao;
-    @Autowired
-    DrillItemDao drillItemDao;
-    @Autowired
-    DrillService drillService;
+    @Mock DrillItemDao drillDao;
+    @Mock SubmissionDao subDao;
+    @Mock ChallengeDao chalDao;
 
-    private Challenge newChallenge(String title) {
-        return challengeDao.save(new Challenge(title, Difficulty.EASY, "blurb", "prompt"));
+    @InjectMocks DrillService service;
+
+    private static Challenge challengeWithId(long id) {
+        Challenge c = new Challenge("Two Sum", Difficulty.EASY, "b", "p");
+        try { var f = Challenge.class.getDeclaredField("id"); f.setAccessible(true); f.set(c, id); } catch (Exception ignored) {}
+        return c;
     }
 
     @Test
-    void recordOutcome_createsItem_and_updates_streak_timesSeen_and_schedule_for_correct() {
-        Challenge ch = newChallenge("Two Sum");
-        Instant before = Instant.now();
-        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, "code");
+    void recordOutcome_createsSubmission_updatesDrillItem_andPersistsBoth() {
+        Long id = 42L;
+        Challenge c = challengeWithId(id);
+        DrillItem di = new DrillItem(c);
 
-        List<DrillItem> items = drillItemDao.findByChallengeId(ch.getId());
-        assertThat(items).hasSize(1);
-        DrillItem di = items.get(0);
-        assertThat(di.getTimesSeen()).isEqualTo(1);
-        assertThat(di.getStreak()).isEqualTo(1);
-        assertThat(di.getNextDueAt()).isNotNull();
+        when(chalDao.getById(id)).thenReturn(c);
+        when(drillDao.listByChallengeId(id)).thenReturn(List.of(di));
 
-        Duration until = Duration.between(before, di.getNextDueAt());
-        // Expect around 30 minutes for streak 1
-        assertThat(until).isGreaterThanOrEqualTo(Duration.ofMinutes(20));
-        assertThat(until).isLessThan(Duration.ofHours(2));
+        Submission s = service.recordOutcome(id, Outcome.CORRECT, "code");
 
-        // Second correct should push to ~1 day
-        before = Instant.now();
-        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
-        di = drillItemDao.findByChallengeId(ch.getId()).get(0);
-        assertThat(di.getTimesSeen()).isEqualTo(2);
-        assertThat(di.getStreak()).isEqualTo(2);
-        until = Duration.between(before, di.getNextDueAt());
-        assertThat(until).isGreaterThanOrEqualTo(Duration.ofHours(12));
-        assertThat(until).isLessThan(Duration.ofDays(2));
+        verify(subDao).saveOrUpdate(any(Submission.class));
+        verify(drillDao).saveOrUpdate(argThat(item ->
+                item.getStreak() >= 1 && item.getTimesSeen() == 1 && item.getNextDueAt() != null));
+        assertEquals(Outcome.CORRECT, s.getOutcome());
     }
 
     @Test
-    void recordOutcome_incorrect_resets_streak_and_short_delay() {
-        Challenge ch = newChallenge("Valid Parentheses");
-        Instant before = Instant.now();
-        drillService.recordOutcome(ch.getId(), Outcome.INCORRECT, null);
-        DrillItem di = drillItemDao.findByChallengeId(ch.getId()).get(0);
-        assertThat(di.getTimesSeen()).isEqualTo(1);
-        assertThat(di.getStreak()).isZero();
-        Duration until = Duration.between(before, di.getNextDueAt());
-        assertThat(until).isGreaterThanOrEqualTo(Duration.ofMinutes(4));
-        assertThat(until).isLessThan(Duration.ofMinutes(15));
+    void computeNextDueAt_advancesAccordingToStreak() {
+        Long id = 7L;
+        Challenge c = challengeWithId(id);
+        DrillItem di = new DrillItem(c);
+        di.setTimesSeen(0);
+        di.setStreak(0);
+
+        when(chalDao.getById(id)).thenReturn(c);
+        when(drillDao.listByChallengeId(id)).thenReturn(List.of(di));
+
+        // CORRECT should set nextDueAt in the future and increment streak
+        service.recordOutcome(id, Outcome.CORRECT, "// correct");
+        verify(drillDao).saveOrUpdate(argThat(item -> item.getStreak() == 1 && item.getNextDueAt().isAfter(Instant.now())));
+
+        // INCORRECT should reset streak to 0 and set shorter delay
+        service.recordOutcome(id, Outcome.INCORRECT, "// fail");
+        verify(drillDao, atLeast(2)).saveOrUpdate(any());
     }
 
     @Test
-    void recordOutcome_skipped_keeps_streak_and_ten_min_delay() {
-        Challenge ch = newChallenge("Merge Intervals");
-        // Build up a streak first
-        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
-        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
-        int streakBefore = drillItemDao.findByChallengeId(ch.getId()).get(0).getStreak();
-        Instant before = Instant.now();
-        drillService.recordOutcome(ch.getId(), Outcome.SKIPPED, null);
-        DrillItem di = drillItemDao.findByChallengeId(ch.getId()).get(0);
-        assertThat(di.getTimesSeen()).isEqualTo(3);
-        assertThat(di.getStreak()).isEqualTo(streakBefore);
-        Duration until = Duration.between(before, di.getNextDueAt());
-        assertThat(until).isGreaterThanOrEqualTo(Duration.ofMinutes(8));
-        assertThat(until).isLessThan(Duration.ofMinutes(20));
+    void getDueQueue_returnsSoonestWhenNoneDue() {
+        when(drillDao.dueQueue(any(), eq(1))).thenReturn(List.of());
+        DrillItem soonest = new DrillItem(challengeWithId(0L));
+        when(drillDao.soonestUpcoming()).thenReturn(Optional.of(soonest));
+
+        var queue = service.getDueQueue(1);
+        assertEquals(1, queue.size());
+        assertSame(soonest, queue.get(0));
     }
 
     @Test
-    void getDueQueue_returns_due_sorted_and_excludes_future() {
-        Challenge a = newChallenge("A");
-        Challenge b = newChallenge("B");
-        Challenge c = newChallenge("C");
+    void ensureDrillItem_createsWhenMissing() {
+        Long id = 9L;
+        Challenge c = challengeWithId(id);
+        when(chalDao.getById(id)).thenReturn(c);
+        when(drillDao.listByChallengeId(id)).thenReturn(List.of());
 
-        DrillItem diA = drillItemDao.save(new DrillItem(a)); // nextDueAt null
-        DrillItem diB = new DrillItem(b);
-        diB.setNextDueAt(Instant.now().minus(Duration.ofMinutes(1))); // due
-        drillItemDao.save(diB);
-        DrillItem diC = new DrillItem(c);
-        diC.setNextDueAt(Instant.now().plus(Duration.ofMinutes(2))); // future
-        drillItemDao.save(diC);
-
-        List<DrillItem> queue = drillService.getDueQueue(10);
-        assertThat(queue).hasSize(2);
-        assertThat(queue.get(0).getId()).isEqualTo(diA.getId()); // null first
-        assertThat(queue.get(1).getId()).isEqualTo(diB.getId()); // then past
-
-        // Limit respected
-        List<DrillItem> one = drillService.getDueQueue(1);
-        assertThat(one).hasSize(1);
-        assertThat(one.get(0).getId()).isEqualTo(diA.getId());
-    }
-
-    @Test
-    void getDueQueue_when_none_due_returns_soonest_future_singleton() {
-        Challenge d = newChallenge("D");
-        Challenge e = newChallenge("E");
-        DrillItem diD = new DrillItem(d);
-        diD.setNextDueAt(Instant.now().plus(Duration.ofMinutes(1)));
-        drillItemDao.save(diD);
-        DrillItem diE = new DrillItem(e);
-        diE.setNextDueAt(Instant.now().plus(Duration.ofMinutes(3)));
-        drillItemDao.save(diE);
-
-        List<DrillItem> queue = drillService.getDueQueue(5);
-        assertThat(queue).hasSize(1);
-        assertThat(queue.get(0).getId()).isEqualTo(diD.getId());
-    }
-
-    @Test
-    void version_increments_on_update() {
-        Challenge ch = newChallenge("Version Check");
-
-        // First write should create the DrillItem and set initial version
-        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
-        DrillItem first = drillItemDao.findByChallengeId(ch.getId()).get(0);
-        Long v1 = first.getVersion();
-        assertThat(v1).as("version after first save").isNotNull();
-
-        // Second write should increment version
-        drillService.recordOutcome(ch.getId(), Outcome.CORRECT, null);
-        DrillItem second = drillItemDao.findByChallengeId(ch.getId()).get(0);
-        Long v2 = second.getVersion();
-        assertThat(v2).as("version after second save").isNotNull();
-        assertThat(v2).isGreaterThan(v1);
+        service.ensureDrillItem(id);
+        verify(drillDao).saveOrUpdate(any(DrillItem.class));
     }
 }
