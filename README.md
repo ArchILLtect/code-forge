@@ -5,7 +5,8 @@
     <img alt="CI" src="https://github.com/ArchILLtect/code-forge/actions/workflows/ci.yml/badge.svg">
   </a>
   <img alt="Java" src="https://img.shields.io/badge/Java-17-007396?logo=java&logoColor=white">
-  <img alt="Spring Boot" src="https://img.shields.io/badge/Spring_Boot-3.3.3-6DB33F?logo=springboot&logoColor=white">
+  <img alt="Servlets/JSP" src="https://img.shields.io/badge/Servlets%2FJSP-Tomcat_9-4CAF50">
+  <img alt="Hibernate" src="https://img.shields.io/badge/Hibernate-6.x-59666C?logo=hibernate&logoColor=white">
   <img alt="Maven" src="https://img.shields.io/badge/Maven-3%2B-C71A36?logo=apachemaven&logoColor=white">
   <a href="https://opensource.org/licenses/MIT">
     <img alt="License" src="https://img.shields.io/badge/License-MIT-blue">
@@ -59,7 +60,6 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 
 - ### Backend
   - **Java 17 (LTS)** — Core language
-  - **Spring Boot** — Primary framework for web tier, REST controllers, and DI
   - **JPA / Hibernate** — ORM layer for database persistence
   - **Project Lombok** — Reduces boilerplate (getters, setters, builders, etc.)
   - **Log4J** — Centralized logging framework (replaces `System.out.println`)
@@ -76,7 +76,7 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 - ### Authentication & Security
   - **AWS Cognito** — Authentication & authorization service (user registration, login, tokens)
   - **Servlet filter (MVP)** — `AuthGuardFilter` protects admin routes and all Drill routes (redirects to `/logIn`)
-  - **Spring Security** (migration later) — OIDC integration tracked for a future milestone
+  - ID token validation (JWKS, RSA256) and HTTP session storage of the user
 
 - ### Testing
   - **JUnit 5** — Unit and integration testing
@@ -105,11 +105,12 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 - ✅ [Reflections](docs/reflections/WeeklyJournal.md)
 - ✅ [Time Log](docs/reflections/TimeLog.md)
 - ✅ ER Diagram (ERD): [docs/erd.png](docs/erd.png)
+- ✅ Deployment runbook: [docs/deployment.md](docs/deployment.md)
 
 ---
 ## 🗺️ Roadmap
-- [ ] Initial project setup
-- [ ] User auth & progress tracking
+- [x] Initial project setup
+- [x] User auth & progress tracking
 - [ ] Problem database + admin interface
 - [ ] Practice mode (basic submission → test feedback)
 - [ ] Drill mode with spaced-repetition queue
@@ -178,6 +179,43 @@ http://localhost:5000
 
 ---
 
+Build the WAR:
+
+- Windows cmd.exe
+```
+cmd /c 'cd /d "C:\Users\nickh\Documents\My Projects\Java\code-forge" && mvn -q -DskipTests=false clean package'
+```
+
+Deploy to Tomcat 9:
+- Copy `target/codeforge.war` into your Tomcat 9 `webapps/` directory (rename to `codeforge.war` if needed)
+- Start Tomcat and open: `http://localhost:8080/codeforge/`
+
+Required runtime configuration:
+- Cognito client secret must be provided via environment or system property (do NOT commit secrets):
+  - `COGNITO_CLIENT_SECRET` (environment variable)
+  - or `-DCOGNITO_CLIENT_SECRET=...` (Java system property)
+- Non-secret Cognito values live in `src/main/resources/cognito.properties`
+
+---
+## Configuration required by QuoteService (non‑Spring)
+QuoteService loads settings from `src/main/resources/application.properties` at runtime.
+
+Required keys:
+- `quote.api.url` — endpoint URL returning JSON array of quotes compatible with ZenQuotes shape.
+- `quote.timeout.seconds` — HTTP connect timeout in seconds (default 5 if missing).
+
+Example `application.properties` (already present):
+```
+quote.api.url=https://zenquotes.io/api/random
+quote.timeout.seconds=5
+```
+
+JSON → POJO mapping:
+- Response elements map to: `record ApiResponse(String q, String a, String h) {}`
+- Home page invokes `QuoteService#getRandomQuote()` and forwards the `quote` to the JSP
+
+---
+
 ## 🧪 Stub Run Service (Heuristics)
 The early runner does not compile or execute code. It deterministically simulates outcomes to unblock UI wiring. Heuristics (order matters):
 - Unsupported or blank language → outcome=SKIPPED
@@ -227,7 +265,6 @@ mvn spring-boot:run
 On login, the app redirects to the Cognito Hosted UI; on callback (`/auth`) it exchanges the code for tokens using your `client.id` and `COGNITO_CLIENT_SECRET`, validates the ID token, stores the user in the session, and redirects to `/me`.
 
 ### Pagination status (MVP)
-- Server-side Pageable has been removed.
 - Client-side pagination is implemented with jQuery DataTables via CDN on the challenges list.
 
 ---
