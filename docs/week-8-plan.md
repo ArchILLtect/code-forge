@@ -88,3 +88,4 @@ cmd /c 'set "SPRING_DATASOURCE_URL=jdbc:postgresql://<host>:5432/<db>?sslmode=re
 
 After verification, switch SPRING_JPA_HIBERNATE_DDL_AUTO to validate for deployment.
 
+

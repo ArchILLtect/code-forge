@@ -35,21 +35,21 @@ CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to ex
 
 ---
 ## ✨ Features (Planned / In Progress)
-- **Practice Mode**  
+- **Practice Mode**
   Browse algorithm challenges by topic and difficulty, write your solution, and get instant test feedback.
   - Early stub runner implemented (ChallengeRunService) for Week 5 to support upcoming submit flow.
 
-- **Drill Mode**  
+- **Drill Mode**
   A “flashcard for code” system. Missed or skipped problems come back in future cycles until you solve them correctly — with some solved ones mixed in to re-check your mastery.
   - Week 7: Drill UI + controller + submit flow wired end-to-end (Issues 27 & 28). Queue page, next redirect, solve page, and submit now work; outcomes persist and scheduling updates.
 
 - **Progress Tracking**
   Track your problem status (`Correct`, `Acceptable`, `Incorrect`, `Skipped`) and see your overall improvement over time.
 
-- **Expandable Challenge Set**  
+- **Expandable Challenge Set**
   Admins/instructors can easily add new problems, test cases, and starter code to grow the platform.
 
-- **Admin Tools (Week 5)**  
+- **Admin Tools (Week 5)**
   Basic Challenge management (Create/Edit/Delete), list pagination/sorting, filter by difficulty, validation and friendly error pages (404/500).
 
 ---
@@ -389,3 +389,4 @@ The home page uses `HomeServlet` to call `QuoteService#getRandomQuote()` and for
 - If outbound HTTP is blocked, the home page will show a fallback quote.
 
 ---
+

@@ -103,9 +103,9 @@ Acceptance criteria
 - Screenshots (placeholders committed):
   - docs/screenshots/week6-auth-login.png
   - docs/screenshots/week6-challenges-list.png
-  - docs/screenshots/week6-eb-health-up.png
 
 ## Notes & Assumptions
 - Target runtime: Java 17 (Corretto 17 on EB)
 - Secrets for Cognito configured via environment variables or EB configuration (not committed)
 - If actuator not present, add dependency and minimal config as part of this week
+
