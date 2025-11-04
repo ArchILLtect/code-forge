@@ -11,10 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,6 +22,31 @@ class ChallengeServiceTest {
 
     @Mock ChallengeDao dao;
     @InjectMocks ChallengeService svc;
+
+    @Test
+    void findAll() {
+        List<Challenge> all = List.of(
+                new Challenge("Two Sum", Difficulty.EASY, "b","p"),
+                new Challenge("LRU Cache", Difficulty.HARD, "b","p")
+        );
+        when(dao.getAll()).thenReturn(all);
+
+        List<Challenge> result = svc.listChallenges(null);
+
+        assertEquals(2, result.size());
+        verify(dao).getAll();
+        verifyNoMoreInteractions(dao);
+    }
+
+    @Test
+    void findById_returnsOne_whenPresent() {
+        Challenge c = new Challenge("Two Sum", Difficulty.EASY, "b","p");
+        when(dao.getById(42L)).thenReturn(c);
+
+        assertTrue(svc.getById(42L).isPresent());
+        assertEquals("Two Sum", svc.getById(42L).get().getTitle());
+        verify(dao, times(2)).getById(42L); // or call once then store the Optional
+    }
 
     @Test
     void create_setsFields_and_saves() {

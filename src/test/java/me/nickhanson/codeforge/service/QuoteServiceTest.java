@@ -66,7 +66,7 @@ class QuoteServiceTest {
                 .thenReturn(httpResponse);
 
         String first = service.getRandomQuote();
-        assertEquals("\u201cHello\u201d — World", first);
+        assertEquals("“Hello” — World", first);
 
         // Second call should use cache; http.send still only 1 call
         String second = service.getRandomQuote();
@@ -123,7 +123,7 @@ class QuoteServiceTest {
                 .thenReturn(httpResponse);
 
         String out = service.getRandomQuote();
-        assertTrue(out.equals("\u201cAlpha\u201d — A") || out.equals("\u201cBeta\u201d — B"));
+        assertTrue(out.equals("“Alpha” — A") || out.equals("“Beta” — B"));
     }
 
     /**
@@ -138,7 +138,7 @@ class QuoteServiceTest {
                 .thenReturn(httpResponse);
 
         String out = service.getRandomQuote();
-        assertEquals("\u201cMsg\u201d — Unknown", out);
+        assertEquals("“Msg” — Unknown", out);
     }
 
     // --- helpers ---

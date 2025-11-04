@@ -1,9 +1,10 @@
 package me.nickhanson.codeforge.persistence;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+
+import java.sql.Statement;
 
 /**
  * Base class for DAO integration tests. It resets the in-memory H2 database tables
@@ -15,11 +16,15 @@ public abstract class DaoTestBase {
     void resetDatabase() {
         // Delete in FK-safe order
         try (Session session = SessionFactoryProvider.getSessionFactory().openSession()) {
-            Transaction tx = session.beginTransaction();
-            session.createNativeQuery("DELETE FROM SUBMISSIONS").executeUpdate();
-            session.createNativeQuery("DELETE FROM DRILL_ITEMS").executeUpdate();
-            session.createNativeQuery("DELETE FROM CHALLENGES").executeUpdate();
-            tx.commit();
+            session.doWork(conn -> {
+                try (Statement st = conn.createStatement()) {
+                    st.execute("SET REFERENTIAL_INTEGRITY TO FALSE");
+                    st.execute("TRUNCATE TABLE SUBMISSIONS RESTART IDENTITY");
+                    st.execute("TRUNCATE TABLE DRILL_ITEMS RESTART IDENTITY");
+                    st.execute("TRUNCATE TABLE CHALLENGES RESTART IDENTITY");
+                    st.execute("SET REFERENTIAL_INTEGRITY TO TRUE");
+                }
+            });
         }
     }
 
