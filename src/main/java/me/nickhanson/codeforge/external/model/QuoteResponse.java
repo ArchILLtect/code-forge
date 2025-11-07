@@ -1,9 +1,9 @@
-package me.nickhanson.codeforge.entity;
+package me.nickhanson.codeforge.external.model;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class QuoteResponseItem{
+public class QuoteResponse {
 
 	@JsonProperty("authorSlug")
 	private String authorSlug;
