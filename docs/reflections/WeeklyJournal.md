@@ -67,7 +67,7 @@ Highlights
 - Centralized error handling via @ControllerAdvice with JSP error pages for 404 and 500 (correct HTTP statuses).
 - Logging: Log4J2 console appender configured; clean INFO defaults across the app.
 - Service layer: Introduced ChallengeService to keep controllers thin and consolidate business logic.
-- Data layer: Added Submission and DrillItem DAOs (repos) plus tests; expanded data.sql to seed realistic dev data.
+- Data layer: Added Submission and DrillItem DAOs (repos) plus tests; expanded cleandb.sql to seed realistic dev data.
 - Fixes: H2 console 404 resolved; JSTL taglib issue fixed by adding Jakarta JSTL and correcting JSP taglib usage; clarified test profile behavior (create-drop, no dev seed load).
 
 Testing and docs

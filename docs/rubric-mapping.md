@@ -10,7 +10,7 @@ This document explicitly maps the repo state to rubric items for DB, DAO, loggin
   - Submission — `src/main/java/me/nickhanson/codeforge/entity/Submission.java`
   - DrillItem — `src/main/java/me/nickhanson/codeforge/entity/DrillItem.java`
 - Seed data:
-  - `src/main/resources/data.sql` seeds CHALLENGES, SUBMISSIONS, and DRILL_ITEMS (IDs 1–3), sufficient for local dev/test.
+  - `src/main/resources/cleandb.sql` seeds CHALLENGES, SUBMISSIONS, and DRILL_ITEMS (IDs 1–3), sufficient for local dev/test.
 
 ## DAO (CRUD) + Transactions
 - DAOs (manual JPA via EntityManager):
