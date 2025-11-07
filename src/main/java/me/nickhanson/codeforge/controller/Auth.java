@@ -51,15 +51,15 @@ import java.util.stream.Collectors;
 public class Auth extends HttpServlet implements PropertiesLoader {
 
     Properties properties;
-    String CLIENT_ID;
-    String CLIENT_SECRET;
-    String OAUTH_URL;
-    String LOGIN_URL;
-    String REDIRECT_URL;
-    String REGION;
-    String POOL_ID;
+    String clientId;
+    String clientSecrect;
+    String oAuthURL;
+    String loginUrl;
+    String redirectUrl;
+    String region;
+    String poolId;
     // Use existing error JSP under WEB-INF
-    String ERROR_URL = "/WEB-INF/jsp/error/500.jsp";
+    String errorUrl = "/WEB-INF/jsp/error/500.jsp";
     Keys jwks;
 
     // Reuse a single HttpClient instance (HttpClient is not AutoCloseable)
@@ -83,42 +83,42 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         properties = loadProperties("/cognito.properties");
 
         // Use the same client id as LogIn (from properties)
-        CLIENT_ID = properties.getProperty("client.id");
+        clientId = properties.getProperty("client.id");
 
         // Resolve secret from multiple sources (env -> sysprop -> web.xml context-param -> properties)
-        CLIENT_SECRET = System.getenv("COGNITO_CLIENT_SECRET");
-        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
-            CLIENT_SECRET = System.getProperty("COGNITO_CLIENT_SECRET");
-            if (CLIENT_SECRET != null && !CLIENT_SECRET.isBlank()) {
+        clientSecrect = System.getenv("COGNITO_CLIENT_SECRET");
+        if (clientSecrect == null || clientSecrect.isBlank()) {
+            clientSecrect = System.getProperty("COGNITO_CLIENT_SECRET");
+            if (clientSecrect != null && !clientSecrect.isBlank()) {
                 logger.info("Using COGNITO_CLIENT_SECRET from Java system property (-DCOGNITO_CLIENT_SECRET)");
             }
         } else {
             logger.info("Using COGNITO_CLIENT_SECRET from environment variable");
         }
-        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+        if (clientSecrect == null || clientSecrect.isBlank()) {
             ServletContext ctx = getServletContext();
             String ctxSecret = ctx.getInitParameter("COGNITO_CLIENT_SECRET");
             if (ctxSecret != null && !ctxSecret.isBlank()) {
-                CLIENT_SECRET = ctxSecret;
+                clientSecrect = ctxSecret;
                 logger.warn("Using COGNITO_CLIENT_SECRET from web.xml <context-param> (dev only)");
             }
         }
-        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+        if (clientSecrect == null || clientSecrect.isBlank()) {
             String propSecret = properties.getProperty("client.secret");
             if (propSecret != null && !propSecret.isBlank()) {
-                CLIENT_SECRET = propSecret;
+                clientSecrect = propSecret;
                 logger.warn("Using client.secret from cognito.properties (dev only; do not use in prod)");
             }
         }
-        if (CLIENT_SECRET == null || CLIENT_SECRET.isBlank()) {
+        if (clientSecrect == null || clientSecrect.isBlank()) {
             logger.error("COGNITO_CLIENT_SECRET is not set. Refusing to start Auth servlet.");
             throw new ServletException("Missing COGNITO_CLIENT_SECRET (env, -D, context-param, or properties)");
         }
-        OAUTH_URL = properties.getProperty("oAuthURL");
-        LOGIN_URL = properties.getProperty("loginURL");
-        REDIRECT_URL = EnvConfig.get(logger, properties, "redirectURL");
-        REGION = properties.getProperty("region");
-        POOL_ID = properties.getProperty("pool.id");
+        oAuthURL = properties.getProperty("oAuthURL");
+        loginUrl = properties.getProperty("loginURL");
+        redirectUrl = EnvConfig.get(logger, properties, "redirectURL");
+        region = properties.getProperty("region");
+        poolId = properties.getProperty("pool.id");
 
         loadKey();
     }
@@ -138,7 +138,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         if (authCode == null) {
             logger.error("Missing authorization code in callback. Forwarding to error page.");
             req.setAttribute("errorMessage", "Missing or invalid authorization code. Please try logging in again.");
-            req.getRequestDispatcher(ERROR_URL).forward(req, resp);
+            req.getRequestDispatcher(errorUrl).forward(req, resp);
             return;
         } else {
             HttpRequest authRequest = buildAuthRequest(authCode);
@@ -153,13 +153,13 @@ public class Auth extends HttpServlet implements PropertiesLoader {
             } catch (SecurityException se) {
                 req.setAttribute("errorMessage", "Authentication failed: " + se.getMessage());
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                req.getRequestDispatcher(ERROR_URL).forward(req, resp);
+                req.getRequestDispatcher(errorUrl).forward(req, resp);
                 return;
             } catch (IOException | InterruptedException ex) {
                 logger.error("Auth exchange failed: {}", ex.getMessage(), ex);
                 req.setAttribute("errorMessage", "Authentication service is temporarily unavailable.");
                 resp.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
-                req.getRequestDispatcher(ERROR_URL).forward(req, resp);
+                req.getRequestDispatcher(errorUrl).forward(req, resp);
                 return;
             }
         }
@@ -234,7 +234,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
             Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) publicKey, null);
 
             // Verify ISS field of the token to make sure it's from the Cognito source
-            String iss = String.format("https://cognito-idp.%s.amazonaws.com/%s", REGION, POOL_ID);
+            String iss = String.format("https://cognito-idp.%s.amazonaws.com/%s", region, poolId);
 
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(iss)
@@ -266,14 +266,14 @@ public class Auth extends HttpServlet implements PropertiesLoader {
      * @return the constructed oauth request
      */
     private HttpRequest buildAuthRequest(String authCode) {
-        String keys = CLIENT_ID + ":" + CLIENT_SECRET;
+        String keys = clientId + ":" + clientSecrect;
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("grant_type", "authorization_code");
-        parameters.put("client_secret", CLIENT_SECRET);
-        parameters.put("client_id", CLIENT_ID);
+        parameters.put("client_secret", clientSecrect);
+        parameters.put("client_id", clientId);
         parameters.put("code", authCode);
-        parameters.put("redirect_uri", REDIRECT_URL);
+        parameters.put("redirect_uri", redirectUrl);
 
         String form = parameters.keySet().stream()
                 .map(key -> key + "=" + URLEncoder.encode(parameters.get(key), StandardCharsets.UTF_8))
@@ -281,7 +281,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
         String encoding = Base64.getEncoder().encodeToString(keys.getBytes());
 
-        return HttpRequest.newBuilder().uri(URI.create(OAUTH_URL))
+        return HttpRequest.newBuilder().uri(URI.create(oAuthURL))
                 .headers("Content-Type", "application/x-www-form-urlencoded", "Authorization", "Basic " + encoding)
                 .POST(HttpRequest.BodyPublishers.ofString(form)).build();
     }
@@ -295,7 +295,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
         try (InputStream in = new URL(
                 String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json",
-                        REGION, POOL_ID)).openStream()) {
+                        region, poolId)).openStream()) {
             jwks = mapper.readValue(in, Keys.class);
             logger.debug("Keys are loaded. Here's e: {}", jwks.getKeys().get(0).getE());
         } catch (IOException ioException) {

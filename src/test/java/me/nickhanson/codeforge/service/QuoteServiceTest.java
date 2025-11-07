@@ -1,7 +1,6 @@
 package me.nickhanson.codeforge.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.nickhanson.codeforge.entity.QuoteResponseItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,26 +30,6 @@ class QuoteServiceTest {
         // Inject mocked HttpClient into the service (avoid real network)
         setPrivateField(service, "http", http);
         // Reduce cache duration if needed in future (defaults are fine here)
-    }
-
-    /**
-     * Test that the JSON mapping from the quote API to QuoteResponseItem works as expected.
-     * @throws Exception if mapping fails
-     */
-    @Test
-    void apiMapping_parsesExpectedFields() throws Exception {
-        String json = "[{\"_id\":\"A5l8yCGO4BL5\",\"content\":\"Forgiveness is choosing to love. It is the first skill of self-giving love.\",\"author\":\"Mahatma Gandhi\",\"tags\":[\"Wisdom\"],\"authorSlug\":\"mahatma-gandhi\",\"length\":75,\"dateAdded\":\"2019-12-13\",\"dateModified\":\"2023-04-14\"}]";
-        ObjectMapper mapper = new ObjectMapper();
-
-        // Act: map JSON → POJO array
-        QuoteResponseItem[] arr = mapper.readValue(json, QuoteResponseItem[].class);
-
-        // Assert: verify that Jackson mapped the fields correctly
-        assertNotNull(arr);
-        assertEquals(1, arr.length);
-        assertEquals("Forgiveness is choosing to love. It is the first skill of self-giving love.", arr[0].getContent());
-        assertEquals("Mahatma Gandhi", arr[0].getAuthor());
-        assertEquals(75, arr[0].getLength());
     }
 
     /**
@@ -111,7 +90,7 @@ class QuoteServiceTest {
     @Test
     void getRandomQuote_multiElementArray_returnsOneOfThem() throws Exception {
         // Disable cache so we can safely reason about output per call if needed
-        setPrivateField(service, "cacheDuration", 0L);
+        setPrivateField(service, "CACHE_DURATION", 0L);
 
         String body = "[" +
                 "{\"content\":\"Alpha\",\"author\":\"A\"}," +

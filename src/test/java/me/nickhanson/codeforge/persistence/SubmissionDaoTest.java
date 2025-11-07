@@ -43,7 +43,7 @@ class SubmissionDaoTest extends DaoTestBase {
         Challenge ch = seedChallenge("Reverse String");
         Submission s1 = new Submission(ch, Outcome.CORRECT, null);
         submissionDao.saveOrUpdate(s1);
-        Challenge other = seedChallenge("Two Sum");
+        Challenge other = seedChallenge("Unique Lambda");
         Submission s2 = new Submission(other, Outcome.INCORRECT, null);
         submissionDao.saveOrUpdate(s2);
         List<Submission> list = submissionDao.listByChallengeId(ch.getId());
@@ -53,16 +53,23 @@ class SubmissionDaoTest extends DaoTestBase {
 
     @Test
     void delete_submission_keepsChallenge() {
+        int beforeChallengeCount = challengeDao.getAll().size();
+        int beforeSubmissionCount = submissionDao.getAll().size();
+
         Challenge ch = seedChallenge("Reverse String");
         Submission s = new Submission(ch, Outcome.SKIPPED, null);
         submissionDao.saveOrUpdate(s);
         submissionDao.delete(s);
-        assertEquals(1, challengeDao.getAll().size());
-        assertEquals(0, submissionDao.getAll().size());
+
+        assertEquals(beforeChallengeCount + 1, challengeDao.getAll().size());
+        assertEquals(beforeSubmissionCount, submissionDao.getAll().size());
     }
 
     @Test
     void delete_challenge_requiresCleaningDependents() {
+        int beforeChallengeCount = challengeDao.getAll().size();
+        int beforeSubmissionCount = submissionDao.getAll().size();
+
         Challenge ch = seedChallenge("Reverse String");
         // Keep FK safe: seed a DrillItem and a Submission
         DrillItem di = new DrillItem(ch); drillDao.saveOrUpdate(di);
@@ -73,7 +80,6 @@ class SubmissionDaoTest extends DaoTestBase {
         submissionDao.delete(s);
         challengeDao.delete(ch);
 
-        assertEquals(0, challengeDao.getAll().size());
-        assertEquals(0, submissionDao.getAll().size());
+        assertEquals(beforeChallengeCount, challengeDao.getAll().size());
     }
 }

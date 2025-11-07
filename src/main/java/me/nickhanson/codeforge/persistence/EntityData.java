@@ -68,10 +68,9 @@ public class EntityData<T> {
             tx = session.beginTransaction();
             session.saveOrUpdate(entity);         // Hibernate API, in-scope
             tx.commit();
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            log.error("saveOrUpdate failed for {}", type.getSimpleName(), e);
-            throw e;
+        } catch (RuntimeException ex) {
+            rollbackQuietly(tx);
+            throw ex;
         }
     }
 
@@ -91,11 +90,22 @@ public class EntityData<T> {
             session.remove(managed);
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            rollbackQuietly(tx);
             log.error("delete failed for {}", type.getSimpleName(), e);
             throw e;
         }
     }
+
+    private void rollbackQuietly(Transaction tx) {
+        if (tx != null) {
+            try {
+                tx.rollback();
+            } catch (Exception e) {
+                log.warn("Transaction rollback failed", e);
+            }
+        }
+    }
+
 
     /**
      * Find entities where a property equals a given value.

@@ -1,6 +1,6 @@
 package me.nickhanson.codeforge.service;
 
-import me.nickhanson.codeforge.entity.QuoteResponseItem;
+import me.nickhanson.codeforge.external.model.QuoteResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.nickhanson.codeforge.config.PropertiesLoader;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +27,10 @@ public class QuoteService implements PropertiesLoader {
     private static final Logger logger = LogManager.getLogger(QuoteService.class);
     private static final String FALLBACK = "Keep it simple. — CodeForge";
 
+    private final long CACHE_DURATION;
+    private final List<String> OR_TAGS;
+    private final List<String> AND_TAGS;
+
     private final String apiBaseUrl;
     private final HttpClient http;
     private final ObjectMapper mapper;
@@ -35,14 +39,13 @@ public class QuoteService implements PropertiesLoader {
     private final Duration requestTimeout;
 
     // simple cache
-    private long cacheDuration;
+
     private String lastQuote;
     private long lastFetchTime = 0;
 
     // User preferences
     private String userAuthor = null;
-    private List<String> orTags;
-    private List<String> andTags;
+
 
         // Constructor initializes HttpClient and loads configuration properties
     public QuoteService() {
@@ -53,10 +56,10 @@ public class QuoteService implements PropertiesLoader {
         if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
             logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
         }
-        this.cacheDuration = Long.parseLong(props.getProperty("quote.cache.duration.ms", "60000")); // 1 minute default
+        this.CACHE_DURATION = Long.parseLong(props.getProperty("quote.cache.duration.ms", "60000")); // 1 minute default
         this.userAuthor = props.getProperty("quote.author", "").trim();
-        this.orTags  = parseCsv(props.getProperty("quote.tags.or", ""));
-        this.andTags = parseCsv(props.getProperty("quote.tags.and", ""));
+        this.OR_TAGS  = parseCsv(props.getProperty("quote.tags.or", ""));
+        this.AND_TAGS = parseCsv(props.getProperty("quote.tags.and", ""));
         int timeout = Integer.parseInt(props.getProperty("quote.api.timeout.seconds", "5"));
         this.requestTimeout = Duration.ofSeconds(timeout);
         this.http = HttpClient.newBuilder()
@@ -75,7 +78,7 @@ public class QuoteService implements PropertiesLoader {
         long now = System.currentTimeMillis();
 
         // If cached quote is still valid, return it
-        if (lastQuote != null && (now - lastFetchTime) < cacheDuration) {
+        if (lastQuote != null && (now - lastFetchTime) < CACHE_DURATION) {
             // Log the current time passed since last fetch
             logger.info("Using cached quote, {} ms since last fetch", (now - lastFetchTime));
             return lastQuote;
@@ -103,7 +106,7 @@ public class QuoteService implements PropertiesLoader {
                 return FALLBACK;
             }
 
-            QuoteResponseItem[] responseArray = mapper.readValue(resp.body(), QuoteResponseItem[].class);
+            QuoteResponse[] responseArray = mapper.readValue(resp.body(), QuoteResponse[].class);
             if (responseArray == null || responseArray.length == 0 || responseArray[0] == null) {
                 logger.warn("Quote API returned empty payload");
                 return FALLBACK;
@@ -124,7 +127,7 @@ public class QuoteService implements PropertiesLoader {
             lastQuote = "“" + text + "” — " + author;
             lastFetchTime = now;
 
-            return "\u201c" + text + "\u201d — " + author; // “text” — Author
+            return "“" + text + "” — " + author; // “text” — Author
         } catch (IOException | InterruptedException ie) {
             logger.warn("Quote fetch failed: {}", ie.toString());
             return FALLBACK;
@@ -142,8 +145,8 @@ public class QuoteService implements PropertiesLoader {
             params.add("author=" + URLEncoder.encode(userAuthor, StandardCharsets.UTF_8));
         } else {
             // tags only if no keyword/author
-            String orPart  = String.join("|", orTags);
-            String andPart = String.join(",", andTags);
+            String orPart  = String.join("|", OR_TAGS);
+            String andPart = String.join(",", AND_TAGS);
 
             String tagsValue = null;
             if (!orPart.isBlank() && !andPart.isBlank()) {

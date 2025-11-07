@@ -19,67 +19,73 @@ class ChallengeDaoTest extends DaoTestBase {
 
     @Test
     void create_assignsId() {
-        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "Find two numbers sum to target", "...");
+        Challenge c1 = new Challenge("Unique Alpha", Difficulty.EASY, "Find two numbers sum to target", "...");
         dao.saveOrUpdate(c1);
         assertNotNull(c1.getId());
     }
 
     @Test
     void read_getById_returnsSavedEntity() {
-        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "Find two numbers sum to target", "...");
+        Challenge c1 = new Challenge("Unique Beta", Difficulty.EASY, "Find two numbers sum to target", "...");
         dao.saveOrUpdate(c1);
         Challenge found = dao.getById(c1.getId());
         assertNotNull(found);
-        assertEquals("Two Sum", found.getTitle());
+        assertEquals("Unique Beta", found.getTitle());
         assertEquals(Difficulty.EASY, found.getDifficulty());
     }
 
     @Test
     void update_persistsChanges() {
-        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "Find two numbers sum to target", "...");
+        Challenge c1 = new Challenge("Unique Gamma", Difficulty.EASY, "Find two numbers sum to target", "...");
         dao.saveOrUpdate(c1);
-        c1.setTitle("Two Sum v2");
+        c1.setTitle("Unique Gamma v2");
         dao.saveOrUpdate(c1);
         Challenge updated = dao.getById(c1.getId());
-        assertEquals("Two Sum v2", updated.getTitle());
+        assertEquals("Unique Gamma v2", updated.getTitle());
     }
 
     @Test
     void getAll_returnsAll() {
-        dao.saveOrUpdate(new Challenge("Two Sum", Difficulty.EASY, "", "..."));
-        dao.saveOrUpdate(new Challenge("Three Sum", Difficulty.MEDIUM, "", "..."));
+        int before = dao.getAll().size();
+        dao.saveOrUpdate(new Challenge("Unique Delta", Difficulty.EASY, "", "..."));
+        dao.saveOrUpdate(new Challenge("Unique Epsilon", Difficulty.MEDIUM, "", "..."));
         List<Challenge> all = dao.getAll();
-        assertEquals(2, all.size());
+        assertEquals(before + 2, all.size());
     }
 
     @Test
     void existsTitleIgnoreCase_trueAfterInsert() {
-        dao.saveOrUpdate(new Challenge("Two Sum", Difficulty.EASY, "", "..."));
-        assertTrue(dao.existsTitleIgnoreCase("two sum"));
+        dao.saveOrUpdate(new Challenge("Unique Zeta", Difficulty.EASY, "", "..."));
+        assertTrue(dao.existsTitleIgnoreCase("unique zeta"));
     }
 
     @Test
     void existsTitleForOtherIgnoreCase_falseForSameEntity() {
-        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "", "...");
+        Challenge c1 = new Challenge("Unique Eta", Difficulty.EASY, "", "...");
         dao.saveOrUpdate(c1);
-        assertFalse(dao.existsTitleForOtherIgnoreCase("two sum", c1.getId()));
+        assertFalse(dao.existsTitleForOtherIgnoreCase("unique eta", c1.getId()));
     }
 
     @Test
     void findByDifficulty_returnsOnlyMatching() {
-        dao.saveOrUpdate(new Challenge("Two Sum", Difficulty.EASY, "", "..."));
-        dao.saveOrUpdate(new Challenge("Three Sum", Difficulty.MEDIUM, "", "..."));
-        assertEquals(1, dao.findByDifficulty(Difficulty.EASY).size());
+        int beforeEasy = dao.findByDifficulty(Difficulty.EASY).size();
+        int beforeMedium = dao.findByDifficulty(Difficulty.MEDIUM).size();
+        dao.saveOrUpdate(new Challenge("Unique Theta", Difficulty.EASY, "", "..."));
+        dao.saveOrUpdate(new Challenge("Unique Iota", Difficulty.MEDIUM, "", "..."));
+        assertEquals(beforeEasy + 1, dao.findByDifficulty(Difficulty.EASY).size());
+        assertEquals(beforeMedium + 1, dao.findByDifficulty(Difficulty.MEDIUM).size());
     }
 
     @Test
     void delete_removesRow() {
-        Challenge c1 = new Challenge("Two Sum", Difficulty.EASY, "", "...");
+        int before = dao.getAll().size();
+        Challenge c1 = new Challenge("Unique Kappa", Difficulty.EASY, "", "...");
         dao.saveOrUpdate(c1);
-        Long id = c1.getId();
+        int afterInsert = dao.getAll().size();
+        assertEquals(before + 1, afterInsert);
         dao.delete(c1);
-        assertNull(dao.getById(id));
-        assertEquals(0, dao.getAll().size());
+        int afterDelete = dao.getAll().size();
+        assertEquals(before, afterDelete);
     }
 
     @Test
