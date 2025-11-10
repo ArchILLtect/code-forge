@@ -26,7 +26,7 @@ import java.util.Properties;
 public class QuoteService implements PropertiesLoader {
     private static final Logger logger = LogManager.getLogger(QuoteService.class);
     private static final String FALLBACK = "Keep it simple. — CodeForge";
-
+    private final String FALLBACK_URL;
     private final long CACHE_DURATION;
     private final List<String> OR_TAGS;
     private final List<String> AND_TAGS;
@@ -51,7 +51,8 @@ public class QuoteService implements PropertiesLoader {
     public QuoteService() {
         logger.info("Java={}, Vendor={}", System.getProperty("java.version"), System.getProperty("java.vendor"));
         Properties props = loadProperties("/application.properties");
-        this.apiBaseUrl = props.getProperty("quote.api.url", "https://zenquotes.io/api/random");
+        this.FALLBACK_URL = props.getProperty("quote.fallback.url", "");
+        this.apiBaseUrl = props.getProperty("quote.api.url", FALLBACK_URL);
         boolean allowInsecure = Boolean.parseBoolean(props.getProperty("quote.api.allowInsecure","false"));
         if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
             logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
@@ -100,6 +101,8 @@ public class QuoteService implements PropertiesLoader {
             HttpResponse<String> resp = http.send(req, HttpResponse.BodyHandlers.ofString());
             int status = resp.statusCode();
 
+            logger.info("URL used: {}", uri.toString());
+
             // Handle non-200 responses gracefully
             if (status != 200) {
                 logger.warn("Quote API returned status {}: {}", status, truncate(resp.body()));
@@ -137,17 +140,25 @@ public class QuoteService implements PropertiesLoader {
         }
     }
 
+    /**
+     * Builds the URI for the quote API request based on user preferences.
+     * @return The constructed URI.
+     */
     private URI buildQuoteUri() {
+        // Build query parameters based on user preferences
         StringBuilder url = new StringBuilder(apiBaseUrl);
+        // Collect query parameters
         List<String> params = new ArrayList<>();
 
+        // author only if specified, blank means any author, randomly chosen
          if (userAuthor != null && !userAuthor.isBlank()) {
             params.add("author=" + URLEncoder.encode(userAuthor, StandardCharsets.UTF_8));
         } else {
-            // tags only if no keyword/author
+            // tags only if no author
             String orPart  = String.join("|", OR_TAGS);
             String andPart = String.join(",", AND_TAGS);
 
+            // Combine the OR and AND parts appropriately
             String tagsValue = null;
             if (!orPart.isBlank() && !andPart.isBlank()) {
                 tagsValue = orPart + "," + andPart;       // (OR) AND (AND)
@@ -157,11 +168,13 @@ public class QuoteService implements PropertiesLoader {
                 tagsValue = andPart;                       // AND only
             }
 
+            // Add tags parameter if applicable
             if (tagsValue != null && !tagsValue.isBlank()) {
                 params.add("tags=" + URLEncoder.encode(tagsValue, StandardCharsets.UTF_8));
             }
         }
 
+         // Append query parameters to URL
         if (!params.isEmpty()) {
             url.append("?").append(String.join("&", params));
         }
