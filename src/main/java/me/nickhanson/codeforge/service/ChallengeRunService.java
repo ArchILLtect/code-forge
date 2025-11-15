@@ -36,39 +36,39 @@ public class ChallengeRunService {
         log.info("Simulating run for challengeId={} language={}", challengeId, language);
 
         if (language == null || language.isBlank() || !"java".equalsIgnoreCase(language)) {
-            RunResult rr = new RunResult(Outcome.SKIPPED, "Unsupported language: " + language);
-            log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-            return rr;
+            RunResult runResult = new RunResult(Outcome.SKIPPED, "Unsupported language: " + language);
+            log.info("Run finished: ok=false outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+            return runResult;
         }
         if (code == null || code.isBlank()) {
-            RunResult rr = new RunResult(Outcome.SKIPPED, "No code provided – counted as skipped.");
-            log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-            return rr;
+            RunResult runResult = new RunResult(Outcome.SKIPPED, "No code provided – counted as skipped.");
+            log.info("Run finished: ok=false outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+            return runResult;
         }
 
         String normalized = code.toLowerCase();
         if (normalized.contains("skip")) {
-            RunResult rr = new RunResult(Outcome.SKIPPED, "Stub runner: marked as SKIPPED.");
-            log.info("Run finished: ok=true outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-            return rr;
+            RunResult runResult = new RunResult(Outcome.SKIPPED, "Stub runner: marked as SKIPPED.");
+            log.info("Run finished: ok=true outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+            return runResult;
         }
         if (normalized.contains("fail") || normalized.contains("assert false")) {
-            RunResult rr = new RunResult(Outcome.INCORRECT, "Stub runner: marked as INCORRECT.");
-            log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-            return rr;
+            RunResult runResult = new RunResult(Outcome.INCORRECT, "Stub runner: marked as INCORRECT.");
+            log.info("Run finished: ok=false outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+            return runResult;
         }
         if (normalized.contains("// correct") || normalized.contains("// pass")) {
-            RunResult rr = new RunResult(Outcome.CORRECT, "Stub runner: marked as CORRECT.");
-            log.info("Run finished: ok=true outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-            return rr;
+            RunResult runResult = new RunResult(Outcome.CORRECT, "Stub runner: marked as CORRECT.");
+            log.info("Run finished: ok=true outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+            return runResult;
         }
         if (normalized.contains("// ok")) {
-            RunResult rr = new RunResult(Outcome.ACCEPTABLE, "Stub runner: marked as ACCEPTABLE.");
-            log.info("Run finished: ok=true outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-            return rr;
+            RunResult runResult = new RunResult(Outcome.ACCEPTABLE, "Stub runner: marked as ACCEPTABLE.");
+            log.info("Run finished: ok=true outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+            return runResult;
         }
-        RunResult rr = new RunResult(Outcome.INCORRECT, "Stub runner: marked as INCORRECT.");
-        log.info("Run finished: ok=false outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
-        return rr;
+        RunResult runResult = new RunResult(Outcome.INCORRECT, "Stub runner: marked as INCORRECT.");
+        log.info("Run finished: ok=false outcome={} in {}ms", runResult.getOutcome(), (System.currentTimeMillis() - start));
+        return runResult;
     }
 }

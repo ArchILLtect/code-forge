@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+// TODO: Improve asset delivery (S3 pipeline) after course completion.
+
 /**
  * Application bootstrap listener to initialize services and seed data.
  * Registers service singletons in the servlet context and seeds development data if necessary.
