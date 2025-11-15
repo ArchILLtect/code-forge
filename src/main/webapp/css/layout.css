@@ -1,0 +1,64 @@
+/* Parent that owns the submenu */
+.cf-nav-item-has-menu {
+    position: relative;
+}
+
+/* Caret next to "Coding" */
+.cf-nav-caret {
+    font-size: 0.7rem;
+    margin-left: 0.25rem;
+}
+
+/* Dropdown base */
+.cf-nav-dropdown {
+    position: absolute;
+    top: 100%;          /* directly below the parent */
+    left: 0;
+    min-width: 11rem;
+    margin-top: 0.25rem;
+    padding: 0.35rem 0;
+
+    background: #020617;       /* near-black */
+    border-radius: 0.6rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+
+    display: none;
+    z-index: 50;
+}
+
+/* Show dropdown when hovering the LI, not just the anchor */
+.cf-nav-item-has-menu:hover .cf-nav-dropdown,
+.cf-nav-item-has-menu:focus-within .cf-nav-dropdown {
+    display: block;
+}
+
+/* Dropdown links */
+.cf-nav-dropdown-link {
+    display: block;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.cf-nav-dropdown-link:hover,
+.cf-nav-dropdown-link:focus {
+    background: rgba(148, 163, 184, 0.12);
+    color: #f9fafb;
+}
+
+/* Put this in whichever CSS file makes sense */
+.cf-nav-list {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cf-nav-item {
+    position: relative;
+}
