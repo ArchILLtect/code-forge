@@ -13,12 +13,6 @@
   </a>
 </div>
 
-<div align="center">
-  <a href="http://codeforge-env-war.eba-h9i9qmbf.us-east-2.elasticbeanstalk.com/actuator/health">
-    <img alt="EB Health" src="https://img.shields.io/website?url=http%3A%2F%2Fcodeforge-env-war.eba-h9i9qmbf.us-east-2.elasticbeanstalk.com%2Factuator%2Fhealth&label=EB%20health&up_message=UP&down_message=DOWN&cacheSeconds=60">
-  </a>
-</div>
-
 
 Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
 
@@ -97,6 +91,7 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
   - **Draw.io / Mermaid** — (Optional/Stretch) Diagrams and architecture sketches
 
 ---
+
 ## 🗃️ Project Docs
 - ✅ [Problem Statement](docs/problem-statement.md)
 - ✅ [User Stories (MVP)](docs/user-stories.md)
@@ -427,3 +422,45 @@ The home page uses `HomeServlet` to call `QuoteService#getRandomQuote()` and for
 
 ---
 
+# POST-MVP:
+
+##  S3 Asset Storage
+
+CodeForge stores static assets (images, JSON files, etc.) in an S3 bucket rather than bundling them inside the WAR.
+
+- ### Why?
+  - Faster deployments (no need to redeploy for content updates)
+  - Versioning support (rollback assets independently)
+  - Lower cost & cleaner architecture
+
+- ### Bucket Structure
+```
+  codeforge-assets.nickhanson.me/
+  ├── dev/
+  │     └── images/
+  └── prod/
+        └── images/
+```
+
+- ### Public Access Policy
+  Only specific prefixes are public:
+
+```json
+  {
+    "Effect": "Allow",
+    "Principal": "*",
+    "Action": "s3:GetObject",
+    "Resource": "arn:aws:s3:::codeforge-assets.nickhanson.me/prod/images/*"
+  }
+```
+
+- ### Java Access Helper
+
+  The app loads assets depending on environment:
+
+  `AssetConfig.image("banner.png");`
+
+- ### JSP Usage
+  `<img src="${cf:asset('banner.png')}" />`
+
+---

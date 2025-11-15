@@ -53,3 +53,21 @@
 - Acceptance Criteria:
   - [ ] App validates baseline on startup; no pending migrations
   - [ ] Subsequent schema changes are applied via new versioned scripts and verified in CI
+
+2) Retrieve images/JSON/etc. from S3 instead of packaging in the WAR (labels: optimization, hardening)
+- Title: Post‑MVP: serve static assets from S3 instead of bundling in WAR
+- Context: Currently, static assets (images, JSON files) are packaged in the WAR, leading to larger deployments and less flexibility. Moving these assets to S3 will improve scalability and ease updates.
+- Tasks:
+  - [ ] Identify all static assets currently bundled in the WAR
+  - [ ] Upload these assets to a designated S3 bucket with appropriate permissions
+  - [ ] Update the application code to reference the S3 URLs for these assets
+  - [ ] Move static assets (images/json) from WAR to S3-backed asset pipeline  
+    - [ ] Implement AssetConfig for dev/prod asset switching  
+    - [ ] Create JSP tag to generate S3 URLs dynamically  
+    - [ ] Update JSPs to use <cf:asset> instead of local WAR paths  
+    - [ ] Remove static files from WAR after migration
+  - [ ] Test to ensure assets load correctly from S3 in all environments
+- Acceptance Criteria:
+  - [ ] Static assets are no longer included in the WAR file
+  - [ ] Application successfully retrieves and displays assets from S3
+  - [ ] Documentation updated to reflect the new asset management approach

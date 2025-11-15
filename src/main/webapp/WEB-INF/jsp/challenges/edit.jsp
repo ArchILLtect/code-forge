@@ -1,49 +1,100 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%--
+  Created by IntelliJ IDEA.
+  User: nickh
+  Date: 10/24/2025
+  Time: 2:30 PM
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Edit Challenge</title>
+  <title>Edit <c:out value="${challenge.title}"/> | CodeForge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>
-  <p><a href="${pageContext.request.contextPath}/">Home</a> | <a href="${pageContext.request.contextPath}/challenges">All Challenges</a></p>
-  <h1>Edit Challenge</h1>
+<jsp:include page="/WEB-INF/jsp/header.jsp" />
 
-  <form method="post" action="${pageContext.request.contextPath}/challenges/${challengeId}">
+<main class="cf-main">
+  <section class="cf-page-header">
     <div>
-      <label for="title">Title</label><br/>
-      <input type="text" id="title" name="title" value="${title}" />
+      <h1 class="cf-page-title">Edit Challenge</h1>
+      <p class="cf-page-subtitle">
+        Updating <span class="cf-mono">#${challenge.id}</span> – ${challenge.title}
+      </p>
     </div>
 
-    <div>
-      <label for="difficulty">Difficulty</label><br/>
-      <select id="difficulty" name="difficulty">
-        <c:forEach items="${difficulties}" var="d">
-          <option value="${d}" ${d == difficulty ? 'selected' : ''}>${d}</option>
-        </c:forEach>
-      </select>
-    </div>
+    <a class="cf-link"
+       href="${pageContext.request.contextPath}/challenges/${challenge.id}">
+      View details
+    </a>
+  </section>
 
-    <div>
-      <label for="blurb">Summary</label><br/>
-      <textarea id="blurb" name="blurb" rows="3" cols="60">${blurb}</textarea>
-    </div>
+  <section class="cf-card cf-form-card">
+    <form action="${pageContext.request.contextPath}/challenges/edit"
+          method="post"
+          class="cf-form">
 
-    <div>
-      <label for="promptMd">Prompt (Markdown)</label><br/>
-      <textarea id="promptMd" name="promptMd" rows="10" cols="80">${promptMd}</textarea>
-    </div>
+      <!-- ID: read-only but posted back -->
+      <input type="hidden" name="id" value="${challenge.id}" />
 
-    <div style="margin-top: 1rem;">
-      <button type="submit">Update</button>
-    </div>
-  </form>
+      <div class="cf-form-row">
+        <label for="title">Title</label>
+        <input id="title"
+               name="title"
+               type="text"
+               required
+               value="${challenge.title}" />
+      </div>
 
-  <c:if test="${not empty sessionScope.user}">
-    <form method="post" action="${pageContext.request.contextPath}/challenges/${challengeId}/delete" style="margin-top: 1rem;">
-      <button type="submit" onclick="return confirm('Delete this challenge?');">Delete</button>
+      <div class="cf-form-row">
+        <label for="blurb">Short summary</label>
+        <textarea id="blurb"
+                  name="blurb"
+                  rows="2"
+                  placeholder="One–sentence description shown in lists">${challenge.blurb}</textarea>
+      </div>
+
+      <div class="cf-form-row cf-form-row-inline">
+        <div>
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty" required>
+            <option value="EASY"   ${challenge.difficulty == 'EASY'   ? 'selected' : ''}>Easy</option>
+            <option value="MEDIUM" ${challenge.difficulty == 'MEDIUM' ? 'selected' : ''}>Medium</option>
+            <option value="HARD"   ${challenge.difficulty == 'HARD'   ? 'selected' : ''}>Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cf-form-row">
+        <label for="promptMd">
+          Prompt (Markdown)
+          <span class="cf-label-hint">Rendered on the detail page</span>
+        </label>
+        <textarea id="promptMd"
+                  name="promptMd"
+                  rows="14"
+                  placeholder="Describe the problem, inputs, outputs, and example cases using Markdown.">${challenge.promptMd}</textarea>
+      </div>
+
+      <div class="cf-form-actions">
+        <a class="cf-btn cf-btn-ghost"
+           href="${pageContext.request.contextPath}/challenges/${challenge.id}">
+          Cancel
+        </a>
+        <button class="cf-btn cf-btn-primary" type="submit">
+          Save changes
+        </button>
+      </div>
     </form>
-  </c:if>
+  </section>
+</main>
+
+<jsp:include page="/WEB-INF/jsp/footer.jsp" />
+
 </body>
 </html>

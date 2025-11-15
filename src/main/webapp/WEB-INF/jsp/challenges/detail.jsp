@@ -1,62 +1,96 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: nickh
+  Date: 10/24/2025
+  Time: 2:30 PM
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title><c:out value="${challenge.title}"/> Details | CodeForge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Challenge Detail</title>
-  <style>
-    .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
-    .flash-error { background: #ffecec; border: 1px solid #ff3b30; padding: .5rem; margin-bottom: 1rem; }
-    .actions { margin: 10px 0; }
-    .hint { color: #555; }
-  </style>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>
-  <p>
-    <a href="${pageContext.request.contextPath}/">Home</a> |
-    <a href="${pageContext.request.contextPath}/challenges">All Challenges</a>
-    <c:if test="${not empty sessionScope.user}"> |
-      <a href="${pageContext.request.contextPath}/challenges/${challenge.id}/edit">Edit</a>
-    </c:if>
-  </p>
+<jsp:include page="/WEB-INF/jsp/header.jsp" />
 
-  <c:if test="${not empty success}">
-    <div class="flash-success">${success}</div>
-  </c:if>
-  <c:if test="${not empty error}">
-    <div class="flash-error">${error}</div>
-  </c:if>
+<main class="cf-main">
+  <section class="cf-page-header">
+    <div>
+      <h1 class="cf-page-title">
+        ${challenge.title}
+      </h1>
+      <p class="cf-page-subtitle">
+        Challenge <span class="cf-mono">#${challenge.id}</span>
+      </p>
+    </div>
 
-  <h1><c:out value="${challenge.title}"/></h1>
-  <p>
-    <strong>Difficulty:</strong> <c:out value="${challenge.difficulty}"/>
-  </p>
-  <div class="actions">
-    <c:choose>
-      <c:when test="${not empty sessionScope.user}">
-        <c:choose>
-          <c:when test="${drillEnrolled}">
-            <a href="${pageContext.request.contextPath}/drill/${challenge.id}">Open in Drill</a>
-          </c:when>
-          <c:otherwise>
-            <form method="post" action="${pageContext.request.contextPath}/drill/${challenge.id}/add" style="display:inline;">
-              <button type="submit">Add to Drill</button>
-            </form>
-          </c:otherwise>
-        </c:choose>
-      </c:when>
-      <c:otherwise>
-        <span class="hint">Log in to access Drill Mode.</span>
-        <a href="${pageContext.request.contextPath}/logIn" style="margin-left: 8px;">Log in</a>
-      </c:otherwise>
-    </c:choose>
-  </div>
-  <p>
-    <strong>Summary:</strong> <c:out value="${challenge.blurb}"/>
-  </p>
-  <h3>Prompt</h3>
-  <pre style="white-space: pre-wrap;"><c:out value="${challenge.promptMd}"/></pre>
+    <div class="cf-page-header-meta">
+      <span class="cf-pill cf-pill-difficulty-${challenge.difficulty}">
+        ${challenge.difficulty}
+      </span>
+
+      <span class="cf-pill cf-pill-neutral">
+          ${challenge.promptMd}
+      </span>
+
+      <a class="cf-btn cf-btn-secondary"
+         href="${pageContext.request.contextPath}/challenges/${challenge.id}/edit">
+        Edit
+      </a>
+    </div>
+  </section>
+
+  <section class="cf-grid cf-grid-2">
+    <article class="cf-card">
+      <h2 class="cf-section-title">Description</h2>
+      <c:if test="${not empty challenge.blurb}">
+        <p class="cf-muted">${challenge.blurb}</p>
+        <hr class="cf-divider-horizontal" />
+      </c:if>
+
+      <!-- promptMd already contains HTML-safe content from Markdown render -->
+      <div class="cf-markdown">
+        ${challenge.promptMd}
+      </div>
+    </article>
+
+    <aside class="cf-card cf-meta-card">
+      <h2 class="cf-section-title">Meta</h2>
+      <dl class="cf-meta-list">
+        <div>
+          <dt>Difficulty</dt>
+          <dd>${challenge.difficulty}</dd>
+        </div>
+          <div>
+            <dt>Topic</dt>
+            <dd>${challenge.promptMd}</dd>
+          </div>
+        <div>
+          <dt>Created</dt>
+          <dd>
+            <fmt:formatDate value="${challenge.createdAt}" pattern="yyyy-MM-dd HH:mm" />
+          </dd>
+        </div>
+      </dl>
+
+      <div class="cf-meta-actions">
+        <a class="cf-link"
+           href="${pageContext.request.contextPath}/challenges">
+          ← Back to list
+        </a>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<jsp:include page="/WEB-INF/jsp/footer.jsp" />
+
 </body>
 </html>

@@ -1,75 +1,114 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%--
+  Created by IntelliJ IDEA.
+  User: nickh
+  Date: 10/24/2025
+  Time: 2:30 PM
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <title>Challenges | CodeForge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Challenges</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css"/>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/2.0.7/js/dataTables.min.js"></script>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/challenges.css" />
-  <style>
-    body { margin: 0 20% ; font-family: Arial, sans-serif; }
-    table { border-collapse: collapse; border: 1px solid #000; }
-    form { margin-bottom: unset; }
-    .flash-success { background: #e6ffed; border: 1px solid #34c759; padding: .5rem; margin-bottom: 1rem; }
-    .flash-error { background: #ffecec; border: 1px solid #ff3b30; padding: .5rem; margin-bottom: 1rem; }
-    .controls { display: flex; justify-content: center; align-items: center; gap: 10px; }
-  </style>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>
-  <h1>Challenges</h1>
-  <p>
-    <a href="${pageContext.request.contextPath}/">Home</a>
-    <c:if test="${not empty sessionScope.user}"> | <a href="${pageContext.request.contextPath}/challenges/new">Create New</a></c:if>
-  </p>
+<jsp:include page="/WEB-INF/jsp/header.jsp" />
 
-  <c:if test="${not empty success}">
-    <div class="flash-success">${success}</div>
-  </c:if>
-  <c:if test="${not empty error}">
-    <div class="flash-error">${error}</div>
-  </c:if>
-
-  <form method="get" action="${pageContext.request.contextPath}/challenges">
-    <div class="controls">
-      <div class="difficulty-filter">
-        <label for="difficulty">Filter by difficulty:</label>
-        <select name="difficulty" id="difficulty">
-          <option value="" ${empty difficultyValue ? 'selected' : ''}>All</option>
-          <option value="EASY" ${difficultyValue == 'EASY' ? 'selected' : ''}>EASY</option>
-          <option value="MEDIUM" ${difficultyValue == 'MEDIUM' ? 'selected' : ''}>MEDIUM</option>
-          <option value="HARD" ${difficultyValue == 'HARD' ? 'selected' : ''}>HARD</option>
-        </select>
-      </div>
-      <button type="submit">Apply</button>
+<main class="cf-main">
+  <section class="cf-page-header">
+    <div>
+      <h1 class="cf-page-title">Challenges</h1>
+      <p class="cf-page-subtitle">
+        Browse, review, and refine coding challenges in the CodeForge library.
+      </p>
     </div>
-  </form>
+
+    <a class="cf-btn cf-btn-primary"
+       href="${pageContext.request.contextPath}/challenges/new">
+      + New Challenge
+    </a>
+  </section>
+
+  <!-- Flash messages -->
+  <c:if test="${not empty flash}">
+    <div class="cf-alert cf-alert-success">
+        ${flash}
+    </div>
+  </c:if>
 
   <c:choose>
     <c:when test="${empty challenges}">
-      <p>No challenges available.</p>
+      <div class="cf-empty-state">
+        <h2>No challenges yet</h2>
+        <p>Create your first challenge to kick things off.</p>
+        <a class="cf-btn cf-btn-primary"
+           href="${pageContext.request.contextPath}/challenges/new">
+          Create a challenge
+        </a>
+      </div>
     </c:when>
+
     <c:otherwise>
-      <table id="challenges" class="display">
-        <thead><tr><th>ID</th><th>Title</th><th>Difficulty</th><th>Blurb</th></tr></thead>
-        <tbody>
+      <div class="cf-card">
+        <table class="cf-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th class="cf-actions">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
           <c:forEach items="${challenges}" var="ch">
             <tr>
-              <td><c:out value="${ch.id}"/></td>
-              <td><a href="${pageContext.request.contextPath}/challenges/${ch.id}"><c:out value="${ch.title}"/></a></td>
-              <td><c:out value="${ch.difficulty}"/></td>
-              <td><c:out value="${ch.blurb}"/></td>
+              <td>
+                ${ch.id}
+              </td>
+              <td>
+                <a class="cf-link-strong"
+                   href="${pageContext.request.contextPath}/challenges/${ch.id}">
+                    ${ch.title}
+                </a>
+                <c:if test="${not empty ch.blurb}">
+                  <div class="cf-muted small">
+                      ${ch.blurb}
+                  </div>
+                </c:if>
+              </td>
+
+              <td>
+                <span class="cf-pill cf-pill-difficulty-${ch.difficulty}">
+                    ${ch.difficulty}
+                </span>
+              </td>
+
+              <td class="cf-actions">
+                <a class="cf-link"
+                   href="${pageContext.request.contextPath}/challenges/${ch.id}">
+                  View
+                </a>
+                <span class="cf-divider">|</span>
+                <a class="cf-link"
+                   href="${pageContext.request.contextPath}/challenges/${ch.id}/edit">
+                  Edit
+                </a>
+              </td>
             </tr>
           </c:forEach>
-        </tbody>
-      </table>
-
-      <script>
-        $(function () { $('#challenges').DataTable(); });
-      </script>
+          </tbody>
+        </table>
+      </div>
     </c:otherwise>
   </c:choose>
+</main>
+
+<jsp:include page="/WEB-INF/jsp/footer.jsp" />
 </body>
 </html>
