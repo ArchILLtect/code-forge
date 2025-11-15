@@ -8,6 +8,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drill Queue</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css" />
+</head>
+<body>
+
 <header class="cf-header">
   <div class="cf-header-inner">
     <!-- Left: Logo + app name -->
@@ -23,29 +34,40 @@
     </div>
 
     <!-- Center: Navigation -->
-    <nav class="cf-nav" aria-label="Main navigation">
-      <a href="${pageContext.request.contextPath}/home" class="cf-nav-link">Home</a>
-      <a href="${pageContext.request.contextPath}/challenges" class="cf-nav-link">Challenges</a>
+    <div class="cf-nav" aria-label="Main navigation">
+      <ul class="cf-nav-list">
+        <a href="${pageContext.request.contextPath}/challenges" class="cf-nav-link">Challenges</a>
 
-      <div class="cf-nav-dropdown">
-        <button class="cf-nav-link cf-nav-dropdown-toggle" type="button">
-          Coding
-          <span class="cf-nav-caret">▾</span>
-        </button>
-        <div class="cf-nav-dropdown-menu">
-          <a href="${pageContext.request.contextPath}/practice" class="cf-nav-dropdown-item">
-            Practice
+        <li class="cf-nav-item cf-nav-item-has-menu">
+          <a class="cf-nav-link"
+             href="#">
+            Coding
+            <span class="cf-nav-caret">▾</span>
           </a>
-          <a href="${pageContext.request.contextPath}/drill" class="cf-nav-dropdown-item">
-            Drill Mode
-          </a>
-        </div>
-      </div>
 
-      <a href="${pageContext.request.contextPath}/about" class="cf-nav-link">About</a>
-    </nav>
+          <ul class="cf-nav-dropdown">
+            <li>
+              <a href="${pageContext.request.contextPath}/practice"
+                 class="cf-nav-dropdown-link">
+                Practice
+              </a>
+            </li>
+            <li>
+              <a href="${pageContext.request.contextPath}/drill"
+                 class="cf-nav-dropdown-link">
+                Drill
+              </a>
+            </li>
+          </ul>
+        </li>
 
-    <!-- Right: User info / login -->
+        <li class="cf-nav-item">
+          <a href="${pageContext.request.contextPath}/about" class="cf-nav-link">About</a>
+        </li>
+      </ul>
+    </div>
+
+      <!-- Right: User info / login -->
     <div class="cf-user-area">
       <c:choose>
         <c:when test="${not empty sessionScope.user}">
