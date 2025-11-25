@@ -469,6 +469,9 @@ cf-card-title { font-size: 1.5rem; margin: 0 0 0.5rem; color: #0b1220; }
 .cf-form-row-inline { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 1rem; }
 .cf-form input, .cf-form select, .cf-form textarea { padding: .6rem .7rem; border-radius: .5rem; border: 1px solid #d1d5db; font: inherit; }
 .cf-form-actions { display: flex; justify-content: flex-end; gap: .75rem; margin-top: 1.25rem; }
+.drill-form-actions { display: flex; justify-content: space-between; align-content: center; margin-top: 0.5rem; }
+.drill-form-submit {  display: flex; justify-content: center; gap: .75rem; margin-top: 1.25rem; }
+.cf-btn-secondary { border: 1px solid #d1d5db; color: #6b7280; margin-top: 0; }
 .cf-btn { border-radius: 999px; padding: .55rem 1.1rem; border: 1px solid transparent; font-weight: 500; cursor: pointer; text-decoration: none; }
 .cf-btn-primary { background: #2563eb; color: #fff; }
 .cf-btn-ghost { background: transparent; border-color: #d1d5db; color: #111827; }
