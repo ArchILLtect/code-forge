@@ -78,7 +78,14 @@ public class DrillServlet extends HttpServlet {
             return;
         }
         // /{id}
-        Long id = Long.valueOf(parts[0]);
+        long id;
+        try {
+            id = Long.parseLong(parts[0]);
+            if (id <= 0) { resp.sendError(400); return; }
+        } catch (NumberFormatException nfe) {
+            resp.sendError(400);
+            return;
+        }
         Challenge c = challengeService.getById(id).orElse(null);
         if (c == null) { resp.sendError(404); return; }
         DrillItem di = drillService.ensureDrillItem(id);
@@ -100,7 +107,12 @@ public class DrillServlet extends HttpServlet {
         String path = req.getPathInfo();
         String[] parts = (path == null || "/".equals(path)) ? new String[0] : path.substring(1).split("/");
         if (parts.length == 2 && "submit".equals(parts[1])) {
-            Long id = Long.valueOf(parts[0]);
+            long id;
+            try {
+                id = Long.parseLong(parts[0]);
+                if (id <= 0) { resp.sendError(400); return; }
+            } catch (NumberFormatException nfe) {
+                resp.sendError(400); return; }
             String language = req.getParameter("language");
             String code = req.getParameter("code");
             var result = runService.run(id, language, code);
@@ -111,7 +123,11 @@ public class DrillServlet extends HttpServlet {
         }
         // /{id}/add
         if (parts.length == 2 && "add".equals(parts[1])) {
-            Long id = Long.valueOf(parts[0]);
+            long id;
+            try {
+                id = Long.parseLong(parts[0]);
+                if (id <= 0) { resp.sendError(400); return; }
+            } catch (NumberFormatException nfe) { resp.sendError(400); return; }
             drillService.ensureDrillItem(id);
             resp.sendRedirect(req.getContextPath() + "/challenges/" + id);
             return;

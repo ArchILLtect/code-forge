@@ -35,7 +35,7 @@ class DrillServiceTest {
 
     @Test
     void recordOutcome_createsSubmission_updatesDrillItem_andPersistsBoth() {
-        Long id = 42L;
+        long id = 42L;
         Challenge c = challengeWithId(id);
         DrillItem di = new DrillItem(c);
 
@@ -52,7 +52,7 @@ class DrillServiceTest {
 
     @Test
     void computeNextDueAt_advancesAccordingToStreak() {
-        Long id = 7L;
+        long id = 7L;
         Challenge c = challengeWithId(id);
         DrillItem di = new DrillItem(c);
         di.setTimesSeen(0);
@@ -83,7 +83,7 @@ class DrillServiceTest {
 
     @Test
     void ensureDrillItem_createsWhenMissing() {
-        Long id = 9L;
+        long id = 9L;
         Challenge c = challengeWithId(id);
         when(chalDao.getById(id)).thenReturn(c);
         when(drillDao.listByChallengeId(id)).thenReturn(List.of());
