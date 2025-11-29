@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -15,7 +16,7 @@ import java.time.Instant;
  * @author Nick Hanson
  */
 @Entity
-@Table(name = "SUBMISSIONS")
+@Table(name = "submissions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -61,8 +62,16 @@ public class Submission {
      * It is not updatable after creation.
      */
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
+
+    /**
+     * The timestamp when the submission was last updated.
+     * This field is automatically populated with the current timestamp when the entity is updated.
+     */
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
     /**
      * Constructs a new Submission with the specified challenge, outcome, and optional code.

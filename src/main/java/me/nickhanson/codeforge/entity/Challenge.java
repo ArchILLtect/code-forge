@@ -2,6 +2,8 @@ package me.nickhanson.codeforge.entity;
 
 import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 
 /**
@@ -11,7 +13,7 @@ import java.time.Instant;
  * TODO: needs better Lombok implementation
  */
 @Entity
-@Table(name = "CHALLENGES")
+@Table(name = "challenges")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)   // JPA default ctor
 @ToString(onlyExplicitlyIncluded = true)            // we’ll include selectively (see below)
@@ -33,7 +35,7 @@ public class Challenge {
      * The title of the Challenge.
      */
     @ToString.Include // Includes the title field in toString
-    @Column(nullable = false, unique = true, length = 100) // Maps to a non-null, unique column with max length 100
+    @Column(name = "title", nullable = false, unique = true, length = 255) // Maps to a non-null, unique column with max length 255
     private String title;
 
     /**
@@ -41,21 +43,21 @@ public class Challenge {
      */
     @Enumerated(EnumType.STRING) // Maps the enum to a database column as a string
     @ToString.Include // Includes the difficulty field in toString
-    @Column(nullable = false, length = 20) // Maps to a non-null column with max length 20
+    @Column(name = "difficulty", nullable = false, length = 20) // Maps to a non-null column with max length 20
     private Difficulty difficulty;
 
     /**
      * A short description or blurb about the Challenge.
      */
     @Lob // Maps to a large object column for storing long text
-    @Column(nullable = false) // Maps to a non-null column
+    @Column(name = "blurb", nullable = true) // Maps to a column that can be null
     private String blurb;
 
     /**
      * The full prompt of the Challenge in Markdown format.
      */
     @Lob // Maps to a large object column for storing long text
-    @Column(name = "PROMPT_MD", nullable = false) // Maps to a non-null column
+    @Column(name = "prompt_md", nullable = true) // Maps to a column that can be null
     private String promptMd;
 
     /**
@@ -64,8 +66,17 @@ public class Challenge {
      * It is not updatable after creation.
      */
     @ToString.Include // Includes the createdAt field in toString
-    @Column(updatable = false) // Maps to a column that cannot be updated after creation
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false) // Maps to a column that cannot be updated after creation
     private Instant createdAt;
+
+    /**
+     * The timestamp when the Challenge was last updated.
+     * This field is automatically populated with the current timestamp when the entity is updated.
+     */
+    @UpdateTimestamp
+    @Column(name = "updated_at") // Maps to a column that can be updated
+    private Instant updatedAt;
 
     // Constructor to create a Challenge with all required fields
     public Challenge(String title, Difficulty difficulty, String blurb, String promptMd) {

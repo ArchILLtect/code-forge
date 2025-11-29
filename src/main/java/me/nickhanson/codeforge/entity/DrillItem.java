@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -51,21 +52,21 @@ public class DrillItem {
      * The number of times this DrillItem has been seen by the user.
      * This field is initialized to zero and cannot be null.
      */
-    @Column(name = "TIMES_SEEN", nullable = false)
+    @Column(name = "times_seen", nullable = false)
     private int timesSeen = 0;
 
     /**
      * The current streak of consecutive correct or acceptable answers for this DrillItem.
      * This field is initialized to zero and cannot be null.
      */
-    @Column(name = "STREAK", nullable = false)
+    @Column(name = "streak", nullable = false)
     private int streak = 0; // consecutive correct/acceptable answers
 
     /**
      * The timestamp for when this DrillItem is next due to appear in a drill session.
      * This field is optional and can be null if the item is not scheduled for future appearance.
      */
-    @Column(name = "NEXT_DUE_AT")
+    @Column(name = "next_due_at")
     private Instant nextDueAt; // optional scheduling for next appearance
 
     /**
@@ -74,8 +75,17 @@ public class DrillItem {
      * and is not updatable thereafter.
      */
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
+
+    /**
+     * The timestamp for the last update to this DrillItem.
+     * This field is automatically populated with the current timestamp when the entity is updated
+     * and is not settable thereafter.
+     */
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
     /**
      * Constructs a new DrillItem associated with the specified Challenge.
