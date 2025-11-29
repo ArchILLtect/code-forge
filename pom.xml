@@ -28,6 +28,7 @@
     <javax.validation.version>2.0.1.Final</javax.validation.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
     <javax.el.version>3.0.1-b11</javax.el.version>
+    <mysql.connector.version>8.4.0</mysql.connector.version>
     <!-- Plugin versions -->
     <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
@@ -168,6 +169,13 @@
       <groupId>org.glassfish</groupId>
       <artifactId>javax.el</artifactId>
       <version>${javax.el.version}</version>
+    </dependency>
+
+    <!-- MySQL JDBC driver for DAO tests and MySQL runtime -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>${mysql.connector.version}</version>
     </dependency>
 
   </dependencies>
