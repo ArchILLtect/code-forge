@@ -2,12 +2,13 @@ package me.nickhanson.codeforge.persistence;
 
 import me.nickhanson.codeforge.entity.*;
 import org.junit.jupiter.api.Test;
+import testsupport.DbReset;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SubmissionDaoTest extends DaoTestBase {
+class SubmissionDaoTest extends DbReset {
 
     private final ChallengeDao challengeDao = new ChallengeDao();
     private final DrillItemDao drillDao = new DrillItemDao();

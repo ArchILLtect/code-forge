@@ -6,12 +6,13 @@ import me.nickhanson.codeforge.entity.DrillItem;
 import me.nickhanson.codeforge.entity.Submission;
 import me.nickhanson.codeforge.entity.Outcome;
 import org.junit.jupiter.api.Test;
+import testsupport.DbReset;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ChallengeDaoTest extends DaoTestBase {
+class ChallengeDaoTest extends DbReset {
 
     private final ChallengeDao dao = new ChallengeDao();
     private final DrillItemDao drillDao = new DrillItemDao();
@@ -89,26 +90,24 @@ class ChallengeDaoTest extends DaoTestBase {
     }
 
     @Test
-    void delete_withDependents_failsWithoutCleaning() {
+    void delete_withDependents_cascadesToChildren() {
         Challenge ch = new Challenge("Dependent Test", Difficulty.EASY, "", "...");
         dao.saveOrUpdate(ch);
 
         DrillItem di = new DrillItem(ch);
         drillDao.saveOrUpdate(di);
+
         Submission s = new Submission(ch, Outcome.CORRECT, null);
         submissionDao.saveOrUpdate(s);
 
-        // When / Then – should throw some persistence-level exception
-        assertThrows(Exception.class, () -> dao.delete(ch));
-
-        // Verify parent and children still exist
-        assertNotNull(dao.getById(ch.getId()));
-        assertEquals(1, drillDao.listByChallengeId(ch.getId()).size());
-        assertEquals(1, submissionDao.listByChallengeId(ch.getId()).size());
-
-        // Clean up for test isolation
-        drillDao.delete(di);
-        submissionDao.delete(s);
+        // When – delete the parent
         dao.delete(ch);
+
+        // Then – parent is gone
+        assertNull(dao.getById(ch.getId()));
+
+        // And children are gone because of ON DELETE CASCADE
+        assertEquals(0, drillDao.listByChallengeId(ch.getId()).size());
+        assertEquals(0, submissionDao.listByChallengeId(ch.getId()).size());
     }
 }
