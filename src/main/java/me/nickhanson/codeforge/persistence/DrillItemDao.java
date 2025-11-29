@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author Nick Hanson
  */
 public class DrillItemDao {
-    private final EntityData<DrillItem> data = new EntityData<>(DrillItem.class);
+    private final GenericDao<DrillItem> data = new GenericDao<>(DrillItem.class);
 
     // ---- generic CRUD (delegated) ----
     public DrillItem getById(Long id) { return data.getById(id); }
