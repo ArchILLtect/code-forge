@@ -49,8 +49,7 @@ public class QuoteService implements PropertiesLoader {
     public QuoteService() {
         logger.info("Java={}, Vendor={}", System.getProperty("java.version"), System.getProperty("java.vendor"));
         Properties props = loadProperties("/application.properties");
-        final String FALLBACK_URL = props.getProperty("quote.fallback.url", "");
-        this.apiBaseUrl = props.getProperty("quote.api.url", FALLBACK_URL);
+        this.apiBaseUrl = props.getProperty("quote.api.url", props.getProperty("quote.fallback.url", ""));
         boolean allowInsecure = Boolean.parseBoolean(props.getProperty("quote.api.allowInsecure","false"));
         if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
             logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
