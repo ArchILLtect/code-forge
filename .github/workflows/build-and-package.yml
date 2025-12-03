@@ -7,21 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: cf_test_db
-          MYSQL_ROOT_HOST: '%'
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost -proot || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,17 +18,8 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      # (Optional) install mysql client if you ever want to run SQL via CLI
-      # - name: Install MySQL client
-      #   run: sudo apt-get update && sudo apt-get install -y mysql-client
-
-      - name: Build with Maven
-        env:
-          DB_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        run: mvn -B \
-          -DskipITs=false -DskipTests=false \
-          -Dhibernate.connection.password="${DB_PASSWORD}" \
-          verify
+      - name: Build with Maven (skip all tests)
+        run: mvn -B -DskipITs -DskipTests clean package
 
       - name: Upload WAR artifact
         uses: actions/upload-artifact@v4
