@@ -35,7 +35,7 @@
   </section>
 
   <section class="cf-card cf-form-card">
-    <form action="${pageContext.request.contextPath}/challenges/new"
+    <form action="${pageContext.request.contextPath}/challenges"
           method="post"
           class="cf-form">
 
