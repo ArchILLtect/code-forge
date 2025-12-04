@@ -19,7 +19,6 @@
     <servlet.api.version>4.0.1</servlet.api.version>
     <jstl.version>1.2</jstl.version>
     <jakarta.persistence.api.version>3.1.0</jakarta.persistence.api.version>
-    <h2.version>2.3.232</h2.version>
     <log4j2.version>2.23.1</log4j2.version>
     <java.jwt.version>4.4.0</java.jwt.version>
     <jwks.rsa.version>0.22.1</jwks.rsa.version>
@@ -61,13 +60,6 @@
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
       <version>${jakarta.persistence.api.version}</version>
-    </dependency>
-
-    <!-- H2 for dev/test -->
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2.version}</version>
     </dependency>
 
     <!-- Logging -->
