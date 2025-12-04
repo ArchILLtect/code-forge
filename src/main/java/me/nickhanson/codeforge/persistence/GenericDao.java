@@ -18,9 +18,9 @@ import java.util.Objects;
  * match the class pattern used in the project.
  * @author Nick Hanson
  */
-public class EntityData<T> {
+public class GenericDao<T> {
 
-    private static final Logger log = LogManager.getLogger(EntityData.class);
+    private static final Logger log = LogManager.getLogger(GenericDao.class);
 
     // The entity class type managed by this instance
     private final Class<T> type;
@@ -28,7 +28,7 @@ public class EntityData<T> {
     private final SessionFactory sessionFactory;
 
     // Constructor accepting the entity class type
-    public EntityData(Class<T> type) {
+    public GenericDao(Class<T> type) {
         this.type = Objects.requireNonNull(type, "type");
         this.sessionFactory = SessionFactoryProvider.getSessionFactory();
     }

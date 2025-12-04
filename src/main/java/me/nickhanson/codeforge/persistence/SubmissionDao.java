@@ -11,7 +11,7 @@ import java.util.List;
  * @author Nick Hanson
  */
 public class SubmissionDao {
-    private final EntityData<Submission> data = new EntityData<>(Submission.class);
+    private final GenericDao<Submission> data = new GenericDao<>(Submission.class);
 
     // CRUD Operations
     public Submission getById(Long id) { return data.getById(id); }

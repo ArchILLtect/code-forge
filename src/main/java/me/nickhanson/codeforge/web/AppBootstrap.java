@@ -47,18 +47,22 @@ public class AppBootstrap implements ServletContextListener {
         try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
             Long count = (Long) s.createQuery("select count(c) from Challenge c").getSingleResult();
             if (count == null || count == 0) {
-                InputStream in = getClass().getClassLoader().getResourceAsStream("data.sql");
-                if (in != null) {
-                    String sql = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
-                            .lines().reduce("", (a, b) -> a + "\n" + b);
-                    s.beginTransaction();
-                    for (String stmt : sql.split(";\\s*\n")) {
-                        String t = stmt.trim();
-                        if (!t.isEmpty()) {
-                            s.createNativeQuery(t).executeUpdate();
+                try (InputStream in = getClass().getClassLoader().getResourceAsStream("data.sql")) {
+                    if (in != null) {
+                        StringBuilder sb = new StringBuilder();
+                        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                            br.lines().forEach(line -> sb.append(line).append('\n'));
                         }
+                        String sql = sb.toString();
+                        s.beginTransaction();
+                        for (String stmt : sql.split(";\s*\n")) {
+                            String t = stmt.trim();
+                            if (!t.isEmpty()) {
+                                s.createNativeQuery(t).executeUpdate();
+                            }
+                        }
+                        s.getTransaction().commit();
                     }
-                    s.getTransaction().commit();
                 }
             }
         } catch (Exception e) {

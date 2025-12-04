@@ -8,55 +8,66 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Provides a singleton SessionFactory for Hibernate ORM.
- * This class initializes the SessionFactory using the configuration
- * @author Nick Hanson
+ * Loads configuration from hibernate.cfg.xml (MySQL only for MVP),
+ * applying overrides from system properties or environment variables when present.
  */
 public class SessionFactoryProvider {
     private static final Logger log = LogManager.getLogger(SessionFactoryProvider.class);
     private static final SessionFactory sessionFactory = buildSessionFactory();
 
+    private static String env(String key, String defVal) {
+        String v = System.getenv(key);
+        return (v != null && !v.isBlank()) ? v : defVal;
+    }
+
+    private static String prop(String key, String defVal) {
+        String v = System.getProperty(key);
+        return (v != null && !v.isBlank()) ? v : defVal;
+    }
+
     /**
      * Builds the SessionFactory from hibernate.cfg.xml configuration file.
-     * Falls back to a programmatic in-memory H2 configuration if XML loading fails
-     * (useful in CI when XML DTD/network issues occur).
      */
     private static SessionFactory buildSessionFactory() {
-        try {
-            // Preferred: load from hibernate.cfg.xml on classpath
-            StandardServiceRegistry registry =
-                    new StandardServiceRegistryBuilder()
-                            .configure("hibernate.cfg.xml")
-                            .build();
-
-            return buildFromRegistry(registry);
-        } catch (Exception xmlErr) {
-            log.warn("Failed to load hibernate.cfg.xml; falling back to programmatic H2 config for tests. Cause: {}",
-                    xmlErr.toString(), xmlErr);
-            try {
-                Map<String, Object> settings = new HashMap<>();
-                settings.put("hibernate.connection.driver_class", "org.h2.Driver");
-                settings.put("hibernate.connection.url", "jdbc:h2:mem:codeforge_ci;DB_CLOSE_DELAY=-1");
-                settings.put("hibernate.connection.username", "sa");
-                settings.put("hibernate.connection.password", "");
-                settings.put("hibernate.hbm2ddl.auto", "update");
-                settings.put("hibernate.show_sql", "false");
-                settings.put("hibernate.format_sql", "false");
-                settings.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-
-                StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                        .applySettings(settings)
-                        .build();
-                return buildFromRegistry(registry);
-            } catch (Exception e) {
-                log.error("SessionFactory initialization failed (fallback path)", e);
-                throw new ExceptionInInitializerError(e);
-            }
+        // Resolve optional overrides
+        String url = prop("hibernate.connection.url", null);
+        if (url == null) {
+            String host = env("DB_HOST", "localhost");
+            String port = env("DB_PORT", "3306");
+            String db   = env("DB_NAME", "cf_test_db");
+            url = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
         }
+        String user = prop("hibernate.connection.username", env("DB_USER", "root"));
+        String pass = prop("hibernate.connection.password", env("DB_PASSWORD", ""));
+        String dialect = prop("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+
+        // Ensure MySQL JDBC driver is registered
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("MySQL JDBC driver not found on classpath", e);
+        }
+
+        // Build registry using XML, then apply non-empty overrides
+        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+                .configure("hibernate.cfg.xml");
+        if (url != null && !url.isBlank()) {
+            builder.applySetting("hibernate.connection.url", url);
+        }
+        if (user != null && !user.isBlank()) {
+            builder.applySetting("hibernate.connection.username", user);
+        }
+        if (pass != null && !pass.isBlank()) {
+            builder.applySetting("hibernate.connection.password", pass);
+        }
+        if (dialect != null && !dialect.isBlank()) {
+            builder.applySetting("hibernate.dialect", dialect);
+        }
+
+        StandardServiceRegistry registry = builder.build();
+        return buildFromRegistry(registry);
     }
 
     private static SessionFactory buildFromRegistry(StandardServiceRegistry registry) {
@@ -67,19 +78,11 @@ public class SessionFactoryProvider {
 
         Metadata metadata = sources.buildMetadata();
         SessionFactory sf = metadata.buildSessionFactory();
-
-        // log mapped entities
-        sf.getMetamodel().getEntities().forEach(e ->
-                log.info("Mapped entity -> name='{}' javaType={}", e.getName(), e.getJavaType())
-        );
-
-        log.info("SessionFactory identity: {}", System.identityHashCode(sf));
         return sf;
     }
 
     /**
      * Gets the singleton SessionFactory instance.
-     * @return the SessionFactory
      */
     public static SessionFactory getSessionFactory() {
         return sessionFactory;

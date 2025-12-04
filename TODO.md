@@ -71,3 +71,16 @@
   - [ ] Static assets are no longer included in the WAR file
   - [ ] Application successfully retrieves and displays assets from S3
   - [ ] Documentation updated to reflect the new asset management approach
+
+3) Drill editor UX enhancements (labels: enhancement, ux)
+- Title: Post‑MVP: drill editor polish (tooltip + last saved stamp)
+- Context: Current solve page auto-saves code per challenge and shows character count. Improve feedback and clarity.
+- Tasks:
+  - [ ] Add small tooltip near character counter: "Saved locally (browser)".
+  - [ ] Track last auto-save timestamp (update on debounce persist) and display e.g. "Last saved: 14:32:07".
+  - [ ] Gracefully handle localStorage quota errors (already swallowed; consider user hint if persist fails repeatedly).
+  - [ ] Optional: Add a diff warning if localStorage version diverges from server-provided starter template.
+- Acceptance Criteria:
+  - [ ] Tooltip renders on hover/focus next to counter.
+  - [ ] Timestamp updates after typing and on submit.
+  - [ ] No runtime errors in browsers without localStorage (fallback display hidden).

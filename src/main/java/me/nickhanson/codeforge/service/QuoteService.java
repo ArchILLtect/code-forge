@@ -26,47 +26,69 @@ import java.util.Properties;
 public class QuoteService implements PropertiesLoader {
     private static final Logger logger = LogManager.getLogger(QuoteService.class);
     private static final String FALLBACK = "Keep it simple. — CodeForge";
-    private final String FALLBACK_URL;
+    private static final String OPEN_QUOTE = "“"; // “
+    private static final String CLOSE_QUOTE = "”"; // ”
     private final long CACHE_DURATION;
     private final List<String> OR_TAGS;
     private final List<String> AND_TAGS;
-
     private final String apiBaseUrl;
     private final HttpClient http;
     private final ObjectMapper mapper;
 
-    //
+    // HTTP request timeout
     private final Duration requestTimeout;
 
-    // simple cache
-
+    // Cache for last fetched quote
     private String lastQuote;
     private long lastFetchTime = 0;
 
     // User preferences
     private String userAuthor = null;
 
-
-        // Constructor initializes HttpClient and loads configuration properties
+    // Constructor initializes HttpClient and loads configuration properties
     public QuoteService() {
         logger.info("Java={}, Vendor={}", System.getProperty("java.version"), System.getProperty("java.vendor"));
         Properties props = loadProperties("/application.properties");
-        this.FALLBACK_URL = props.getProperty("quote.fallback.url", "");
-        this.apiBaseUrl = props.getProperty("quote.api.url", FALLBACK_URL);
+        this.apiBaseUrl = props.getProperty("quote.api.url", props.getProperty("quote.fallback.url", ""));
         boolean allowInsecure = Boolean.parseBoolean(props.getProperty("quote.api.allowInsecure","false"));
         if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
             logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
         }
-        this.CACHE_DURATION = Long.parseLong(props.getProperty("quote.cache.duration.ms", "60000")); // 1 minute default
+        // Safe parse with fallback (avoid NumberFormatException)
+        this.CACHE_DURATION = safeParseLong(props.getProperty("quote.cache.duration.ms"), 60000L, "quote.cache.duration.ms");
         this.userAuthor = props.getProperty("quote.author", "").trim();
         this.OR_TAGS  = parseCsv(props.getProperty("quote.tags.or", ""));
         this.AND_TAGS = parseCsv(props.getProperty("quote.tags.and", ""));
-        int timeout = Integer.parseInt(props.getProperty("quote.api.timeout.seconds", "5"));
-        this.requestTimeout = Duration.ofSeconds(timeout);
+        int timeoutSeconds = (int) safeParseLong(props.getProperty("quote.api.timeout.seconds"), 5L, "quote.api.timeout.seconds");
+        if (timeoutSeconds <= 0) timeoutSeconds = 5; // guard negative/zero
+        this.requestTimeout = Duration.ofSeconds(timeoutSeconds);
         this.http = HttpClient.newBuilder()
                 .connectTimeout(requestTimeout)
                 .build();
         this.mapper = new ObjectMapper();
+    }
+
+    /**
+     * Safely parses a string to a long, returning a default value on failure or non-positive input.
+     * This was implemented because Properties return strings, and we want to avoid exceptions.
+     * @param value The string to parse.
+     * @param def The default value to return on failure.
+     * @param key The configuration key for logging purposes.
+     * @return The parsed long or the default value.
+     */
+    private long safeParseLong(String value, long def, String key) {
+        if (value == null || value.isBlank()) return def;
+        try {
+            long parsed = Long.parseLong(value.trim());
+            if (parsed <= 0) {
+                logger.warn("Config '{}' non-positive ({}). Using default {}", key, parsed, def);
+                return def;
+            }
+            return parsed;
+        } catch (NumberFormatException nfe) {
+            logger.warn("Config '{}' invalid value '{}' ({}). Using default {}", key, value, nfe.getMessage(), def);
+            return def;
+        }
     }
 
     /**
@@ -126,11 +148,12 @@ public class QuoteService implements PropertiesLoader {
             if (text == null || text.isBlank()) return FALLBACK;
             if (author == null || author.isBlank()) author = "Unknown";
 
-            // format and cache result
-            lastQuote = "“" + text + "” — " + author;
+            // format and cache result via helper
+            String formatted = formatQuote(text, author);
+            lastQuote = formatted;
             lastFetchTime = now;
 
-            return "“" + text + "” — " + author; // “text” — Author
+            return formatted; // “text” — Author
         } catch (IOException | InterruptedException ie) {
             logger.warn("Quote fetch failed: {}", ie.toString());
             return FALLBACK;
@@ -158,7 +181,7 @@ public class QuoteService implements PropertiesLoader {
             String orPart  = String.join("|", OR_TAGS);
             String andPart = String.join(",", AND_TAGS);
 
-            // Combine the OR and AND parts appropriately
+            // Combine the OR & AND parts appropriately
             String tagsValue = null;
             if (!orPart.isBlank() && !andPart.isBlank()) {
                 tagsValue = orPart + "," + andPart;       // (OR) AND (AND)
@@ -203,5 +226,9 @@ public class QuoteService implements PropertiesLoader {
     private static String truncate(String string) {
         if (string == null) return "";
         return string.length() > 200 ? string.substring(0, 200) + "…" : string;
+    }
+
+    private static String formatQuote(String text, String author) {
+        return OPEN_QUOTE + text + CLOSE_QUOTE + " — " + author;
     }
 }

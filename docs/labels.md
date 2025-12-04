@@ -21,10 +21,7 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: status:needs-info
   - description: Awaiting more details from the reporter (steps, logs, environment) before work can continue.
   - color: fef2c0
-// TODO: NEW--add to GitHub
-- name: status:backlog
-  - description: Parked for later. Important, but not in the current milestone.
-  - color: 777777
+    // TODO: NEW--add to GitHub
 - name: status:backlog
   - description: Not scheduled for the current milestone; parked for future planning.
   - color: d1d5da
@@ -105,6 +102,10 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: project:mvp
   - description: Use for all issues and PRs that belong to the MVP release scope. Project workflow can auto-add labeled items to the "CodeForge – MVP Release" board.
   - color: e6ffcc
+- name: checkpoint
+  - description: Used for checkpoint tracking issues (e.g., Week 7 – Project Checkpoint) and their templates.
+  - color: 0366d6
+
 ### Cross-cutting / Initiative
 - name: hardening
   - description: Stabilization, safety, and resilience work (e.g., transaction boundaries, locking, validation, error handling).
@@ -112,3 +113,12 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: migration
   - description: Schema/data migrations and related tasks (e.g., Flyway/Liquibase scripts, rollout coordination).
   - color: 1f6feb
+
+## Type
+- name: enhancement
+  - description: New feature work and functional improvements.
+  - color: a2eeef
+- name: chore
+  - description: Maintenance, refactors, and non-feature tasks (e.g., config, build, logging hygiene).
+  - color: d4c5f9
+

@@ -86,4 +86,25 @@ class DrillServletTest {
         verify(drillService).recordOutcome(42L, Outcome.CORRECT, "// code");
         verify(resp).sendRedirect(contains("/drill/next"));
     }
+
+    @Test
+    void get_invalidId_returns400() throws Exception {
+        when(req.getPathInfo()).thenReturn("/abc");
+        servlet.doGet(req, resp);
+        verify(resp).sendError(400);
+    }
+
+    @Test
+    void post_submit_invalidId_returns400() throws Exception {
+        when(req.getPathInfo()).thenReturn("/xyz/submit");
+        servlet.doPost(req, resp);
+        verify(resp).sendError(400);
+    }
+
+    @Test
+    void post_add_invalidId_returns400() throws Exception {
+        when(req.getPathInfo()).thenReturn("/bad/add");
+        servlet.doPost(req, resp);
+        verify(resp).sendError(400);
+    }
 }

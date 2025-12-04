@@ -19,7 +19,6 @@
     <servlet.api.version>4.0.1</servlet.api.version>
     <jstl.version>1.2</jstl.version>
     <jakarta.persistence.api.version>3.1.0</jakarta.persistence.api.version>
-    <h2.version>2.3.232</h2.version>
     <log4j2.version>2.23.1</log4j2.version>
     <java.jwt.version>4.4.0</java.jwt.version>
     <jwks.rsa.version>0.22.1</jwks.rsa.version>
@@ -28,6 +27,7 @@
     <javax.validation.version>2.0.1.Final</javax.validation.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
     <javax.el.version>3.0.1-b11</javax.el.version>
+    <mysql.connector.version>8.4.0</mysql.connector.version>
     <!-- Plugin versions -->
     <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
@@ -60,13 +60,6 @@
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
       <version>${jakarta.persistence.api.version}</version>
-    </dependency>
-
-    <!-- H2 for dev/test -->
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2.version}</version>
     </dependency>
 
     <!-- Logging -->
@@ -168,6 +161,13 @@
       <groupId>org.glassfish</groupId>
       <artifactId>javax.el</artifactId>
       <version>${javax.el.version}</version>
+    </dependency>
+
+    <!-- MySQL JDBC driver for DAO tests and MySQL runtime -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>${mysql.connector.version}</version>
     </dependency>
 
   </dependencies>

@@ -78,7 +78,8 @@ public class DrillServlet extends HttpServlet {
             return;
         }
         // /{id}
-        Long id = Long.valueOf(parts[0]);
+        long id = parseIdOrBadRequest(path.substring(1).split("/")[0], resp);
+        if (id == -1) return;
         Challenge c = challengeService.getById(id).orElse(null);
         if (c == null) { resp.sendError(404); return; }
         DrillItem di = drillService.ensureDrillItem(id);
@@ -91,16 +92,16 @@ public class DrillServlet extends HttpServlet {
      * Handles POST requests for submitting challenge solutions and adding challenges to the drill queue.
      * @param req the HttpServletRequest
      * @param resp the HttpServletResponse
-     * @throws ServletException the servlet exception
-     * @throws IOException the IO exception
+     * @throws IOException if an I/O operation fails
      */
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         // /{id}/submit
         String path = req.getPathInfo();
         String[] parts = (path == null || "/".equals(path)) ? new String[0] : path.substring(1).split("/");
         if (parts.length == 2 && "submit".equals(parts[1])) {
-            Long id = Long.valueOf(parts[0]);
+            long id = parseIdOrBadRequest(parts[0], resp);
+            if (id == -1) return;
             String language = req.getParameter("language");
             String code = req.getParameter("code");
             var result = runService.run(id, language, code);
@@ -111,11 +112,24 @@ public class DrillServlet extends HttpServlet {
         }
         // /{id}/add
         if (parts.length == 2 && "add".equals(parts[1])) {
-            Long id = Long.valueOf(parts[0]);
+            long id = parseIdOrBadRequest(parts[0], resp);
+            if (id == -1) return;
             drillService.ensureDrillItem(id);
             resp.sendRedirect(req.getContextPath() + "/challenges/" + id);
             return;
         }
         resp.sendError(400);
+    }
+
+    // ---- helpers (DRY) ----
+    private long parseIdOrBadRequest(String segment, HttpServletResponse resp) throws IOException {
+        try {
+            long id = Long.parseLong(segment);
+            if (id <= 0) { resp.sendError(400); return -1; }
+            return id;
+        } catch (NumberFormatException nfe) {
+            resp.sendError(400);
+            return -1;
+        }
     }
 }

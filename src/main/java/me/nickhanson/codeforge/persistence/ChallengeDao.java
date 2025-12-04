@@ -17,7 +17,7 @@ public class ChallengeDao {
 
     private static final Logger log = LogManager.getLogger(ChallengeDao.class);
 
-    private final EntityData<Challenge> data = new EntityData<>(Challenge.class);
+    private final GenericDao<Challenge> data = new GenericDao<>(Challenge.class);
 
     // Constructor
     public ChallengeDao() {

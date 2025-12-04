@@ -2,13 +2,14 @@ package me.nickhanson.codeforge.persistence;
 
 import me.nickhanson.codeforge.entity.*;
 import org.junit.jupiter.api.Test;
+import testsupport.DbReset;
 
 import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DrillItemDaoTest extends DaoTestBase {
+class DrillItemDaoTest extends DbReset {
 
     private final ChallengeDao challengeDao = new ChallengeDao();
     private final DrillItemDao drillDao = new DrillItemDao();
@@ -40,15 +41,42 @@ class DrillItemDaoTest extends DaoTestBase {
 
     @Test
     void dueQueue_ordersNullFirst_thenByTime() {
-        Challenge ch = seedChallenge("FizzBuzz");
-        DrillItem a = new DrillItem(ch); a.setNextDueAt(null); drillDao.saveOrUpdate(a);
-        DrillItem b = new DrillItem(ch); b.setNextDueAt(Instant.now().minusSeconds(60)); drillDao.saveOrUpdate(b);
-        DrillItem c = new DrillItem(ch); c.setNextDueAt(Instant.now().plusSeconds(60)); drillDao.saveOrUpdate(c);
+        // Ensure we control the data set
+        drillDao.getAll().forEach(drillDao::delete);
+
+        Challenge chNull   = seedChallenge("FizzBuzz Null");
+        Challenge chPast   = seedChallenge("FizzBuzz Past");
+        Challenge chFuture = seedChallenge("FizzBuzz Future");
+
+        DrillItem a = new DrillItem(chNull);
+        a.setNextDueAt(null);
+        drillDao.saveOrUpdate(a);
+
+        DrillItem b = new DrillItem(chPast);
+        b.setNextDueAt(Instant.now().minusSeconds(60));
+        drillDao.saveOrUpdate(b);
+
+        DrillItem c = new DrillItem(chFuture);
+        c.setNextDueAt(Instant.now().plusSeconds(60));
+        drillDao.saveOrUpdate(c);
 
         List<DrillItem> queue = drillDao.dueQueue(Instant.now(), 10);
-        assertTrue(queue.size() >= 2); // at least (null + past-due)
+
+        // We expect ONLY the null + past item to be "due"
+        assertEquals(2, queue.size(), "Due queue should include null and past, but not future");
+
+        // 1) null first
         assertNull(queue.get(0).getNextDueAt());
-        assertTrue(queue.get(1).getNextDueAt().isBefore(Instant.now().plusSeconds(1)));
+
+        // 2) then the past-due item
+        assertNotNull(queue.get(1).getNextDueAt());
+        assertTrue(queue.get(1).getNextDueAt().isBefore(Instant.now()));
+
+        // 3) and the future item is NOT in the queue
+        List<Long> challengeIds = queue.stream()
+                .map(di -> di.getChallenge().getId())
+                .toList();
+        assertFalse(challengeIds.contains(chFuture.getId()));
     }
 
     @Test

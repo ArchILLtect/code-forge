@@ -86,7 +86,8 @@
           </div>
         </div>
 
-        <div class="cf-form-row">
+        <div class="cf-form-row-drill">
+
           <label for="code">Code</label>
           <textarea id="code"
                     name="code"
@@ -94,10 +95,16 @@
                     placeholder="// Type your solution here...
 // Add '// correct' to mark CORRECT,
 // '// ok' for ACCEPTABLE,
- // anything else is INCORRECT."></textarea>
+// anything else is INCORRECT."></textarea>
+          <div class="drill-form-actions">
+            <div id="codeCharCount" class="cf-hint" style="color:#6b7280">
+              Characters: <span id="codeCharCountVal">0</span>
+            </div>
+            <button type="button" id="clearCodeBtn" class="cf-btn cf-btn-secondary">Clear</button>
+          </div>
         </div>
 
-        <div class="cf-form-actions">
+        <div class="drill-form-submit">
           <button type="submit" class="cf-btn cf-btn-primary">
             Run &amp; Submit
           </button>
@@ -122,13 +129,53 @@
 <jsp:include page="/WEB-INF/jsp/footer.jsp" />
 
 <script>
-  // Ctrl+Enter to submit quickly
-  document.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+  // LocalStorage persistence & Ctrl+Enter submit (Issue #34)
+  (function() {
+    const textarea = document.getElementById('code');
+    const chalId = '${challenge.id}'; // server-side value
+    const storageKey = 'cf.challenge.' + chalId + '.code';
+    const countEl = document.getElementById('codeCharCountVal');
+    function updateCount() { if (countEl && textarea) { countEl.textContent = String(textarea.value.length); } }
+    if (textarea) {
+      // Restore saved value
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        textarea.value = saved;
+      }
+      updateCount();
+      let saveTimer;
+      const persist = () => {
+        try { localStorage.setItem(storageKey, textarea.value); } catch (e) { /* ignore quota errors */ }
+      };
+      textarea.addEventListener('input', function() {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(persist, 300); // debounce
+        updateCount();
+      });
+      // Ensure latest code stored on submit
       const form = document.querySelector('.drill-form');
-      if (form) form.submit();
+      if (form) {
+        form.addEventListener('submit', persist);
+      }
+      // Clear button
+      const clearBtn = document.getElementById('clearCodeBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+          localStorage.removeItem(storageKey);
+          textarea.value = '';
+          updateCount();
+        });
+      }
     }
-  });
+
+    // Ctrl+Enter to submit quickly (preserve existing behavior)
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        const form = document.querySelector('.drill-form');
+        if (form) form.submit();
+      }
+    });
+  })();
 </script>
 
 </body>

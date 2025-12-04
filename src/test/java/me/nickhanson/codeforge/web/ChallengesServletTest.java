@@ -104,4 +104,25 @@ class ChallengesServletTest {
 
         verify(resp).sendError(400);
     }
+
+    @Test
+    void get_detail_invalidId_returns400() throws Exception {
+        when(req.getPathInfo()).thenReturn("/abc");
+        servlet.doGet(req, resp);
+        verify(resp).sendError(400);
+    }
+
+    @Test
+    void post_update_invalidId_returns400() throws Exception {
+        when(req.getPathInfo()).thenReturn("/xyz");
+        servlet.doPost(req, resp);
+        verify(resp).sendError(400);
+    }
+
+    @Test
+    void post_delete_invalidId_returns400() throws Exception {
+        when(req.getPathInfo()).thenReturn("/xyz/delete");
+        servlet.doPost(req, resp);
+        verify(resp).sendError(400);
+    }
 }
