@@ -4,7 +4,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 1) Practice Mode (MVP): Non-persistent challenge submission and evaluation (P0)
+## 53) Practice Mode (MVP): Non-persistent challenge submission and evaluation (P0)
 
 - Title
   - feat(practice): Practice Mode — submit code for a challenge and see inline result (no persistence)
@@ -35,7 +35,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 2) Feature Flags: Toggle Practice and Drill availability via config (P0)
+## 54) Feature Flags: Toggle Practice and Drill availability via config (P0)
 
 - Title
   - feat(config): Feature flags for Practice and Drill routes
@@ -60,7 +60,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 3) Drill Mode: Submission flow wiring and next navigation polish (P0)
+## 55) Drill Mode: Submission flow wiring and next navigation polish (P0)
 
 - Title
   - feat(drill): Submission flow — run stub, persist outcome, redirect to next due
@@ -86,7 +86,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 4) Error Handling: Friendly messages and 404s for invalid IDs/runner errors (P0)
+## 56) Error Handling: Friendly messages and 404s for invalid IDs/runner errors (P0)
 
 - Title
   - chore(web): Error handling — 404 for invalid challenge, friendly messages for runner errors
@@ -111,7 +111,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 5) Security: Guard Drill routes; Practice is public (no auth) (P1)
+## 57) Security: Guard Drill routes; Practice is public (no auth) (P1)
 
 - Title
   - feat(security): Guard Drill routes (require auth); Practice is public (no auth required)
@@ -136,7 +136,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 6) Telemetry: Log counters for attempts and outcomes by mode (P1)
+## 58) Telemetry: Log counters for attempts and outcomes by mode (P1)
 
 - Title
   - chore(logging): Structured logs and counters for submit events
@@ -161,7 +161,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 7) Tests: Unit and servlet integration for Practice and Drill flows (P1)
+## 59) Tests: Unit and servlet integration for Practice and Drill flows (P1)
 
 - Title
   - test(service,web): Unit and servlet integration tests — runner outcomes and submit flow
@@ -186,7 +186,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 8) DB Tests: DrillService.recordOutcome scheduling updates (P1)
+## 60) DB Tests: DrillService.recordOutcome scheduling updates (P1)
 
 - Title
   - test(service): DB-backed tests for Drill scheduling and persistence
@@ -209,7 +209,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 9) Docs: MVP guide and screenshots (P2)
+## 61) Docs: MVP guide and screenshots (P2)
 
 - Title
   - docs: MVP guide — Practice & Drill usage, flags, and test notes
@@ -232,7 +232,7 @@ Use these blocks to create GitHub issues with our templates. Each block includes
 
 ---
 
-## 10) Practice Landing Page (optional) (P2)
+## 62) Practice Landing Page (optional) (P2)
 
 - Title
   - feat(practice): Landing page at /practice with CTA to challenges
