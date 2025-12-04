@@ -26,8 +26,6 @@ import java.util.Properties;
 public class QuoteService implements PropertiesLoader {
     private static final Logger logger = LogManager.getLogger(QuoteService.class);
     private static final String FALLBACK = "Keep it simple. — CodeForge";
-    private static final String OPEN_QUOTE = "“"; // “
-    private static final String CLOSE_QUOTE = "”"; // ”
     private final long CACHE_DURATION;
     private final List<String> OR_TAGS;
     private final List<String> AND_TAGS;
@@ -228,7 +226,16 @@ public class QuoteService implements PropertiesLoader {
         return string.length() > 200 ? string.substring(0, 200) + "…" : string;
     }
 
+    // Minimal formatter for MVP: no added quotation marks, no trimming logic
+    /**
+     * Formats the quote text and author into a single string.
+     * @param text the quote text
+     * @param author the quote author
+     * @return Formatted quote string
+     */
     private static String formatQuote(String text, String author) {
-        return OPEN_QUOTE + text + CLOSE_QUOTE + " — " + author;
+        String safeText = (text == null) ? "" : text;
+        String safeAuthor = (author == null || author.isBlank()) ? "Unknown" : author;
+        return safeText + " — " + safeAuthor;
     }
 }
