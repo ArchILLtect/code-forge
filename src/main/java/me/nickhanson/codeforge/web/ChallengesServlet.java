@@ -73,6 +73,8 @@ public class ChallengesServlet extends HttpServlet {
             Challenge c = service.getById(id).orElse(null);
             if (c == null) { resp.sendError(404); return; }
             applyEditAttributes(req, c, id);
+            // Also provide the full entity for JSPs that reference ${challenge.*}
+            req.setAttribute("challenge", c);
             req.getRequestDispatcher("/WEB-INF/jsp/challenges/edit.jsp").forward(req, resp);
             return;
         }
