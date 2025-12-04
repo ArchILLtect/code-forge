@@ -83,17 +83,18 @@ public class Database implements PropertiesLoader {
                 new InputStreamReader(classloader.getResourceAsStream(sqlFile)))) {
 
             connect();
-            Statement stmt = connection.createStatement();
-            String sql = "";
+            try (Statement stmt = connection.createStatement()) {
+                String sql = "";
 
-            while (br.ready()) {
-                char inputValue = (char) br.read();
+                while (br.ready()) {
+                    char inputValue = (char) br.read();
 
-                if (inputValue == ';') {
-                    stmt.executeUpdate(sql.trim());
-                    sql = "";
-                } else {
-                    sql += inputValue;
+                    if (inputValue == ';') {
+                        stmt.executeUpdate(sql.trim());
+                        sql = "";
+                    } else {
+                        sql += inputValue;
+                    }
                 }
             }
 

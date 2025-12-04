@@ -150,10 +150,10 @@ Recommended Java annotations:
 
 ```java
 @CreationTimestamp
-private LocalDateTime createdAt;
+private Instant createdAt;
 
 @UpdateTimestamp
-private LocalDateTime updatedAt;
+private Instant updatedAt;
 
 @Enumerated(EnumType.STRING)
 private Difficulty difficulty;
