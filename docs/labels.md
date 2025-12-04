@@ -89,7 +89,6 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
   - description: Work related to external/public API selection, integration, and resilience.
   - color: 5f8b95
 
-// TODO: NEW--add to GitHub
 ## Hardening & Migrations
 - name: hardening
   - description: Reliability, security, and performance improvements; tech debt reductions.

@@ -18,13 +18,17 @@
     margin-top: 0.25rem;
     padding: 0.35rem 0;
 
-    background: #020617;       /* near-black */
+    background: #020617;
     border-radius: 0.6rem;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
     border: 1px solid rgba(148, 163, 184, 0.35);
 
     display: none;
     z-index: 50;
+}
+
+.cf-nav-dropdown li {
+    list-style: none;
 }
 
 /* Show dropdown when hovering the LI, not just the anchor */
@@ -49,7 +53,7 @@
     color: #f9fafb;
 }
 
-/* Put this in whichever CSS file makes sense */
+/* Navigation list */
 .cf-nav-list {
     display: flex;
     align-items: center;

@@ -68,14 +68,15 @@
           <dt>Difficulty</dt>
           <dd>${challenge.difficulty}</dd>
         </div>
-          <div>
-            <dt>Topic</dt>
-            <dd>${challenge.promptMd}</dd>
-          </div>
+        <div>
+          <dt>Topic</dt>
+          <dd>${challenge.promptMd}</dd>
+        </div>
         <div>
           <dt>Created</dt>
           <dd>
-            <fmt:formatDate value="${challenge.createdAt}" pattern="yyyy-MM-dd HH:mm" />
+            <!-- Avoid fmt:formatDate for Java Time types; render raw or pre-formatted string -->
+            <c:out value="${challenge.createdAt}"/>
           </dd>
         </div>
       </dl>

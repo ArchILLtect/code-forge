@@ -34,7 +34,6 @@ class QuoteServiceTest {
 
     /**
      * Test that getRandomQuote correctly formats a single-element response and caches it.
-     * @throws Exception if HTTP call fails
      */
     @Test
     void getRandomQuote_formatsSingleElementResponse_andCaches() throws Exception {
@@ -45,7 +44,7 @@ class QuoteServiceTest {
                 .thenReturn(httpResponse);
 
         String first = service.getRandomQuote();
-        assertEquals("“Hello” — World", first);
+        assertEquals("Hello — World", first);
 
         // Second call should use cache; http.send still only 1 call
         String second = service.getRandomQuote();
@@ -55,7 +54,6 @@ class QuoteServiceTest {
 
     /**
      * Test that getRandomQuote falls back to default quote on non-200 response.
-     * @throws Exception if HTTP call fails
      */
     @Test
     void getRandomQuote_fallbackOnNon200() throws Exception {
@@ -70,7 +68,6 @@ class QuoteServiceTest {
 
     /**
      * Test that getRandomQuote falls back to default quote on empty array response.
-     * @throws Exception if HTTP call fails
      */
     @Test
     void getRandomQuote_fallbackOnEmptyArray() throws Exception {
@@ -85,7 +82,6 @@ class QuoteServiceTest {
 
     /**
      * Test that getRandomQuote returns one of multiple quotes in the response array.
-     * @throws Exception if HTTP call fails
      */
     @Test
     void getRandomQuote_multiElementArray_returnsOneOfThem() throws Exception {
@@ -102,12 +98,11 @@ class QuoteServiceTest {
                 .thenReturn(httpResponse);
 
         String out = service.getRandomQuote();
-        assertTrue(out.equals("“Alpha” — A") || out.equals("“Beta” — B"));
+        assertTrue(out.equals("Alpha — A") || out.equals("Beta — B"));
     }
 
     /**
      * Test that getRandomQuote defaults to "Unknown" author when the author field is blank.
-     * @throws Exception if HTTP call fails
      */
     @Test
     void getRandomQuote_blankAuthor_defaultsToUnknown() throws Exception {
@@ -117,7 +112,7 @@ class QuoteServiceTest {
                 .thenReturn(httpResponse);
 
         String out = service.getRandomQuote();
-        assertEquals("“Msg” — Unknown", out);
+        assertEquals("Msg — Unknown", out);
     }
 
     // --- helpers ---
