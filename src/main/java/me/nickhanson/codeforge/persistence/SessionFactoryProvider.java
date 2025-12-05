@@ -1,5 +1,6 @@
 package me.nickhanson.codeforge.persistence;
 
+import me.nickhanson.codeforge.config.LocalConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
@@ -10,61 +11,103 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 /**
  * Provides a singleton SessionFactory for Hibernate ORM.
- * Loads configuration from hibernate.cfg.xml (MySQL only for MVP),
- * applying overrides from system properties or environment variables when present.
+ * Resolution order for config values:
+ *   1) System properties        (e.g. -Dhibernate.connection.url=...)
+ *   2) Environment variables    (e.g. DB_HOST, DB_USER, DB_PASS, ...)
+ *   3) local.properties         (on classpath, git-ignored; for local dev)
+ *   4) Hard-coded default       (only for non-secret things)
  */
 public class SessionFactoryProvider {
+
     private static final Logger log = LogManager.getLogger(SessionFactoryProvider.class);
     private static final SessionFactory sessionFactory = buildSessionFactory();
 
-    private static String env(String key, String defVal) {
-        String v = System.getenv(key);
-        return (v != null && !v.isBlank()) ? v : defVal;
-    }
-
-    private static String prop(String key, String defVal) {
-        String v = System.getProperty(key);
-        return (v != null && !v.isBlank()) ? v : defVal;
-    }
-
     /**
-     * Builds the SessionFactory from hibernate.cfg.xml configuration file.
+     * Resolve a config value in this order:
+     *   - Java system property
+     *   - Environment variable
+     *   - local.properties (via LocalConfig)
+     *   - Provided default
      */
-    private static SessionFactory buildSessionFactory() {
-        // Resolve optional overrides
-        String url = prop("hibernate.connection.url", null);
-        if (url == null) {
-            String host = env("DB_HOST", "localhost");
-            String port = env("DB_PORT", "3306");
-            String db   = env("DB_NAME", "cf_test_db");
-            url = "jdbc:mysql://" + host + ":" + port + "/" + db + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static String resolve(String key, String defaultVal) {
+        String fromSys = System.getProperty(key);
+        if (fromSys != null && !fromSys.isBlank()) {
+            return fromSys;
         }
-        String user = prop("hibernate.connection.username", env("DB_USER", "root"));
-        String pass = prop("hibernate.connection.password", env("DB_PASSWORD", ""));
-        String dialect = prop("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
 
-        // Ensure MySQL JDBC driver is registered
+        String fromEnv = System.getenv(key);
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv;
+        }
+
+        String fromLocal = LocalConfig.get(key);
+        if (fromLocal != null && !fromLocal.isBlank()) {
+            return fromLocal;
+        }
+
+        return defaultVal;
+    }
+
+    private static SessionFactory buildSessionFactory() {
+        // URL: explicit hibernate prop wins; otherwise build from DB_HOST/DB_PORT/DB_NAME
+        String explicitUrl = resolve("hibernate.connection.url", null);
+        String url;
+
+        if (explicitUrl != null && !explicitUrl.isBlank()) {
+            url = explicitUrl;
+        } else {
+            String host = resolve("DB_HOST", "localhost");
+            String port = resolve("DB_PORT", "3306");
+            String db   = resolve("DB_NAME", "cf_test_db");
+
+            url = "jdbc:mysql://" + host + ":" + port + "/" + db
+                    + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        }
+
+        // Username: hibernate prop -> DB_USER -> default "root"
+        String user = resolve("hibernate.connection.username", null);
+        if (user == null || user.isBlank()) {
+            user = resolve("DB_USER", "root");
+        }
+
+        // Password: hibernate prop -> DB_PASS -> DB_PASSWORD
+        String pass = resolve("hibernate.connection.password", null);
+        if (pass == null || pass.isBlank()) {
+            pass = resolve("DB_PASS", null);
+        }
+        if (pass == null || pass.isBlank()) {
+            pass = resolve("DB_PASSWORD", null);
+        }
+        if (pass == null || pass.isBlank()) {
+            throw new IllegalStateException(
+                    "No DB password configured. Tried hibernate.connection.password, "
+                            + "DB_PASS, DB_PASSWORD, and local.properties."
+            );
+        }
+
+        // Dialect: can still be overridden if needed
+        String dialect = resolve(
+                "hibernate.dialect",
+                "org.hibernate.dialect.MySQL8Dialect"
+        );
+
+        // Ensure MySQL JDBC driver is present
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("MySQL JDBC driver not found on classpath", e);
         }
 
-        // Build registry using XML, then apply non-empty overrides
+        // Log *non-secret* connection info
+        log.info("Building SessionFactory with URL={} and user={}", url, user);
+
+        // Build registry using XML then override with resolved settings
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
-                .configure("hibernate.cfg.xml");
-        if (url != null && !url.isBlank()) {
-            builder.applySetting("hibernate.connection.url", url);
-        }
-        if (user != null && !user.isBlank()) {
-            builder.applySetting("hibernate.connection.username", user);
-        }
-        if (pass != null && !pass.isBlank()) {
-            builder.applySetting("hibernate.connection.password", pass);
-        }
-        if (dialect != null && !dialect.isBlank()) {
-            builder.applySetting("hibernate.dialect", dialect);
-        }
+                .configure("hibernate.cfg.xml")
+                .applySetting("hibernate.connection.url", url)
+                .applySetting("hibernate.connection.username", user)
+                .applySetting("hibernate.connection.password", pass)
+                .applySetting("hibernate.dialect", dialect);
 
         StandardServiceRegistry registry = builder.build();
         return buildFromRegistry(registry);
@@ -77,8 +120,7 @@ public class SessionFactoryProvider {
                 .addAnnotatedClass(me.nickhanson.codeforge.entity.DrillItem.class);
 
         Metadata metadata = sources.buildMetadata();
-        SessionFactory sf = metadata.buildSessionFactory();
-        return sf;
+        return metadata.buildSessionFactory();
     }
 
     /**
