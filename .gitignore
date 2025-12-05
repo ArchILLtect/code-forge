@@ -108,3 +108,4 @@ https-instance.config
 /mvn-test.log
 
 /src/main/webapp/WEB-INF/web.xml
+/src/main/resources/local.properties
