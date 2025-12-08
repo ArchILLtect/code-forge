@@ -51,6 +51,11 @@ class DrillServletTest {
         lenient().when(ctx.getAttribute("challengeService")).thenReturn(challengeService);
         lenient().when(ctx.getAttribute("runService")).thenReturn(runService);
         lenient().when(req.getRequestDispatcher(any())).thenReturn(rd);
+        var session = mock(javax.servlet.http.HttpSession.class);
+        lenient().when(req.getSession(false)).thenReturn(session); // UserContext reads this
+        lenient().when(req.getSession()).thenReturn(session);
+        when(session.getAttribute("userSub")).thenReturn("demo-user");
+        lenient().when(req.getContextPath()).thenReturn(""); // Avoid null in redirects
 
         config = new ServletConfig() {
             @Override public String getServletName() { return "DrillServletTest"; }
@@ -65,7 +70,7 @@ class DrillServletTest {
     void get_queue_forwardsWithRows() throws Exception {
         when(req.getPathInfo()).thenReturn(null);
         DrillItem di = new DrillItem(new Challenge("A", Difficulty.EASY, "", ""));
-        when(drillService.getDueQueue(10)).thenReturn(List.of(di));
+        when(drillService.getDueQueue(10, "demo-user")).thenReturn(List.of(di));
 
         servlet.doGet(req, resp);
 
@@ -83,7 +88,7 @@ class DrillServletTest {
 
         servlet.doPost(req, resp);
 
-        verify(drillService).recordOutcome(42L, Outcome.CORRECT, "// code");
+        verify(drillService).recordOutcome(42L, Outcome.CORRECT, "// code", "demo-user");
         verify(resp).sendRedirect(contains("/drill/next"));
     }
 
