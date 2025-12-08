@@ -79,6 +79,15 @@
                   rows="14"></textarea>
       </div>
 
+      <div class="cf-form-row">
+        <label for="expectedAnswer">Expected answer (MVP)</label>
+        <input id="expectedAnswer"
+               name="expectedAnswer"
+               type="text"
+               required
+               placeholder="e.g., twoSum" />
+      </div>
+
       <div class="cf-form-actions">
         <a class="cf-btn cf-btn-ghost"
            href="${pageContext.request.contextPath}/challenges">

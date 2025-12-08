@@ -48,6 +48,13 @@
       <div class="cf-alert cf-alert-info">${info}</div>
     </c:if>
 
+    <!-- Enrollment banner -->
+    <c:if test="${enrolledCreated gt 0}">
+      <div class="cf-alert cf-alert-info">
+        Enrolled <strong><c:out value="${enrolledCreated}"/></strong> challenge(s) into your drill queue.
+      </div>
+    </c:if>
+
     <c:choose>
       <c:when test="${empty rows}">
         <div class="cf-empty-state">
