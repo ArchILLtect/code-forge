@@ -36,13 +36,15 @@ class DrillServiceTest {
     @Test
     void recordOutcome_createsSubmission_updatesDrillItem_andPersistsBoth() {
         long id = 42L;
+        String userId = "demo-user";
         Challenge c = challengeWithId(id);
         DrillItem di = new DrillItem(c);
+        di.setUserId(userId);
 
         when(chalDao.getById(id)).thenReturn(c);
-        when(drillDao.listByChallengeId(id)).thenReturn(List.of(di));
+        when(drillDao.listByChallengeIdAndUser(id, userId)).thenReturn(List.of(di));
 
-        Submission s = service.recordOutcome(id, Outcome.CORRECT, "code");
+        Submission s = service.recordOutcome(id, Outcome.CORRECT, "code", userId);
 
         verify(subDao).saveOrUpdate(any(Submission.class));
         verify(drillDao).saveOrUpdate(argThat(item ->
@@ -53,30 +55,34 @@ class DrillServiceTest {
     @Test
     void computeNextDueAt_advancesAccordingToStreak() {
         long id = 7L;
+        String userId = "demo-user";
         Challenge c = challengeWithId(id);
         DrillItem di = new DrillItem(c);
         di.setTimesSeen(0);
         di.setStreak(0);
+        di.setUserId(userId);
 
         when(chalDao.getById(id)).thenReturn(c);
-        when(drillDao.listByChallengeId(id)).thenReturn(List.of(di));
+        when(drillDao.listByChallengeIdAndUser(id, userId)).thenReturn(List.of(di));
 
         // CORRECT should set nextDueAt in the future and increment streak
-        service.recordOutcome(id, Outcome.CORRECT, "// correct");
+        service.recordOutcome(id, Outcome.CORRECT, "// correct", userId);
         verify(drillDao).saveOrUpdate(argThat(item -> item.getStreak() == 1 && item.getNextDueAt().isAfter(Instant.now())));
 
         // INCORRECT should reset streak to 0 and set shorter delay
-        service.recordOutcome(id, Outcome.INCORRECT, "// fail");
+        service.recordOutcome(id, Outcome.INCORRECT, "// fail", userId);
         verify(drillDao, atLeast(2)).saveOrUpdate(any());
     }
 
     @Test
     void getDueQueue_returnsSoonestWhenNoneDue() {
-        when(drillDao.dueQueue(any(), eq(1))).thenReturn(List.of());
+        String userId = "demo-user";
+        when(drillDao.dueQueue(any(), eq(1), eq(userId))).thenReturn(List.of());
         DrillItem soonest = new DrillItem(challengeWithId(0L));
-        when(drillDao.soonestUpcoming()).thenReturn(Optional.of(soonest));
+        soonest.setUserId(userId);
+        when(drillDao.soonestUpcoming(eq(userId))).thenReturn(Optional.of(soonest));
 
-        var queue = service.getDueQueue(1);
+        var queue = service.getDueQueue(1, userId);
         assertEquals(1, queue.size());
         assertSame(soonest, queue.get(0));
     }
@@ -84,11 +90,12 @@ class DrillServiceTest {
     @Test
     void ensureDrillItem_createsWhenMissing() {
         long id = 9L;
+        String userId = "demo-user";
         Challenge c = challengeWithId(id);
         when(chalDao.getById(id)).thenReturn(c);
-        when(drillDao.listByChallengeId(id)).thenReturn(List.of());
+        when(drillDao.listByChallengeIdAndUser(id, userId)).thenReturn(List.of());
 
-        service.ensureDrillItem(id);
+        service.ensureDrillItem(id, userId);
         verify(drillDao).saveOrUpdate(any(DrillItem.class));
     }
 }
