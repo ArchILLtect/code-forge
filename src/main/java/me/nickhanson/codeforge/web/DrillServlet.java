@@ -11,9 +11,12 @@ import me.nickhanson.codeforge.entity.Outcome;
 import me.nickhanson.codeforge.service.ChallengeRunService;
 import me.nickhanson.codeforge.service.ChallengeService;
 import me.nickhanson.codeforge.service.DrillService;
+import me.nickhanson.codeforge.service.RunResult;
 
 import java.io.IOException;
 import java.util.List;
+import javax.servlet.ServletContext;
+import java.util.Optional;
 
 /**
  * Servlet handling drill-related operations, including displaying the drill queue,
@@ -31,7 +34,7 @@ public class DrillServlet extends HttpServlet {
     // Initialize services from servlet context or create new instances if not present.
     @Override
     public void init() {
-        var ctx = getServletContext();
+        ServletContext ctx = getServletContext();
         this.drillService = (DrillService) ctx.getAttribute("drillService");
         this.challengeService = (ChallengeService) ctx.getAttribute("challengeService");
         this.runService = (ChallengeRunService) ctx.getAttribute("runService");
@@ -49,13 +52,26 @@ public class DrillServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = UserContext.getUserId(req);
+        if (userId == null) {
+            resp.sendRedirect(req.getContextPath() + "/logIn");
+            return;
+        }
         // /drill or /drill/*
         String path = req.getPathInfo();
         if (path == null || "/".equals(path)) {
-            // queue
+            // Auto-enroll: create missing DrillItems for this user
+            List<Challenge> allChallenges = challengeService.listChallenges(null);
+            int created = drillService.ensureEnrollmentForUser(allChallenges, userId);
+            req.setAttribute("enrolledCreated", created);
             int limit = 10;
-            try { limit = Integer.parseInt(req.getParameter("limit")); } catch (Exception ignored) {}
-            List<DrillItem> items = drillService.getDueQueue(limit);
+            try {
+                String raw = req.getParameter("limit");
+                if (raw != null) {
+                    limit = Integer.parseInt(raw);
+                }
+            } catch (Exception ignored) { }
+            List<DrillItem> items = drillService.getDueQueue(limit, userId);
             req.setAttribute("rows", items.stream().map(di -> new DrillQueueRow(
                     di.getChallenge().getId(),
                     di.getChallenge().getTitle(),
@@ -66,10 +82,10 @@ public class DrillServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/jsp/drill/queue.jsp").forward(req, resp);
             return;
         }
-        // /next
+        // /drill/next  -> redirect to next due challenge
         String[] parts = path.substring(1).split("/");
         if (parts.length == 1 && "next".equals(parts[0])) {
-            var next = drillService.nextDue();
+            Optional<DrillItem> next = drillService.nextDue(userId);
             if (next.isPresent()) {
                 resp.sendRedirect(req.getContextPath() + "/drill/" + next.get().getChallenge().getId());
             } else {
@@ -77,12 +93,12 @@ public class DrillServlet extends HttpServlet {
             }
             return;
         }
-        // /{id}
-        long id = parseIdOrBadRequest(path.substring(1).split("/")[0], resp);
+        // /drill/{id}  -> show solve page
+        long id = parseIdOrBadRequest(parts[0], resp);
         if (id == -1) return;
         Challenge c = challengeService.getById(id).orElse(null);
         if (c == null) { resp.sendError(404); return; }
-        DrillItem di = drillService.ensureDrillItem(id);
+        DrillItem di = drillService.ensureDrillItem(id, userId);
         req.setAttribute("challenge", c);
         req.setAttribute("drillItem", di);
         req.getRequestDispatcher("/WEB-INF/jsp/drill/solve.jsp").forward(req, resp);
@@ -96,28 +112,44 @@ public class DrillServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String userId = UserContext.getUserId(req);
+        if (userId == null) {
+            resp.sendRedirect(req.getContextPath() + "/logIn");
+            return;
+        }
         // /{id}/submit
         String path = req.getPathInfo();
-        String[] parts = (path == null || "/".equals(path)) ? new String[0] : path.substring(1).split("/");
+        String[] parts = (path == null || "/".equals(path))
+                ? new String[0]
+                : path.substring(1).split("/");
         if (parts.length == 2 && "submit".equals(parts[1])) {
             long id = parseIdOrBadRequest(parts[0], resp);
             if (id == -1) return;
+
             String language = req.getParameter("language");
             String code = req.getParameter("code");
-            var result = runService.run(id, language, code);
+
+            RunResult result = runService.run(id, language, code);
             Outcome outcome = result.getOutcome();
-            drillService.recordOutcome(id, outcome, code);
+
+            drillService.recordOutcome(id, outcome, code, userId);
+
+            // TODO: set flash feedback from result.getFeedback() if available
+
             resp.sendRedirect(req.getContextPath() + "/drill/next");
             return;
         }
-        // /{id}/add
+
+        // /drill/{id}/add
         if (parts.length == 2 && "add".equals(parts[1])) {
             long id = parseIdOrBadRequest(parts[0], resp);
             if (id == -1) return;
-            drillService.ensureDrillItem(id);
+
+            drillService.ensureDrillItem(id, userId);
             resp.sendRedirect(req.getContextPath() + "/challenges/" + id);
             return;
         }
+
         resp.sendError(400);
     }
 
@@ -125,7 +157,9 @@ public class DrillServlet extends HttpServlet {
     private long parseIdOrBadRequest(String segment, HttpServletResponse resp) throws IOException {
         try {
             long id = Long.parseLong(segment);
-            if (id <= 0) { resp.sendError(400); return -1; }
+            if (id <= 0) {
+                resp.sendError(400); return -1;
+            }
             return id;
         } catch (NumberFormatException nfe) {
             resp.sendError(400);
