@@ -84,3 +84,8 @@
   - [ ] Tooltip renders on hover/focus next to counter.
   - [ ] Timestamp updates after typing and on submit.
   - [ ] No runtime errors in browsers without localStorage (fallback display hidden).
+
+- [ ] Wire flash feedback into queue/solve JSP via a simple session attribute.
+      Note: Add after DrillServlet posts; read feedback on next page and clear it.
+- [ ] Update PracticeServlet (public) to render evaluator feedback inline, using expectedAnswer but skipping persistence.
+      Add after evaluator is implemented (post-evaluator).
