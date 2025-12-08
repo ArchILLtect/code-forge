@@ -164,6 +164,7 @@ public class ChallengesServlet extends HttpServlet {
         form.setBlurb(req.getParameter("blurb"));
         try { form.setDifficulty(Difficulty.valueOf(req.getParameter("difficulty"))); } catch (Exception ignored) {}
         form.setPromptMd(req.getParameter("promptMd"));
+        form.setExpectedAnswer(req.getParameter("expectedAnswer"));
         return form;
     }
 }

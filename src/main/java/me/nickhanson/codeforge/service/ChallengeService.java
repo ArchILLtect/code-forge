@@ -94,6 +94,8 @@ public class ChallengeService {
                 form.getBlurb(),
                 form.getPromptMd()
         );
+        // Set expected answer for evaluator (MVP)
+        challenge.setExpectedAnswer(form.getExpectedAnswer());
         dao.saveOrUpdate(challenge);
         log.info("Created challenge id={} title='{}'", challenge.getId(), challenge.getTitle());
         return challenge;
@@ -113,6 +115,8 @@ public class ChallengeService {
         existing.setDifficulty(form.getDifficulty());
         existing.setBlurb(form.getBlurb());
         existing.setPromptMd(form.getPromptMd());
+        // Update expected answer
+        existing.setExpectedAnswer(form.getExpectedAnswer());
         dao.saveOrUpdate(existing);
         log.info("Updated challenge id={}", id);
         return Optional.of(existing);
