@@ -14,6 +14,8 @@ class DrillItemDaoTest extends DbReset {
     private final ChallengeDao challengeDao = new ChallengeDao();
     private final DrillItemDao drillDao = new DrillItemDao();
 
+    private static final String USER = "unit-test-user";
+
     private Challenge seedChallenge(String title) {
         Challenge ch = new Challenge(title, Difficulty.EASY, "", "...");
         challengeDao.saveOrUpdate(ch);
@@ -24,6 +26,7 @@ class DrillItemDaoTest extends DbReset {
     void create_assignsId_and_relatesToChallenge() {
         Challenge ch = seedChallenge("FizzBuzz");
         DrillItem di = new DrillItem(ch);
+        di.setUserId(USER);
         drillDao.saveOrUpdate(di);
         assertNotNull(di.getId());
         assertEquals(ch.getId(), di.getChallenge().getId());
@@ -33,6 +36,7 @@ class DrillItemDaoTest extends DbReset {
     void listByChallenge_returnsItems() {
         Challenge ch = seedChallenge("FizzBuzz");
         DrillItem di = new DrillItem(ch);
+        di.setUserId(USER);
         drillDao.saveOrUpdate(di);
         List<DrillItem> items = drillDao.listByChallengeId(ch.getId());
         assertEquals(1, items.size());
@@ -49,14 +53,17 @@ class DrillItemDaoTest extends DbReset {
         Challenge chFuture = seedChallenge("FizzBuzz Future");
 
         DrillItem a = new DrillItem(chNull);
+        a.setUserId(USER);
         a.setNextDueAt(null);
         drillDao.saveOrUpdate(a);
 
         DrillItem b = new DrillItem(chPast);
+        b.setUserId(USER);
         b.setNextDueAt(Instant.now().minusSeconds(60));
         drillDao.saveOrUpdate(b);
 
         DrillItem c = new DrillItem(chFuture);
+        c.setUserId(USER);
         c.setNextDueAt(Instant.now().plusSeconds(60));
         drillDao.saveOrUpdate(c);
 
@@ -86,6 +93,7 @@ class DrillItemDaoTest extends DbReset {
 
         Challenge ch = seedChallenge("FizzBuzz");
         DrillItem di = new DrillItem(ch);
+        di.setUserId(USER);
         drillDao.saveOrUpdate(di);
 
         drillDao.delete(di);
@@ -99,7 +107,7 @@ class DrillItemDaoTest extends DbReset {
         int beforeChallengeCount = challengeDao.getAll().size();
 
         Challenge ch = seedChallenge("FizzBuzz");
-        DrillItem di = new DrillItem(ch); drillDao.saveOrUpdate(di);
+        DrillItem di = new DrillItem(ch); di.setUserId(USER); drillDao.saveOrUpdate(di);
         // clean dependents then delete parent
         drillDao.delete(di);
         challengeDao.delete(ch);
