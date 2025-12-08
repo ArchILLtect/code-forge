@@ -149,6 +149,10 @@ public class Auth extends HttpServlet implements PropertiesLoader {
                 // Persist the authenticated user in the session
                 HttpSession session = req.getSession(true);
                 session.setAttribute("user", user);
+                // Also store Cognito sub for per-user drill features
+                if (user != null && user.getSub() != null && !user.getSub().isBlank()) {
+                    session.setAttribute("userSub", user.getSub());
+                }
 
             } catch (SecurityException se) {
                 req.setAttribute("errorMessage", "Authentication failed: " + se.getMessage());

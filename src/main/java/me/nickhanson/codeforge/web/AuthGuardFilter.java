@@ -36,7 +36,6 @@ public class AuthGuardFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
 
-        // Get the context path and the requested URI.
         String contextPath = req.getContextPath();
         String path = req.getRequestURI().substring(contextPath.length());
         String method = req.getMethod();
@@ -76,10 +75,14 @@ public class AuthGuardFilter extends HttpFilter {
 
         // If authentication is required, check if the user is logged in.
         if (needsAuth) {
-            HttpSession session = req.getSession(false);
-            Object user = (session != null) ? session.getAttribute("user") : null;
-            // Redirect to the login page if the user is not authenticated.
-            if (user == null) {
+            // Use unified user context; accept either userSub or legacy 'user'
+            boolean authed = UserContext.isAuthenticated(req);
+            if (!authed) {
+                var session = req.getSession(false);
+                Object legacy = (session != null) ? session.getAttribute("user") : null;
+                authed = (legacy != null);
+            }
+            if (!authed) {
                 resp.sendRedirect(contextPath + "/logIn");
                 return;
             }
