@@ -95,9 +95,11 @@ class ChallengeDaoTest extends DbReset {
         dao.saveOrUpdate(ch);
 
         DrillItem di = new DrillItem(ch);
+        di.setUserId("unit-test-user");
         drillDao.saveOrUpdate(di);
 
         Submission s = new Submission(ch, Outcome.CORRECT, null);
+        s.setUserId("unit-test-user");
         submissionDao.saveOrUpdate(s);
 
         // When – delete the parent
