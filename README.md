@@ -184,10 +184,10 @@ CREATE DATABASE cf_test_db;
 
 Then create a new file: `src/main/resources/local.properties` with content:
 ```properties
-DB_HOST=<your_host> // e.g., localhost
-DB_PORT=<your_port> // default MySQL port is 3306
-DB_NAME=<your_database> // e.g., cf_test_db
-DB_USER=<your_username> // e.g., root for local
+DB_HOST=<your_host> # e.g., localhost
+DB_PORT=<your_port> # default MySQL port is 3306
+DB_NAME=<your_database> # e.g., cf_test_db
+DB_USER=<your_username> # e.g., root for local
 DB_PASS=<your_password>
 ``` 
 
