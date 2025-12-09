@@ -45,7 +45,9 @@
       <div class="cf-alert cf-alert-error">${error}</div>
     </c:if>
     <c:if test="${not empty info}">
-      <div class="cf-alert cf-alert-info">${info}</div>
+      <div class="cf-alert cf-alert-info">
+        <c:out value="${info}" />
+      </div>
     </c:if>
 
     <!-- Enrollment banner -->

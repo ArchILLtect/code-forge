@@ -31,6 +31,11 @@
       </p>
     </div>
 
+    <a class="cf-btn cf-btn-primary"
+       href="${pageContext.request.contextPath}/practice/${challenge.id}">
+      Practice
+    </a>
+
     <div class="cf-page-header-meta">
       <span class="cf-pill cf-pill-difficulty-${challenge.difficulty}">
         ${challenge.difficulty}

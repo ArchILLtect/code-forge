@@ -481,6 +481,8 @@ cf-card-title { font-size: 1.5rem; margin: 0 0 0.5rem; color: #0b1220; }
 .cf-pill-neutral { background: #e5e7eb; color: #111827; }
 .cf-alert { padding: .7rem 1rem; border-radius: .5rem; margin-bottom: 1rem; }
 .cf-alert-success { background: #ecfdf3; border: 1px solid #22c55e33; color: #15803d; }
+.cf-alert-info { background: #fefce8; border: 1px solid #facc1533; color: #b45309; }
+.cf-alert-error { background: #fef2f2; border: 1px solid #ef444433; color: #ef4444; }
 
 
 /* 404 & 500 Error Pages */
