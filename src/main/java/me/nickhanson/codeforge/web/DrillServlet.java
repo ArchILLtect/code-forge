@@ -148,6 +148,14 @@ public class DrillServlet extends HttpServlet {
             String language = req.getParameter("language");
             String code = req.getParameter("code");
 
+            if (language == null || language.isBlank() || code == null || code.isBlank()) {
+                javax.servlet.http.HttpSession session = req.getSession(true);
+                String msg = me.nickhanson.codeforge.entity.Outcome.SKIPPED + " — Missing language or code. Please fill in both fields.";
+                if (session != null) session.setAttribute("flashInfo", msg); else req.setAttribute("info", msg);
+                resp.sendRedirect(req.getContextPath() + "/drill");
+                return;
+            }
+
             RunResult result = runService.runWithMode("drill", id, language, code);
             Outcome outcome = (result != null ? result.getOutcome() : Outcome.CORRECT);
 

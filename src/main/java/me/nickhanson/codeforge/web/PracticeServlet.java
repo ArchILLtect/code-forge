@@ -65,6 +65,17 @@ public class PracticeServlet extends HttpServlet {
             if (id == -1) return;
             String language = req.getParameter("language");
             String code = req.getParameter("code");
+            if (language == null || language.isBlank() || code == null || code.isBlank()) {
+                Challenge challenge = challengeService.getById(id).orElse(null);
+                if (challenge == null) { resp.sendError(404); return; }
+                req.setAttribute("challenge", challenge);
+                req.setAttribute("mode", "practice");
+                req.setAttribute("submittedCode", code);
+                req.setAttribute("outcome", me.nickhanson.codeforge.entity.Outcome.SKIPPED);
+                req.setAttribute("feedback", "Missing language or code. Please fill in both fields.");
+                req.getRequestDispatcher("/WEB-INF/jsp/practice/solve.jsp").forward(req, resp);
+                return;
+            }
             RunResult result = runService.runWithMode("practice", id, language, code);
             // Inline render: no persistence
             Challenge challenge = challengeService.getById(id).orElse(null);

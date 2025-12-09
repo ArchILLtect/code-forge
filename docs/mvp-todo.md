@@ -30,9 +30,9 @@ Legend:
   - `GET /drill` shows due queue (top N) via `drillService.getDueQueue(limit, userId)`.
   - `GET /drill/next` resolves next due or shows friendly empty state.
 
-- [~] Error Handling & 404s (S)
-  - Invalid `challengeId` returns 404 (Practice + Drill).
-  - Missing `language`/`code` or runner errors show friendly messages.
+- [x] Error Handling & 404s (S)
+  - Invalid `challengeId` returns 404 (Practice + Drill) — implemented.
+  - Missing `language`/`code` shows friendly SKIPPED feedback (Practice inline; Drill flash then redirect).
 
 - [x] Basic Tests (M)
   - Unit tests for `ChallengeRunService.run` (success/fail/error).
