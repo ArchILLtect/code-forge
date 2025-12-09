@@ -40,6 +40,9 @@
           <span class="drill-meta-divider">•</span>
           Streak:
           <strong><c:out value="${drillItem.streak}" /></strong>
+          <span class="drill-meta-divider">•</span>
+          Next due:
+          <strong><c:out value="${drillItem.nextDueAt}" /></strong>
         </c:if>
       </p>
     </div>
