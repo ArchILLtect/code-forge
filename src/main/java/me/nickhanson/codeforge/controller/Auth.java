@@ -52,7 +52,7 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
     Properties properties;
     String clientId;
-    String clientSecrect;
+    String clientSecret;
     String oAuthURL;
     String loginUrl;
     String redirectUrl;
@@ -85,35 +85,46 @@ public class Auth extends HttpServlet implements PropertiesLoader {
         // Use the same client id as LogIn (from properties)
         clientId = properties.getProperty("client.id");
 
-        // Resolve secret from multiple sources (env -> sysprop -> web.xml context-param -> properties)
-        clientSecrect = System.getenv("COGNITO_CLIENT_SECRET");
-        if (clientSecrect == null || clientSecrect.isBlank()) {
-            clientSecrect = System.getProperty("COGNITO_CLIENT_SECRET");
-            if (clientSecrect != null && !clientSecrect.isBlank()) {
+        // Resolve secret from multiple sources (env -> sysprop -> local.properties -> web.xml context-param -> cognito.properties)
+        clientSecret = System.getenv("COGNITO_CLIENT_SECRET");
+        if (clientSecret == null || clientSecret.isBlank()) {
+            clientSecret = System.getProperty("COGNITO_CLIENT_SECRET");
+            if (clientSecret != null && !clientSecret.isBlank()) {
                 logger.info("Using COGNITO_CLIENT_SECRET from Java system property (-DCOGNITO_CLIENT_SECRET)");
             }
         } else {
             logger.info("Using COGNITO_CLIENT_SECRET from environment variable");
         }
-        if (clientSecrect == null || clientSecrect.isBlank()) {
+        if (clientSecret == null || clientSecret.isBlank()) {
+            try {
+                Properties localProps = loadProperties("/local.properties");
+                String localSecret = localProps.getProperty("COGNITO_CLIENT_SECRET", localProps.getProperty("client.secret"));
+                if (localSecret != null && !localSecret.isBlank()) {
+                    clientSecret = localSecret;
+                    logger.info("Using COGNITO_CLIENT_SECRET from local.properties (gitignored; dev only)");
+                }
+            } catch (Exception ignored) { /* no local.properties present */ }
+        }
+        if (clientSecret == null || clientSecret.isBlank()) {
             ServletContext ctx = getServletContext();
             String ctxSecret = ctx.getInitParameter("COGNITO_CLIENT_SECRET");
             if (ctxSecret != null && !ctxSecret.isBlank()) {
-                clientSecrect = ctxSecret;
-                logger.warn("Using COGNITO_CLIENT_SECRET from web.xml <context-param> (dev only)");
+                clientSecret = ctxSecret;
+                logger.warn("Using COGNITO_CLIENT_SECRET from web.xml <context-param> (avoid in prod)");
             }
         }
-        if (clientSecrect == null || clientSecrect.isBlank()) {
+        if (clientSecret == null || clientSecret.isBlank()) {
             String propSecret = properties.getProperty("client.secret");
             if (propSecret != null && !propSecret.isBlank()) {
-                clientSecrect = propSecret;
+                clientSecret = propSecret;
                 logger.warn("Using client.secret from cognito.properties (dev only; do not use in prod)");
             }
         }
-        if (clientSecrect == null || clientSecrect.isBlank()) {
+        if (clientSecret == null || clientSecret.isBlank()) {
             logger.error("COGNITO_CLIENT_SECRET is not set. Refusing to start Auth servlet.");
-            throw new ServletException("Missing COGNITO_CLIENT_SECRET (env, -D, context-param, or properties)");
+            throw new ServletException("Missing COGNITO_CLIENT_SECRET (env, -D, local.properties, context-param, or cognito.properties)");
         }
+
         oAuthURL = properties.getProperty("oAuthURL");
         loginUrl = properties.getProperty("loginURL");
         redirectUrl = EnvConfig.get(logger, properties, "redirectURL");
@@ -274,11 +285,11 @@ public class Auth extends HttpServlet implements PropertiesLoader {
      * @return the constructed oauth request
      */
     private HttpRequest buildAuthRequest(String authCode) {
-        String keys = clientId + ":" + clientSecrect;
+        String keys = clientId + ":" + clientSecret;
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("grant_type", "authorization_code");
-        parameters.put("client_secret", clientSecrect);
+        parameters.put("client_secret", clientSecret);
         parameters.put("client_id", clientId);
         parameters.put("code", authCode);
         parameters.put("redirect_uri", redirectUrl);
