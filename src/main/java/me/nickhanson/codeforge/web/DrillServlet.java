@@ -27,6 +27,7 @@ import java.util.Optional;
  */
 @WebServlet(urlPatterns = {"/drill", "/drill/*"})
 public class DrillServlet extends HttpServlet {
+    private boolean drillEnabled = true;
     private DrillService drillService;
     private ChallengeService challengeService;
     private ChallengeRunService runService;
@@ -35,6 +36,14 @@ public class DrillServlet extends HttpServlet {
     @Override
     public void init() {
         ServletContext ctx = getServletContext();
+        String flag = ctx.getInitParameter("features.drill.enabled");
+        if (flag == null) {
+            flag = ctx.getAttribute("features.drill.enabled") instanceof String
+                    ? (String) ctx.getAttribute("features.drill.enabled")
+                    : null;
+        }
+        if (flag != null) drillEnabled = Boolean.parseBoolean(flag);
+
         this.drillService = (DrillService) ctx.getAttribute("drillService");
         this.challengeService = (ChallengeService) ctx.getAttribute("challengeService");
         this.runService = (ChallengeRunService) ctx.getAttribute("runService");
@@ -52,6 +61,7 @@ public class DrillServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!drillEnabled) { resp.sendError(404); return; }
         String userId = UserContext.getUserId(req);
         if (userId == null) {
             resp.sendRedirect(req.getContextPath() + "/logIn");
@@ -60,6 +70,15 @@ public class DrillServlet extends HttpServlet {
         // /drill or /drill/*
         String path = req.getPathInfo();
         if (path == null || "/".equals(path)) {
+            // Move flash from session to request (one-time)
+            var session = req.getSession(false);
+            if (session != null) {
+                Object flash = session.getAttribute("flashInfo");
+                if (flash != null) {
+                    req.setAttribute("info", flash);
+                    session.removeAttribute("flashInfo");
+                }
+            }
             // Auto-enroll: create missing DrillItems for this user
             List<Challenge> allChallenges = challengeService.listChallenges(null);
             int created = drillService.ensureEnrollmentForUser(allChallenges, userId);
@@ -112,12 +131,12 @@ public class DrillServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (!drillEnabled) { resp.sendError(404); return; }
         String userId = UserContext.getUserId(req);
         if (userId == null) {
             resp.sendRedirect(req.getContextPath() + "/logIn");
             return;
         }
-        // /{id}/submit
         String path = req.getPathInfo();
         String[] parts = (path == null || "/".equals(path))
                 ? new String[0]
@@ -134,7 +153,14 @@ public class DrillServlet extends HttpServlet {
 
             drillService.recordOutcome(id, outcome, code, userId);
 
-            // TODO: set flash feedback from result.getFeedback() if available
+            // flash message (guard for test environments where session may be null)
+            javax.servlet.http.HttpSession session = req.getSession(false);
+            String msg = outcome + " — " + result.getMessage();
+            if (session != null) {
+                session.setAttribute("flashInfo", msg);
+            } else {
+                req.setAttribute("info", msg);
+            }
 
             resp.sendRedirect(req.getContextPath() + "/drill/next");
             return;
