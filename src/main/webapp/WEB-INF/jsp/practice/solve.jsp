@@ -30,7 +30,16 @@
       <h2><c:out value="${challenge.title}" /></h2>
       <p class="cf-muted"><c:out value="${challenge.blurb}" /></p>
     </header>
+
     <div class="cf-stack">
+      <!-- Prompt content -->
+      <div class="cf-field">
+        <label class="cf-label">Prompt (Markdown)</label>
+        <pre class="drill-prompt-text" style="border: 1px solid black; padding: 10px; overflow-x: auto;">
+<c:out value="${challenge.promptMd}" />
+        </pre>
+      </div>
+
       <form method="post" action="${pageContext.request.contextPath}/practice/${challenge.id}/submit">
 
         <div class="cf-field">
@@ -61,4 +70,3 @@
 </main>
 </body>
 </html>
-

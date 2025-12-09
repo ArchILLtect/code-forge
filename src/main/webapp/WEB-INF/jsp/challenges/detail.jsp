@@ -61,9 +61,9 @@
       </c:if>
 
       <!-- Escape Markdown source to avoid raw HTML injection; render as plain text for MVP -->
-      <div class="cf-markdown">
-        <c:out value="${challenge.promptMd}"/>
-      </div>
+      <pre class="drill-prompt-text">
+<c:out value="${challenge.promptMd}" />
+        </pre>
     </article>
 
     <aside class="cf-card cf-meta-card">

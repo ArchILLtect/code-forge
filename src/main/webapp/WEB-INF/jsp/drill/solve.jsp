@@ -94,7 +94,7 @@
           <div>
             <label for="language">Language</label>
             <select id="language" name="language">
-              <option value="java">Java (stub)</option>
+              <option value="java">Java</option>
             </select>
           </div>
         </div>
@@ -105,10 +105,8 @@
           <textarea id="code"
                     name="code"
                     class="drill-code-input"
-                    placeholder="// Type your solution here...
-// Add '// correct' to mark CORRECT,
-// '// ok' for ACCEPTABLE,
-// anything else is INCORRECT."></textarea>
+                    placeholder="// Type your solution here..."
+          ></textarea>
           <div class="drill-form-actions">
             <div id="codeCharCount" class="cf-hint" style="color:#6b7280">
               Characters: <span id="codeCharCountVal">0</span>
@@ -124,14 +122,6 @@
         </div>
       </form>
 
-      <p class="drill-tip">
-        Runner is a stub for demo only: it does not compile or execute your code.
-        Heuristics: empty = <strong>SKIPPED</strong>; contains
-        <code>// correct</code> or <code>// pass</code> = <strong>CORRECT</strong>;
-        contains <code>// ok</code> = <strong>ACCEPTABLE</strong>; otherwise
-        <strong>INCORRECT</strong>.
-      </p>
-
       <p class="drill-tip-shortcut">
         Pro tip: press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to submit quickly.
       </p>
@@ -142,7 +132,6 @@
 <jsp:include page="/WEB-INF/jsp/footer.jsp" />
 
 <script>
-  // LocalStorage persistence & Ctrl+Enter submit (Issue #34)
   (function() {
     const textarea = document.getElementById('code');
     const chalId = '${challenge.id}'; // server-side value
