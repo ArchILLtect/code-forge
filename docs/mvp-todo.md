@@ -58,18 +58,18 @@ Legend:
 
 ## P1 — Should-have
 
-- [~] Security Rules (S)
-  - Practice is public; `AuthGuardFilter` updated to allow `/practice` GET/POST.
+- [x] Security Rules (S)
+  - Practice is public; `AuthGuardFilter` allowlists `/practice` GET/POST.
   - Auth filter recognizes `userSub` and legacy `user`.
   - Drill routes require auth.
 
 - [x] Flash feedback render in solve/queue (1–2 lines) [Medium]
   - Implemented on queue via session flash.
 
-- [~] Drill JSP Polish (S)
+- [x] Drill JSP Polish (S)
   - `drill/queue.jsp`: friendly empty state, limit param handling, [x] enrollment banner.
   - [x] `drill/solve.jsp`: show drill stats (streak, nextDueAt) at header.
-  - [ ] `drill/solve.jsp`: flash message region polish and date formatting for nextDue.
+  - [x] `drill/solve.jsp`: flash message region polish and date formatting for nextDue.
 
 - [x] Telemetry Logging (S)
   - Structured logs on submit: mode, challengeId, language (for gate), outcome, duration.

@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +43,16 @@
           <strong><c:out value="${drillItem.streak}" /></strong>
           <span class="drill-meta-divider">•</span>
           Next due:
-          <strong><c:out value="${drillItem.nextDueAt}" /></strong>
+          <strong>
+            <c:choose>
+              <c:when test="${not empty drillItem.nextDueAt}">
+                <fmt:formatDate value="${drillItem.nextDueAt}" pattern="yyyy-MM-dd HH:mm"/>
+              </c:when>
+              <c:otherwise>
+                <span class="cf-muted">—</span>
+              </c:otherwise>
+            </c:choose>
+          </strong>
         </c:if>
       </p>
     </div>
@@ -54,13 +64,13 @@
 
   <!-- Flash messages -->
   <c:if test="${not empty success}">
-    <div class="cf-alert cf-alert-success">${success}</div>
+    <div class="cf-alert cf-alert-success"><c:out value="${success}"/></div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="cf-alert cf-alert-error">${error}</div>
+    <div class="cf-alert cf-alert-error"><c:out value="${error}"/></div>
   </c:if>
   <c:if test="${not empty info}">
-    <div class="cf-alert cf-alert-info">${info}</div>
+    <div class="cf-alert cf-alert-info"><c:out value="${info}"/></div>
   </c:if>
 
   <section class="cf-grid cf-grid-2 drill-solve-grid">
