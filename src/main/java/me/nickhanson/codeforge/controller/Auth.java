@@ -184,15 +184,19 @@ public class Auth extends HttpServlet implements PropertiesLoader {
 
         int status = response.statusCode();
         logger.debug("Token response status: {}", status);
-        logger.debug("Response headers: {}", response.headers());
-        logger.debug("Response body: {}", response.body());
+        // Avoid logging full headers/body to prevent token leakage in logs
+        logger.debug("Response headers size: {}", response.headers().map().size());
+        String body = response.body();
+        logger.debug("Response body length: {}", (body != null ? body.length() : 0));
 
         if (status != 200) {
-            throw new SecurityException("Token endpoint returned status " + status + ": " + response.body());
+            // Redact sensitive contents on error logging
+            String redacted = (body != null && body.length() > 0) ? "<redacted>" : "<empty>";
+            throw new SecurityException("Token endpoint returned status " + status + ": " + redacted);
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.body(), TokenResponse.class);
+        return mapper.readValue(body, TokenResponse.class);
     }
 
     /**
