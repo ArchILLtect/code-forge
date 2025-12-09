@@ -7,6 +7,7 @@
   <title>Practice</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/drill.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs/loader.min.js"></script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp" />
@@ -49,9 +50,11 @@
           </select>
         </div>
 
-        <div class="cf-field">
-          <label>Code</label>
-          <textarea name="code" rows="12" placeholder="Write your solution here..."></textarea>
+        <div class="cf-field" style="width: 100%">
+          <label for="code-editor">Code</label>
+          <div id="code-editor" style="height:400px;border:1px solid #ddd; padding: 5px; width: 100%"></div>
+          <!-- hidden field for the actual submission -->
+          <input type="hidden" name="code" id="code"/>
           <c:if test="${not empty submittedCode}">
             <div class="cf-submission-preview">
               <div class="cf-submission-header">Last submission</div>
@@ -68,5 +71,32 @@
     </div>
   </section>
 </main>
+<script>
+  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs' } });
+
+  require(['vs/editor/editor.main'], function () {
+    const editor = monaco.editor.create(document.getElementById('code-editor'), {
+      value: [
+        '// Write your code here',
+        'public class Main {',
+        '    public static void main(String[] args) {',
+        '        System.out.println("Hello CodeForge");',
+        '    }',
+        '}'
+      ].join('\n'),
+      language: 'java',
+      theme: 'vs-dark',
+      automaticLayout: true
+    });
+
+    // Hook editor content into a hidden form field so you can save it if you want
+    const hiddenField = document.getElementById('code');
+    if (hiddenField) {
+      const syncEditorToHidden = () => hiddenField.value = editor.getValue();
+      editor.onDidChangeModelContent(syncEditorToHidden);
+      syncEditorToHidden();
+    }
+  });
+</script>
 </body>
 </html>

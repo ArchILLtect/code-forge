@@ -8,6 +8,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs/loader.min.js"></script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -101,12 +102,11 @@
 
         <div class="cf-form-row-drill">
 
-          <label for="code">Code</label>
-          <textarea id="code"
-                    name="code"
-                    class="drill-code-input"
-                    placeholder="// Type your solution here..."
-          ></textarea>
+          <label for="code-editor">Code</label>
+          <div id="code-editor" style="height:400px;border:1px solid #ddd; padding: 5px;"></div>
+
+          <!-- hidden field for the actual submission -->
+          <input type="hidden" name="code" id="code"/>
           <div class="drill-form-actions">
             <div id="codeCharCount" class="cf-hint" style="color:#6b7280">
               Characters: <span id="codeCharCountVal">0</span>
@@ -132,6 +132,31 @@
 <jsp:include page="/WEB-INF/jsp/footer.jsp" />
 
 <script>
+  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs' } });
+
+  require(['vs/editor/editor.main'], function () {
+    const editor = monaco.editor.create(document.getElementById('code-editor'), {
+      value: [
+        '// Write your code here',
+        'public class Main {',
+        '    public static void main(String[] args) {',
+        '        System.out.println("Hello CodeForge");',
+        '    }',
+        '}'
+      ].join('\n'),
+      language: 'java',
+      theme: 'vs-dark',
+      automaticLayout: true
+    });
+
+    // Hook editor content into a hidden form field so you can save it if you want
+    const hiddenField = document.getElementById('code');
+    if (hiddenField) {
+      const syncEditorToHidden = () => hiddenField.value = editor.getValue();
+      editor.onDidChangeModelContent(syncEditorToHidden);
+      syncEditorToHidden();
+    }
+  });
   (function() {
     const textarea = document.getElementById('code');
     const chalId = '${challenge.id}'; // server-side value

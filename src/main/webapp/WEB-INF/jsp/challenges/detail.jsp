@@ -42,7 +42,7 @@
       </span>
 
       <span class="cf-pill cf-pill-neutral">
-          <c:out value="${challenge.promptMd}"/>
+          <c:out value="${challenge.blurb}"/>
       </span>
 
       <a class="cf-btn cf-btn-secondary"
@@ -74,14 +74,8 @@
           <dd>${challenge.difficulty}</dd>
         </div>
         <div>
-          <dt>Topic</dt>
-          <dd><c:out value="${challenge.promptMd}"/></dd>
-        </div>
-        <div>
           <dt>Created</dt>
-          <dd>
-            <c:out value="${challenge.createdAt}"/>
-          </dd>
+          <dd><c:out value="${challenge.createdAt}"/></dd>
         </div>
       </dl>
 
