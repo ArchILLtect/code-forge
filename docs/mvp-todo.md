@@ -66,20 +66,22 @@ Legend:
 - [x] Flash feedback render in solve/queue (1–2 lines) [Medium]
   - Implemented on queue via session flash.
 
-- [ ] Drill JSP Polish (S)
+- [~] Drill JSP Polish (S)
   - `drill/queue.jsp`: friendly empty state, limit param handling, [x] enrollment banner.
-  - `drill/solve.jsp`: show drill stats (streak, nextDueAt), flash message region.
+  - [x] `drill/solve.jsp`: show drill stats (streak, nextDueAt) at header.
+  - [ ] `drill/solve.jsp`: flash message region polish and date formatting for nextDue.
 
-- [ ] Telemetry Logging (S)
-  - Structured logs on submit: mode, challengeId, language, outcome, duration.
-  - Simple counters by mode for attempts and pass/fail.
+- [x] Telemetry Logging (S)
+  - Structured logs on submit: mode, challengeId, language (for gate), outcome, duration.
+  - Rolling file appender at `logs/telemetry.log`.
+  - [ ] Optional counters by mode (defer post-MVP).
 
-- [ ] DB Tests for Drill Persistence (M)
-  - Verify `DrillService.recordOutcome` updates streak/nextDueAt correctly.
+- [x] DB Tests for Drill Persistence (M)
+  - Verified `DrillService.recordOutcome` updates timesSeen and nextDueAt (handles null-to-set case).
 
-- [ ] Docs — MVP Guide (S)
-  - Add `projects/mvp/README.md`: how to run Practice/Drill, flags, test notes.
-  - Update `docs/project-plan.md` or add `docs/mvp-overview.md` with scope and acceptance criteria.
+- [x] Docs — MVP Guide (S)
+  - Created `projects/mvp/README.md`: run Practice/Drill, flags, test notes.
+  - [ ] Update `docs/project-plan.md` with final MVP acceptance (optional).
 
 ## P2 — Nice-to-have
 
