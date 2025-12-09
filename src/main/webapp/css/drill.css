@@ -107,3 +107,51 @@
         max-height: none;
     }
 }
+
+/* Practice form styles */
+
+.cf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; /* space between label + input */
+    margin-bottom: 1rem; /* spacing between fields */
+    width: fit-content;
+}
+
+.cf-field label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.cf-field textarea {
+    display: block;
+    width: 100%;      /* optional, but keeps it clean */
+}
+
+.cf-submission-preview {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: #0f172a;          /* dark-ish panel */
+    border: 1px solid #1e293b;    /* subtle border */
+}
+
+.cf-submission-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e5e7eb;          /* lighter text */
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+}
+
+.cf-code-block {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.85rem;
+    color: #d1d5db;          /* light text */
+    line-height: 1.4;
+    white-space: pre-wrap;        /* preserve formatting but wrap long lines */
+    word-break: break-word;
+}

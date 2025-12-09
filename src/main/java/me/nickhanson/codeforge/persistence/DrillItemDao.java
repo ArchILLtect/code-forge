@@ -139,4 +139,102 @@ public class DrillItemDao {
             session.close();
         }
     }
+
+    /**
+     * List all DrillItems for a given Challenge ID and user, ordered by nextDueAt ascending.
+     * @param challengeId the ID of the Challenge
+     * @param userId the ID of the User
+     * @return list of DrillItems associated with the Challenge and User
+     */
+    public List<DrillItem> listByChallengeIdAndUser(Long challengeId, String userId) {
+        try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
+            @SuppressWarnings("unchecked")
+            List<DrillItem> results = (List<DrillItem>) s.createQuery(
+                            "select d from DrillItem d join fetch d.challenge c where c.id = :cid and d.userId = :uid order by d.nextDueAt asc")
+                    .setParameter("cid", challengeId)
+                    .setParameter("uid", userId)
+                    .getResultList();
+            return results;
+        }
+    }
+
+    /**
+     * List all DrillItems that are due at or before the specified time for a specific user.
+     * @param now the cutoff Instant for due items
+     * @param userId the ID of the User
+     * @return list of due DrillItems for the User
+     */
+    public List<DrillItem> dueNow(Instant now, String userId) {
+        try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
+            @SuppressWarnings("unchecked")
+            List<DrillItem> results = (List<DrillItem>) s.createQuery(
+                            "select d from DrillItem d join fetch d.challenge where d.userId = :uid and d.nextDueAt <= :now order by d.nextDueAt asc")
+                    .setParameter("uid", userId)
+                    .setParameter("now", now)
+                    .getResultList();
+            return results;
+        }
+    }
+
+    /**
+     * Count of DrillItems that are due at or before the specified time for a specific user.
+     * @param now the cutoff Instant for due items
+     * @param userId the ID of the User
+     * @return count of due DrillItems for the User
+     */
+    public long countDue(Instant now, String userId) {
+        try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
+            Long count = s.createQuery(
+                            "select count(d) from DrillItem d where d.userId = :uid and d.nextDueAt <= :now", Long.class)
+                    .setParameter("uid", userId)
+                    .setParameter("now", now)
+                    .getSingleResult();
+            return (count != null ? count : 0L);
+        }
+    }
+
+    /**
+     * User-scoped due queue up to the specified limit, ordered by nextDueAt.
+     * @param now the cutoff Instant for due items
+     * @param limit maximum number of items to return
+     * @param userId the ID of the User
+     * @return list of due DrillItems for the User
+     */
+    public List<DrillItem> dueQueue(Instant now, int limit, String userId) {
+        Session session = SessionFactoryProvider.getSessionFactory().openSession();
+        try {
+            @SuppressWarnings("unchecked")
+            List<DrillItem> results = (List<DrillItem>) session.createQuery(
+                            "select d from DrillItem d join fetch d.challenge where d.userId = :uid and (d.nextDueAt is null or d.nextDueAt <= :now) " +
+                                    "order by case when d.nextDueAt is null then 0 else 1 end asc, d.nextDueAt asc")
+                    .setParameter("uid", userId)
+                    .setParameter("now", now)
+                    .setMaxResults(limit)
+                    .getResultList();
+            return results;
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
+     * Find the soonest upcoming DrillItem for a user.
+     * @param userId the ID of the User
+     * @return Optional containing the soonest upcoming DrillItem for the User, or empty if none exist
+     */
+    public Optional<DrillItem> soonestUpcoming(String userId) {
+        Session session = SessionFactoryProvider.getSessionFactory().openSession();
+        try {
+            @SuppressWarnings("unchecked")
+            List<DrillItem> list = (List<DrillItem>) session.createQuery(
+                            "select d from DrillItem d join fetch d.challenge where d.userId = :uid and d.nextDueAt is not null order by d.nextDueAt asc")
+                    .setParameter("uid", userId)
+                    .setMaxResults(1)
+                    .getResultList();
+
+            return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
+        } finally {
+            session.close();
+        }
+    }
 }

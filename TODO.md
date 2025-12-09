@@ -84,3 +84,18 @@
   - [ ] Tooltip renders on hover/focus next to counter.
   - [ ] Timestamp updates after typing and on submit.
   - [ ] No runtime errors in browsers without localStorage (fallback display hidden).
+
+- [ ] Wire flash feedback into queue/solve JSP via a simple session attribute.
+      Note: Add after DrillServlet posts; read feedback on next page and clear it.
+- [ ] Update PracticeServlet (public) to render evaluator feedback inline, using expectedAnswer but skipping persistence.
+      Add after evaluator is implemented (post-evaluator).
+
+# Security Hardening TODOs
+
+- [Security][Logging] Audit for sensitive token logging and neutralize:
+  - Grep for `response.body()` and any logs that include `access_token`, `id_token`, or `refresh_token`.
+  - Replace with size-only or redacted logs; avoid printing full headers or bodies.
+  - Ensure package logger level is `info` in production (profile-based override).
+- [Security][Logging] Add Log4j2 RegexFilter to drop lines containing token keys (`access_token|id_token|refresh_token`) in file/telemetry appenders.
+- [Security][Testing] Add a lightweight test that generates a mock token response and asserts logs do not contain token values (use an in-memory appender or temporary file).
+- [Docs] Note logging policy in `projects/mvp/README.md`: never log tokens; use redaction and info-level in prod.

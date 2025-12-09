@@ -36,7 +36,6 @@ public class AuthGuardFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
 
-        // Get the context path and the requested URI.
         String contextPath = req.getContextPath();
         String path = req.getRequestURI().substring(contextPath.length());
         String method = req.getMethod();
@@ -45,8 +44,12 @@ public class AuthGuardFilter extends HttpFilter {
 
         // Check if the request method is POST.
         if ("POST".equalsIgnoreCase(method)) {
+            // Public practice submissions do NOT require auth
+            if (path.matches("^/practice/\\d+/submit$")) {
+                needsAuth = false;
+            }
             // Require authentication for creating a challenge.
-            if ("/challenges".equals(path)) {
+            else if ("/challenges".equals(path)) {
                 needsAuth = true;
             }
             // Require authentication for updating or deleting a challenge.
@@ -62,9 +65,13 @@ public class AuthGuardFilter extends HttpFilter {
         }
         // Check if the request method is GET.
         else if ("GET".equalsIgnoreCase(method)) {
+            // Practice pages are public
+            if (path.equals("/practice") || path.matches("^/practice(/.*)?$")) {
+                needsAuth = false;
+            }
             // Require authentication for specific GET paths.
             // Show forms that should be restricted to authenticated users
-            if (PROTECTED_GET_PATHS.contains(path) || path.matches("^/challenges/\\d+/edit$")) {
+            else if (PROTECTED_GET_PATHS.contains(path) || path.matches("^/challenges/\\d+/edit$")) {
                 needsAuth = true;
             }
             // Require authentication for all Drill pages.
@@ -76,10 +83,14 @@ public class AuthGuardFilter extends HttpFilter {
 
         // If authentication is required, check if the user is logged in.
         if (needsAuth) {
-            HttpSession session = req.getSession(false);
-            Object user = (session != null) ? session.getAttribute("user") : null;
-            // Redirect to the login page if the user is not authenticated.
-            if (user == null) {
+            // Use unified user context; accept either userSub or legacy 'user'
+            boolean authed = UserContext.isAuthenticated(req);
+            if (!authed) {
+                var session = req.getSession(false);
+                Object legacy = (session != null) ? session.getAttribute("user") : null;
+                authed = (legacy != null);
+            }
+            if (!authed) {
                 resp.sendRedirect(contextPath + "/logIn");
                 return;
             }

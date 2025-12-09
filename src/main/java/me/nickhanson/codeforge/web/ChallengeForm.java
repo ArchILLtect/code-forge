@@ -47,5 +47,11 @@ public class ChallengeForm {
      */
     @NotBlank
     private String promptMd;
-}
 
+    /**
+     * The expected answer used by the evaluator (MVP).
+     * Must not be blank.
+     */
+    @NotBlank
+    private String expectedAnswer;
+}

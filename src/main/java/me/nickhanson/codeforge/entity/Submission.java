@@ -74,6 +74,12 @@ public class Submission {
     private Instant updatedAt;
 
     /**
+     * The user identifier (e.g., Cognito sub) who made this submission.
+     */
+    @Column(name = "user_id", nullable = false, length = 64)
+    private String userId;
+
+    /**
      * Constructs a new Submission with the specified challenge, outcome, and optional code.
      * @param challenge The Challenge associated with this submission.
      * @param outcome   The outcome of the submission.

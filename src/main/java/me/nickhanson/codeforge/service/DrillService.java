@@ -42,24 +42,20 @@ public class DrillService {
      * @param limit maximum number of DrillItems to retrieve
      * @return list of due DrillItems
      */
-    public List<DrillItem> getDueQueue(int limit) {
+    public List<DrillItem> getDueQueue(int limit, String userId) {
         if (limit <= 0) {
             throw new IllegalArgumentException("limit must be > 0");
         }
-
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("userId required");
+        }
         Instant now = Instant.now();
-        List<DrillItem> due = drillItemDao.dueQueue(now, limit);
-
+        List<DrillItem> due = drillItemDao.dueQueue(now, limit, userId);
         if (!due.isEmpty()) {
             return due;
         }
-
-        Optional<DrillItem> soonest = drillItemDao.soonestUpcoming();
-        if (soonest.isPresent()) {
-            return List.of(soonest.get());
-        } else {
-            return List.of();
-        }
+        Optional<DrillItem> soonest = drillItemDao.soonestUpcoming(userId);
+        return soonest.map(List::of).orElseGet(List::of);
     }
 
     /**
@@ -69,14 +65,18 @@ public class DrillService {
      * @param code user's submitted code
      * @return the recorded Submission
      */
-    public Submission recordOutcome(Long challengeId, Outcome outcome, String code) {
+    public Submission recordOutcome(Long challengeId, Outcome outcome, String code, String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("userId required");
+        }
         Challenge challenge = Optional.ofNullable(challengeDao.getById(challengeId))
                 .orElseThrow(() -> new IllegalArgumentException("Challenge not found: " + challengeId));
 
-        DrillItem drillItem = getOrCreateDrillItem(challenge);
+        DrillItem drillItem = getOrCreateDrillItem(challenge, userId);
 
         // Persist submission first for audit trail
         Submission submission = new Submission(challenge, outcome, code);
+        submission.setUserId(userId);
         submissionDao.saveOrUpdate(submission);
 
         // Update DrillItem metrics
@@ -91,8 +91,8 @@ public class DrillService {
         drillItem.setNextDueAt(computeNextDueAt(outcome, newStreak));
 
         drillItemDao.saveOrUpdate(drillItem);
-        log.debug("Updated DrillItem challengeId={} timesSeen={} streak={} nextDueAt={} after outcome {}",
-                challengeId, drillItem.getTimesSeen(), drillItem.getStreak(), drillItem.getNextDueAt(), outcome);
+        log.debug("Updated DrillItem userId={} challengeId={} timesSeen={} streak={} nextDueAt={} after outcome {}",
+                userId, challengeId, drillItem.getTimesSeen(), drillItem.getStreak(), drillItem.getNextDueAt(), outcome);
 
         return submission;
     }
@@ -102,10 +102,11 @@ public class DrillService {
      * @param challenge the Challenge
      * @return the existing or newly created DrillItem
      */
-    private DrillItem getOrCreateDrillItem(Challenge challenge) {
-        List<DrillItem> items = drillItemDao.listByChallengeId(challenge.getId());
+    private DrillItem getOrCreateDrillItem(Challenge challenge, String userId) {
+        List<DrillItem> items = drillItemDao.listByChallengeIdAndUser(challenge.getId(), userId);
         if (!items.isEmpty()) return items.get(0);
         DrillItem created = new DrillItem(challenge);
+        created.setUserId(userId);
         drillItemDao.saveOrUpdate(created);
         return created;
     }
@@ -135,8 +136,8 @@ public class DrillService {
      * @param challengeId ID of the challenge
      * @return true if enrolled, false otherwise
      */
-    public boolean isEnrolledInDrill(Long challengeId) {
-        return !drillItemDao.listByChallengeId(challengeId).isEmpty();
+    public boolean isEnrolledInDrill(Long challengeId, String userId) {
+        return !drillItemDao.listByChallengeIdAndUser(challengeId, userId).isEmpty();
     }
 
     /**
@@ -144,18 +145,38 @@ public class DrillService {
      * @param challengeId ID of the challenge
      * @return the existing or newly created DrillItem
      */
-    public DrillItem ensureDrillItem(Long challengeId) {
+    public DrillItem ensureDrillItem(Long challengeId, String userId) {
         Challenge challenge = Optional.ofNullable(challengeDao.getById(challengeId))
                 .orElseThrow(() -> new IllegalArgumentException("Challenge not found: " + challengeId));
-        return getOrCreateDrillItem(challenge);
+        return getOrCreateDrillItem(challenge, userId);
     }
 
     /**
      * Retrieves the next due DrillItem, if any.
      * @return an Optional containing the next due DrillItem, or empty if none exist
      */
-    public Optional<DrillItem> nextDue() {
-        List<DrillItem> queue = getDueQueue(1);
+    public Optional<DrillItem> nextDue(String userId) {
+        List<DrillItem> queue = getDueQueue(1, userId);
         return queue.isEmpty() ? Optional.empty() : Optional.of(queue.get(0));
+    }
+
+    /**
+     * Ensures DrillItems exist for the given user across the provided challenges.
+     * Creates missing items and leaves existing ones untouched.
+     * @return number of DrillItems created
+     */
+    public int ensureEnrollmentForUser(List<Challenge> challenges, String userId) {
+        if (userId == null || userId.isBlank()) throw new IllegalArgumentException("userId required");
+        int created = 0;
+        for (Challenge ch : challenges) {
+            List<DrillItem> items = drillItemDao.listByChallengeIdAndUser(ch.getId(), userId);
+            if (items.isEmpty()) {
+                DrillItem di = new DrillItem(ch);
+                di.setUserId(userId);
+                drillItemDao.saveOrUpdate(di);
+                created++;
+            }
+        }
+        return created;
     }
 }

@@ -35,7 +35,7 @@
   </section>
 
   <section class="cf-card cf-form-card">
-    <form action="${pageContext.request.contextPath}/challenges/edit"
+    <form action="${pageContext.request.contextPath}/challenges/${challenge.id}"
           method="post"
           class="cf-form">
 
@@ -79,6 +79,15 @@
                   name="promptMd"
                   rows="14"
                   placeholder="Describe the problem, inputs, outputs, and example cases using Markdown.">${challenge.promptMd}</textarea>
+      </div>
+
+      <div class="cf-form-row">
+        <label for="expectedAnswer">Expected answer (MVP)</label>
+        <input id="expectedAnswer"
+               name="expectedAnswer"
+               type="text"
+               required
+               value="${challenge.expectedAnswer}" />
       </div>
 
       <div class="cf-form-actions">

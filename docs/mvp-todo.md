@@ -8,60 +8,84 @@ Legend:
 
 ## P0 — Must-have
 
-- [ ] Practice Mode: Servlet + Routes (S)
-  - GET `/practice/{challengeId}` — render solve page with prompt and form.
-  - POST `/practice/{challengeId}/submit` — run via `ChallengeRunService`; show inline result.
-  - Do NOT persist outcomes or modify `DrillItem`.
+- [x] Practice Mode: Servlet + Routes (S)
+  - [x] GET `/practice/{challengeId}` — render solve page with prompt and form.
+  - [x] POST `/practice/{challengeId}/submit` — run via `ChallengeRunService`; show inline result.
+  - [x] Public access (no auth) via `AuthGuardFilter` allowlist.
+  - [x] Do NOT persist outcomes or modify `DrillItem` (verified via DB checks).
 
-- [ ] Practice Mode: JSP (S)
-  - New `WEB-INF/jsp/practice/solve.jsp` (or conditional reuse of `drill/solve.jsp`).
-  - Prompt, language select (start with `java`), textarea, submit button.
+- [x] Practice Mode: JSP (S)
+  - New `WEB-INF/jsp/practice/solve.jsp` with prompt, language select, textarea, submit button.
   - Inline outcome panel (pass/fail/error) and message text.
 
-- [ ] Feature Flags (S)
+- [x] Feature Flags (S)
   - Add `features.practice.enabled` and `features.drill.enabled` in `application.properties`.
   - Servlets read flags; disable routes (404 or redirect) when off.
 
-- [ ] Drill Mode: Submission Flow Works End-to-End (S)
+- [x] Drill Mode: Submission Flow Works End-to-End (S)
   - Confirm `POST /drill/{id}/submit` calls `ChallengeRunService.run` and `DrillService.recordOutcome`.
   - Redirect to `/drill/next` with a flash message summarizing outcome.
 
-- [ ] Drill Mode: Queue and Next Navigation (S)
-  - `GET /drill` shows due queue (top N) via `drillService.getDueQueue(limit)`.
+- [x] Drill Mode: Queue and Next Navigation (S)
+  - `GET /drill` shows due queue (top N) via `drillService.getDueQueue(limit, userId)`.
   - `GET /drill/next` resolves next due or shows friendly empty state.
 
-- [ ] Error Handling & 404s (S)
-  - Invalid `challengeId` returns 404 (Practice + Drill).
-  - Missing `language`/`code` or runner errors show friendly messages.
+- [x] Error Handling & 404s (S)
+  - Invalid `challengeId` returns 404 (Practice + Drill) — implemented.
+  - Missing `language`/`code` shows friendly SKIPPED feedback (Practice inline; Drill flash then redirect).
 
-- [ ] Basic Tests (M)
+- [x] Basic Tests (M)
   - Unit tests for `ChallengeRunService.run` (success/fail/error).
   - Servlet integration tests: Practice GET/POST renders and inline outcome; Drill submit redirects and persists.
+  - Added unit test for drill auto-enrollment.
+  - Added evaluator unit tests including timeout/size guard.
+
+### Evaluator — High Priority (MVP Core)
+
+- [x] Evaluator implementation (local runner, `expectedAnswer` compare) [High]
+  - Scaffold added and wired into `ChallengeRunService`.
+  - Timeout/size guard implemented.
+
+- [x] PracticeServlet public flow using evaluator, no persistence [High]
+  - Implemented; renders feedback inline; no DB writes (manually verified).
+
+- [x] DrillServlet uses evaluator result to set Outcome + feedback [High]
+  - Flash feedback wired: outcome + message shown on queue after redirect.
+
+- [x] Unit + integration tests for evaluator flows [High]
+  - Evaluator tests: correct/acceptable/incorrect/missing expected, timeout guard.
+  - Drill auto-enrollment unit test.
 
 ## P1 — Should-have
 
-- [ ] Security Rules (S)
-  - Decide if Practice is public or requires auth; enforce via existing filter.
-  - Ensure Drill routes require auth consistently.
+- [x] Security Rules (S)
+  - Practice is public; `AuthGuardFilter` allowlists `/practice` GET/POST.
+  - Auth filter recognizes `userSub` and legacy `user`.
+  - Drill routes require auth.
 
-- [ ] Drill JSP Polish (S)
-  - `drill/queue.jsp`: friendly empty state, limit param handling.
-  - `drill/solve.jsp`: show drill stats (streak, nextDueAt), flash message region.
+- [x] Flash feedback render in solve/queue (1–2 lines) [Medium]
+  - Implemented on queue via session flash.
 
-- [ ] Telemetry Logging (S)
-  - Structured logs on submit: mode, challengeId, language, outcome, duration.
-  - Simple counters by mode for attempts and pass/fail.
+- [x] Drill JSP Polish (S)
+  - `drill/queue.jsp`: friendly empty state, limit param handling, [x] enrollment banner.
+  - [x] `drill/solve.jsp`: show drill stats (streak, nextDueAt) at header.
+  - [x] `drill/solve.jsp`: flash message region polish and date formatting for nextDue.
 
-- [ ] DB Tests for Drill Persistence (M)
-  - Verify `DrillService.recordOutcome` updates streak/nextDueAt correctly.
+- [x] Telemetry Logging (S)
+  - Structured logs on submit: mode, challengeId, language (for gate), outcome, duration.
+  - Rolling file appender at `logs/telemetry.log`.
+  - [ ] Optional counters by mode (defer post-MVP).
 
-- [ ] Docs — MVP Guide (S)
-  - Add `projects/mvp/README.md`: how to run Practice/Drill, flags, test notes.
-  - Update `docs/project-plan.md` or add `docs/mvp-overview.md` with scope and acceptance criteria.
+- [x] DB Tests for Drill Persistence (M)
+  - Verified `DrillService.recordOutcome` updates timesSeen and nextDueAt (handles null-to-set case).
+
+- [x] Docs — MVP Guide (S)
+  - Created `projects/mvp/README.md`: run Practice/Drill, flags, test notes.
+  - [ ] Update `docs/project-plan.md` with final MVP acceptance (optional).
 
 ## P2 — Nice-to-have
 
-- [ ] Practice Landing Page (S)
+- [x] Practice Landing Page (S)
   - GET `/practice` with a simple intro and CTA to challenges list.
 
 - [ ] Session UX (S)
@@ -89,14 +113,3 @@ Drill Mode
 - `/drill/{id}` renders solve with drill stats.
 - Submitting code updates `DrillItem` and redirects to next due with flash message.
 - Can disable via `features.drill.enabled`.
-
-## Suggested Timeline (10 days, part-time)
-- Day 1–2: Feature flags; Practice servlet GET/POST; practice JSP with inline result.
-- Day 3: Drill flow verification/polish; empty queue UX; error handling.
-- Day 4: Telemetry logging hooks.
-- Day 5–6: Unit + servlet integration tests; fix regressions.
-- Day 7: DB tests for Drill; validate scheduling updates.
-- Day 8: Optional Practice landing page; UX tweaks.
-- Day 9: Docs, screenshots, time log; finalize security rules.
-- Day 10: Smoke test; enable Practice flag; optionally enable Drill.
-

@@ -14,6 +14,8 @@ class SubmissionDaoTest extends DbReset {
     private final DrillItemDao drillDao = new DrillItemDao();
     private final SubmissionDao submissionDao = new SubmissionDao();
 
+    private static final String USER = "unit-test-user";
+
     private Challenge seedChallenge(String title) {
         Challenge ch = new Challenge(title, Difficulty.EASY, "", "...");
         challengeDao.saveOrUpdate(ch);
@@ -24,6 +26,7 @@ class SubmissionDaoTest extends DbReset {
     void create_assignsId() {
         Challenge ch = seedChallenge("Reverse String");
         Submission s = new Submission(ch, Outcome.INCORRECT, "int i=0;");
+        s.setUserId(USER);
         submissionDao.saveOrUpdate(s);
         assertNotNull(s.getId());
     }
@@ -32,6 +35,7 @@ class SubmissionDaoTest extends DbReset {
     void read_getById_returnsSaved() {
         Challenge ch = seedChallenge("Reverse String");
         Submission s = new Submission(ch, Outcome.CORRECT, "// correct");
+        s.setUserId(USER);
         submissionDao.saveOrUpdate(s);
         Submission found = submissionDao.getById(s.getId());
         assertNotNull(found);
@@ -43,9 +47,11 @@ class SubmissionDaoTest extends DbReset {
     void listByChallenge_returnsOnlyMatching() {
         Challenge ch = seedChallenge("Reverse String");
         Submission s1 = new Submission(ch, Outcome.CORRECT, null);
+        s1.setUserId(USER);
         submissionDao.saveOrUpdate(s1);
         Challenge other = seedChallenge("Unique Lambda");
         Submission s2 = new Submission(other, Outcome.INCORRECT, null);
+        s2.setUserId(USER);
         submissionDao.saveOrUpdate(s2);
         List<Submission> list = submissionDao.listByChallengeId(ch.getId());
         assertEquals(1, list.size());
@@ -59,6 +65,7 @@ class SubmissionDaoTest extends DbReset {
 
         Challenge ch = seedChallenge("Reverse String");
         Submission s = new Submission(ch, Outcome.SKIPPED, null);
+        s.setUserId(USER);
         submissionDao.saveOrUpdate(s);
         submissionDao.delete(s);
 
@@ -73,8 +80,8 @@ class SubmissionDaoTest extends DbReset {
 
         Challenge ch = seedChallenge("Reverse String");
         // Keep FK safe: seed a DrillItem and a Submission
-        DrillItem di = new DrillItem(ch); drillDao.saveOrUpdate(di);
-        Submission s = new Submission(ch, Outcome.CORRECT, null); submissionDao.saveOrUpdate(s);
+        DrillItem di = new DrillItem(ch); di.setUserId(USER); drillDao.saveOrUpdate(di);
+        Submission s = new Submission(ch, Outcome.CORRECT, null); s.setUserId(USER); submissionDao.saveOrUpdate(s);
 
         // Clean dependents first, then delete parent
         drillDao.delete(di);

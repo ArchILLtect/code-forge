@@ -88,6 +88,12 @@ public class DrillItem {
     private Instant updatedAt;
 
     /**
+     * The user identifier (e.g., Cognito sub) owning this DrillItem.
+     */
+    @Column(name = "user_id", nullable = false, length = 64)
+    private String userId;
+
+    /**
      * Constructs a new DrillItem associated with the specified Challenge.
      *
      * @param challenge The Challenge to associate with this DrillItem.

@@ -31,13 +31,18 @@
       </p>
     </div>
 
+    <a class="cf-btn cf-btn-primary"
+       href="${pageContext.request.contextPath}/practice/${challenge.id}">
+      Practice
+    </a>
+
     <div class="cf-page-header-meta">
       <span class="cf-pill cf-pill-difficulty-${challenge.difficulty}">
         ${challenge.difficulty}
       </span>
 
       <span class="cf-pill cf-pill-neutral">
-          ${challenge.promptMd}
+          <c:out value="${challenge.promptMd}"/>
       </span>
 
       <a class="cf-btn cf-btn-secondary"
@@ -51,13 +56,13 @@
     <article class="cf-card">
       <h2 class="cf-section-title">Description</h2>
       <c:if test="${not empty challenge.blurb}">
-        <p class="cf-muted">${challenge.blurb}</p>
+        <p class="cf-muted"><c:out value="${challenge.blurb}"/></p>
         <hr class="cf-divider-horizontal" />
       </c:if>
 
-      <!-- promptMd already contains HTML-safe content from Markdown render -->
+      <!-- Escape Markdown source to avoid raw HTML injection; render as plain text for MVP -->
       <div class="cf-markdown">
-        ${challenge.promptMd}
+        <c:out value="${challenge.promptMd}"/>
       </div>
     </article>
 
@@ -70,12 +75,11 @@
         </div>
         <div>
           <dt>Topic</dt>
-          <dd>${challenge.promptMd}</dd>
+          <dd><c:out value="${challenge.promptMd}"/></dd>
         </div>
         <div>
           <dt>Created</dt>
           <dd>
-            <!-- Avoid fmt:formatDate for Java Time types; render raw or pre-formatted string -->
             <c:out value="${challenge.createdAt}"/>
           </dd>
         </div>

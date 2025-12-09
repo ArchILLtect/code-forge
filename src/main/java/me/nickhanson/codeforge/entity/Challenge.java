@@ -78,6 +78,13 @@ public class Challenge {
     @Column(name = "updated_at") // Maps to a column that can be updated
     private Instant updatedAt;
 
+    /**
+     * The expected answer used by the evaluator for MVP.
+     */
+    @Lob
+    @Column(name = "expected_answer")
+    private String expectedAnswer;
+
     // Constructor to create a Challenge with all required fields
     public Challenge(String title, Difficulty difficulty, String blurb, String promptMd) {
         this.title = title;

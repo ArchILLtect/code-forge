@@ -99,7 +99,7 @@ The CodeForge project leverages a modern **Enterprise Java** stack alongside sup
 - ✅ [Screen Designs (Low-Fi)](docs/screen-designs.md)
 - ✅ [Reflections](docs/reflections/WeeklyJournal.md)
 - ✅ [Time Log](docs/reflections/TimeLog.md)
-- ✅ ER Diagram (ERD): [docs/erd.png](docs/erd.png)
+- ✅ ER Diagram (ERD): [docs/screenshots/CodeForgeERD.png](docs/screenshots/CodeForgeERD.png)
 - ✅ Deployment runbook: [docs/deployment.md](docs/deployment.md)
 
 ---
@@ -156,25 +156,76 @@ CodeForge will include challenges from:
 
 ---
 ## 🚀 Getting Started
-Clone the repository:
+### Clone the repository:
 ```bash
 git clone https://github.com/ArchILLtect/code-forge.git
 cd code-forge
 ```
-Build and run the project (example with Maven):
+
+### Set required environment variable for Cognito client secret:
+- Windows cmd.exe
+```bash
+set COGNITO_CLIENT_SECRET=your_client_secret
+```
+- PowerShell
+```bash
+$env:COGNITO_CLIENT_SECRET="your_client_secret"
+``` 
+- bash
+```bash
+export COGNITO_CLIENT_SECRET=your_client_secret
+```
+
+### Set up test database:
+create a MySQL database--MySQL Workbench or command line:
+```sql
+CREATE DATABASE cf_test_db;
+``` 
+
+Then create a new file: `src/main/resources/local.properties` with content:
+```properties
+DB_HOST=<your_host> # e.g., localhost
+DB_PORT=<your_port> # default MySQL port is 3306
+DB_NAME=<your_database> # e.g., cf_test_db
+DB_USER=<your_username> # e.g., root for local
+DB_PASS=<your_password>
+``` 
+
+And a file `src/test/resources/hibernate.properties` with content:
+```properties
+hibernate.connection.url=jdbc:mysql://<your_host>:<your_port>/<your_database>?useSSL=false&serverTimezone=UTC
+hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver
+hibernate.connection.username=<your_username>
+hibernate.connection.password=<your_password>
+hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+#pool
+hibernate.c3p0.min_size=5
+hibernate.c3p0.max_size=20
+hibernate.c3p0.timeout=300
+hibernate.c3p0.max_statements=50
+hibernate.c3p0.idle_test_period=3000
+
+hibernate.show_sql=false
+hibernate.hbm2ddl.auto=none
+```
+
+Ensure you have a local MySQL instance running with a database named `cf_test_db`.
+
+### Build and run the project (example with Maven):
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
-Open in your browser at:
+### Open in your browser at:
 ```bash
 http://localhost:5000
 ```
 
 ---
 
-Build the WAR:
+## Build the WAR:
 
 - Windows cmd.exe
 ```
@@ -192,6 +243,7 @@ Required runtime configuration:
 - Non-secret Cognito values live in `src/main/resources/cognito.properties`
 
 ---
+
 ## Configuration required by QuoteService (non‑Spring)
 QuoteService loads settings from `src/main/resources/application.properties` at runtime.
 

@@ -33,4 +33,21 @@ public class SubmissionDao {
                 .getResultList();
         }
     }
+
+    /**
+     * Lists submissions for a specific challenge and user.
+     * @param challengeId The ID of the challenge.
+     * @param userId The ID of the user.
+     * @return A list of submissions for the given challenge ID and user ID.
+     */
+    public List<Submission> listByChallengeIdAndUser(Long challengeId, String userId) {
+        try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
+            return s.createQuery(
+                    "select s from Submission s join s.challenge c where c.id = :cid and s.userId = :uid",
+                    Submission.class)
+                .setParameter("cid", challengeId)
+                .setParameter("uid", userId)
+                .getResultList();
+        }
+    }
 }
