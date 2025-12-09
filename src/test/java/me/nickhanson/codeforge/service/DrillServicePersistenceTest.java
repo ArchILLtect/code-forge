@@ -8,7 +8,7 @@ import me.nickhanson.codeforge.persistence.DrillItemDao;
 import me.nickhanson.codeforge.entity.DrillItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import testsupport.DbReset;
+import me.nickhanson.codeforge.testutil.DbReset;
 
 import java.time.Instant;
 

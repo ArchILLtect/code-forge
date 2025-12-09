@@ -2,7 +2,7 @@ package me.nickhanson.codeforge.persistence;
 
 import me.nickhanson.codeforge.entity.*;
 import org.junit.jupiter.api.Test;
-import testsupport.DbReset;
+import me.nickhanson.codeforge.testutil.DbReset;
 
 import java.util.List;
 
