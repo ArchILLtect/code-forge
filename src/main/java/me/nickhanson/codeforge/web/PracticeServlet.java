@@ -65,7 +65,7 @@ public class PracticeServlet extends HttpServlet {
             if (id == -1) return;
             String language = req.getParameter("language");
             String code = req.getParameter("code");
-            RunResult result = runService.run(id, language, code);
+            RunResult result = runService.runWithMode("practice", id, language, code);
             // Inline render: no persistence
             Challenge challenge = challengeService.getById(id).orElse(null);
             if (challenge == null) { resp.sendError(404); return; }

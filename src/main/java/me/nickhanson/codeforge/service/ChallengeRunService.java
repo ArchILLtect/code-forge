@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 public class ChallengeRunService {
 
     private static final Logger log = LogManager.getLogger(ChallengeRunService.class);
+    private static final org.apache.logging.log4j.Logger telemetry = org.apache.logging.log4j.LogManager.getLogger("telemetry");
 
     private final ChallengeDao challengeDao = new ChallengeDao();
     private final AnswerEvaluator evaluator = new BasicEvaluatorService();
@@ -38,12 +39,17 @@ public class ChallengeRunService {
      * @return A RunResult object representing the outcome of the evaluation.
      */
     public RunResult run(Long challengeId, String language, String code) {
+        return runWithMode("unknown", challengeId, language, code);
+    }
+
+    public RunResult runWithMode(String mode, Long challengeId, String language, String code) {
         long start = System.currentTimeMillis();
         log.info("Evaluating challengeId={} language={}", challengeId, language);
 
         // Language gate: MVP supports only Java; blank or unsupported language counts as SKIPPED
         if (language == null || language.isBlank() || !"java".equalsIgnoreCase(language)) {
             RunResult rr = new RunResult(Outcome.SKIPPED, "Unsupported language: " + language);
+            telemetry.info("mode={} challengeId={} outcome={} durationMs={} lang={}", mode, challengeId, rr.getOutcome(), (System.currentTimeMillis() - start), language);
             log.info("Run finished: outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
@@ -51,11 +57,13 @@ public class ChallengeRunService {
         Challenge ch = challengeDao.getById(challengeId);
         if (ch == null) {
             RunResult rr = new RunResult(Outcome.INCORRECT, "Challenge not found.");
+            telemetry.info("mode={} challengeId={} outcome={} durationMs={}", mode, challengeId, rr.getOutcome(), (System.currentTimeMillis() - start));
             log.info("Run finished: outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
         AnswerEvaluation ae = evaluator.evaluate(ch, code);
         RunResult rr = new RunResult(ae.getOutcome(), ae.getFeedback());
+        telemetry.info("mode={} challengeId={} outcome={} durationMs={}", mode, challengeId, rr.getOutcome(), (System.currentTimeMillis() - start));
         log.info("Run finished: outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
         return rr;
     }

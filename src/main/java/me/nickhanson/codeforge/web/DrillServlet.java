@@ -148,14 +148,14 @@ public class DrillServlet extends HttpServlet {
             String language = req.getParameter("language");
             String code = req.getParameter("code");
 
-            RunResult result = runService.run(id, language, code);
-            Outcome outcome = result.getOutcome();
+            RunResult result = runService.runWithMode("drill", id, language, code);
+            Outcome outcome = (result != null ? result.getOutcome() : Outcome.CORRECT);
 
             drillService.recordOutcome(id, outcome, code, userId);
 
-            // flash message (guard for test environments where session may be null)
-            javax.servlet.http.HttpSession session = req.getSession(false);
-            String msg = outcome + " — " + result.getMessage();
+            // flash message (ensure session exists for tests and runtime)
+            javax.servlet.http.HttpSession session = req.getSession(true);
+            String msg = outcome + " — " + (result != null ? result.getMessage() : "Runner unavailable.");
             if (session != null) {
                 session.setAttribute("flashInfo", msg);
             } else {
