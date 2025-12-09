@@ -30,17 +30,4 @@
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
 
-  <context-param>
-    <param-name>COGNITO_CLIENT_SECRET</param-name>
-    <param-value>fsluir74kirvlaq8fecp4dgi1htn11qfdcdfef7tpc08rl8qja5</param-value>
-    <!-- Optional: set here for local dev only. In prod, use an environment variable or -DCOGNITO_CLIENT_SECRET. -->
-  </context-param>
-  <context-param>
-    <param-name>h2.tcp.enabled</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>h2.tcp.port</param-name>
-    <param-value>9092</param-value>
-  </context-param>
 </web-app>
