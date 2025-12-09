@@ -1,4 +1,4 @@
-package testsupport;
+package me.nickhanson.codeforge.testutil;
 
 import me.nickhanson.codeforge.config.PropertiesLoader;
 import org.apache.logging.log4j.LogManager;
@@ -12,9 +12,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-// TODO: Fix warnings for Database class
-
-/** * Provides access to the database * Created on 8/31/16. * * @author pwaite * @author Alex M - Fall 2019 - added multi-line sql capabilitygit */
+/**
+ * Provides access to the database
+ * Created on 8/31/16.
+ * @author pwaite
+ * @author Alex M - Fall 2019 - added multi-line sql capabilitygit
+*/
 public class Database implements PropertiesLoader {
 
     private static final Logger logger = LogManager.getLogger(Database.class);

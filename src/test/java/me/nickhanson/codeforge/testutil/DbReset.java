@@ -1,4 +1,4 @@
-package testsupport;
+package me.nickhanson.codeforge.testutil;
 
 import me.nickhanson.codeforge.persistence.GenericDao;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,8 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 public abstract class DbReset {
     @BeforeEach
     public void setUp() {
-        Database database = Database.getInstance();
-        database.runSQL("cleandb.sql");
+        try {
+            TestDbCleaner.purgeCoreTables();
+        } catch (Exception e) {
+            // Fallback to full SQL reset if purge fails
+            Database database = Database.getInstance();
+            database.runSQL("cleandb.sql");
+        }
     }
 
     /**
