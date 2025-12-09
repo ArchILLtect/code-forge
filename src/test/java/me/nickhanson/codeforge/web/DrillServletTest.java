@@ -84,7 +84,7 @@ class DrillServletTest {
         when(req.getParameter("language")).thenReturn("java");
         when(req.getParameter("code")).thenReturn("// code");
 
-        when(runService.run(42L, "java", "// code")).thenReturn(new RunResult(Outcome.CORRECT, "ok"));
+        when(runService.runWithMode("drill", 42L, "java", "// code")).thenReturn(new RunResult(Outcome.CORRECT, "ok"));
 
         servlet.doPost(req, resp);
 
