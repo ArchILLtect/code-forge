@@ -6,7 +6,7 @@ import me.nickhanson.codeforge.entity.DrillItem;
 import me.nickhanson.codeforge.entity.Submission;
 import me.nickhanson.codeforge.entity.Outcome;
 import org.junit.jupiter.api.Test;
-import testsupport.DbReset;
+import me.nickhanson.codeforge.testutil.DbReset;
 
 import java.util.List;
 

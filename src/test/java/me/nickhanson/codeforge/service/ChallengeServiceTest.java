@@ -10,7 +10,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import testsupport.DbReset;
+import me.nickhanson.codeforge.testutil.DbReset;
 
 import java.util.List;
 import java.util.Optional;
