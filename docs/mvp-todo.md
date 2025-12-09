@@ -85,7 +85,7 @@ Legend:
 
 ## P2 — Nice-to-have
 
-- [ ] Practice Landing Page (S)
+- [x] Practice Landing Page (S)
   - GET `/practice` with a simple intro and CTA to challenges list.
 
 - [ ] Session UX (S)
