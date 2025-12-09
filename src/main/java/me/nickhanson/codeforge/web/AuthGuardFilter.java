@@ -44,8 +44,12 @@ public class AuthGuardFilter extends HttpFilter {
 
         // Check if the request method is POST.
         if ("POST".equalsIgnoreCase(method)) {
+            // Public practice submissions do NOT require auth
+            if (path.matches("^/practice/\\d+/submit$")) {
+                needsAuth = false;
+            }
             // Require authentication for creating a challenge.
-            if ("/challenges".equals(path)) {
+            else if ("/challenges".equals(path)) {
                 needsAuth = true;
             }
             // Require authentication for updating or deleting a challenge.
@@ -61,9 +65,13 @@ public class AuthGuardFilter extends HttpFilter {
         }
         // Check if the request method is GET.
         else if ("GET".equalsIgnoreCase(method)) {
+            // Practice pages are public
+            if (path.equals("/practice") || path.matches("^/practice(/.*)?$")) {
+                needsAuth = false;
+            }
             // Require authentication for specific GET paths.
             // Show forms that should be restricted to authenticated users
-            if (PROTECTED_GET_PATHS.contains(path) || path.matches("^/challenges/\\d+/edit$")) {
+            else if (PROTECTED_GET_PATHS.contains(path) || path.matches("^/challenges/\\d+/edit$")) {
                 needsAuth = true;
             }
             // Require authentication for all Drill pages.
