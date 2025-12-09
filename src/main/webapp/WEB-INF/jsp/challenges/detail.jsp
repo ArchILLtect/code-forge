@@ -42,7 +42,7 @@
       </span>
 
       <span class="cf-pill cf-pill-neutral">
-          <c:out value="${challenge.promptMd}"/>
+          <c:out value="${challenge.blurb}"/>
       </span>
 
       <a class="cf-btn cf-btn-secondary"
@@ -61,9 +61,9 @@
       </c:if>
 
       <!-- Escape Markdown source to avoid raw HTML injection; render as plain text for MVP -->
-      <div class="cf-markdown">
-        <c:out value="${challenge.promptMd}"/>
-      </div>
+      <pre class="drill-prompt-text">
+<c:out value="${challenge.promptMd}" />
+        </pre>
     </article>
 
     <aside class="cf-card cf-meta-card">
@@ -74,14 +74,8 @@
           <dd>${challenge.difficulty}</dd>
         </div>
         <div>
-          <dt>Topic</dt>
-          <dd><c:out value="${challenge.promptMd}"/></dd>
-        </div>
-        <div>
           <dt>Created</dt>
-          <dd>
-            <c:out value="${challenge.createdAt}"/>
-          </dd>
+          <dd><c:out value="${challenge.createdAt}"/></dd>
         </div>
       </dl>
 
