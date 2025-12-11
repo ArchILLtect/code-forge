@@ -12,9 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Service class for managing Challenge entities.
- * Provides methods for CRUD operations and business logic.
- * @author Nick Hanson
+ * Service layer for managing Challenge entities.
  */
 public class ChallengeService {
 
@@ -33,9 +31,9 @@ public class ChallengeService {
     }
 
     /**
-     * Lists challenges, optionally filtered by difficulty.
-     * @param difficulty The difficulty filter; null returns all.
-     * @return List of challenges.
+     * Lists all challenges, optionally filtered by difficulty.
+     * @param difficulty The difficulty to filter by, or null for all difficulties.
+     * @return A list of challenges.
      */
     public List<Challenge> listChallenges(Difficulty difficulty) {
         List<Challenge> all = dao.getAll();
@@ -47,16 +45,16 @@ public class ChallengeService {
     }
 
     /**
-     * Retrieves a challenge by its unique identifier.
-     * @param id The unique identifier of the challenge.
-     * @return An Optional containing the challenge if found, or empty if not found.
+     * Retrieves a challenge by its ID.
+     * @param id The ID of the challenge.
+     * @return An Optional containing the Challenge if found, or empty if not found.
      */
     public Optional<Challenge> getById(Long id) {
         return Optional.ofNullable(dao.getById(id));
     }
 
     /**
-     * Checks if a challenge title already exists (case-insensitive).
+     * Checks if a challenge title already exists (case insensitive).
      * @param title The title to check.
      * @return true if the title exists, false otherwise.
      */
@@ -66,10 +64,10 @@ public class ChallengeService {
     }
 
     /**
-     * Checks for the existence of a challenge title in other records (case-insensitive).
+     * Checks if a challenge title already exists for a different challenge (case insensitive).
      * @param title The title to check.
-     * @param id The ID to exclude from the check.
-     * @return true if the title exists in other records, false otherwise.
+     * @param id The ID of the challenge to exclude from the check.
+     * @return true if the title exists for another challenge, false otherwise.
      */
     public boolean titleExistsForOther(String title, Long id) {
         if (title == null || title.isBlank() || id == null) return false;
@@ -77,9 +75,9 @@ public class ChallengeService {
     }
 
     /**
-     * Creates a new challenge using the provided form data.
+     * Creates a new challenge from the provided form data.
      * @param form The form data for the new challenge.
-     * @return The created Challenge entity.
+     * @return The created Challenge.
      */
     public Challenge create(ChallengeForm form) {
 
