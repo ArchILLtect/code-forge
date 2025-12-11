@@ -96,6 +96,10 @@ public class GenericDao<T> {
         }
     }
 
+    /**
+     * Rollback the given transaction quietly, logging any exceptions.
+     * @param tx the transaction to rollback
+     */
     private void rollbackQuietly(Transaction tx) {
         if (tx != null) {
             try {

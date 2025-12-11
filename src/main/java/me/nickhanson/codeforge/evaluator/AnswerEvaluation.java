@@ -2,6 +2,8 @@ package me.nickhanson.codeforge.evaluator;
 
 import me.nickhanson.codeforge.entity.Outcome;
 
+// TODO: Add javadoc
+
 public class AnswerEvaluation {
     private final Outcome outcome;
     private final String feedback;
