@@ -3,6 +3,8 @@ package me.nickhanson.codeforge.service;
 import lombok.Getter;
 import me.nickhanson.codeforge.entity.Outcome;
 
+// This is a DTO representing the result of a code run.
+
 /**
  * Represents the result of a code run, including the outcome and an associated message.
  * This is a simple value object used to encapsulate the result of executing code in current stub runners.

@@ -3,10 +3,10 @@
   User: nickh
   Date: 11/14/2025
   Time: 11:52 PM
-  To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitle" value="About | CodeForge" />
 
 <!-- Add info about me, links to my showcase site, and other related links including GitHub repo -->
 
@@ -15,7 +15,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Drill Queue</title>
+        <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
     </head>
     <body>

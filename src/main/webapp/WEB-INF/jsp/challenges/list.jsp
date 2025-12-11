@@ -3,18 +3,18 @@
   User: nickh
   Date: 10/24/2025
   Time: 2:30 PM
-  To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="pageTitle" value="Challenges | CodeForge" />
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Challenges | CodeForge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>

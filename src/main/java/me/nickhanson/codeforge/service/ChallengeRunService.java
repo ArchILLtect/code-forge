@@ -8,10 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Represents the result of a code run for a challenge.
- * Includes the outcome and an optional message.
- * Used by ChallengeRunService to return the result of code evaluation.
- * Only a placeholder for demonstration purposes.
+ * Service class responsible for running and evaluating code submissions
+ * against coding challenges using predefined heuristics.
  * @author Nick Hanson
  */
 public class ChallengeRunService {
@@ -23,15 +21,7 @@ public class ChallengeRunService {
     private final AnswerEvaluator evaluator = new BasicEvaluatorService();
 
     /**
-     * Evaluates the submitted code for a specific challenge using predefined heuristics.
-     * Heuristics (order matters):
-     * - Unsupported or blank language -> SKIPPED
-     * - Empty/blank code -> SKIPPED
-     * - code contains "skip" -> SKIPPED
-     * - code contains "fail" or "assert false" -> INCORRECT
-     * - code contains "// correct" or "// pass" -> CORRECT
-     * - code contains "// ok" -> ACCEPTABLE
-     * - otherwise -> INCORRECT
+     * Evaluates submitted code for a given challenge in an unknown mode.
      *
      * @param challengeId The ID of the challenge being evaluated.
      * @param language    The programming language of the submitted code.
@@ -42,6 +32,15 @@ public class ChallengeRunService {
         return runWithMode("unknown", challengeId, language, code);
     }
 
+    /**
+     * Internal method to evaluate code with a specified mode for telemetry.
+     *
+     * @param mode        The mode of the run (e.g., "test", "submit").
+     * @param challengeId The ID of the challenge being evaluated.
+     * @param language    The programming language of the submitted code.
+     * @param code        The submitted code as a string.
+     * @return A RunResult object representing the outcome of the evaluation.
+     */
     public RunResult runWithMode(String mode, Long challengeId, String language, String code) {
         long start = System.currentTimeMillis();
         log.info("Evaluating challengeId={} language={}", challengeId, language);
@@ -54,6 +53,7 @@ public class ChallengeRunService {
             return rr;
         }
 
+        // Retrieve the challenge
         Challenge ch = challengeDao.getById(challengeId);
         if (ch == null) {
             RunResult rr = new RunResult(Outcome.INCORRECT, "Challenge not found.");
@@ -61,6 +61,8 @@ public class ChallengeRunService {
             log.info("Run finished: outcome={} in {}ms", rr.getOutcome(), (System.currentTimeMillis() - start));
             return rr;
         }
+
+        // Evaluate the answer
         AnswerEvaluation ae = evaluator.evaluate(ch, code);
         RunResult rr = new RunResult(ae.getOutcome(), ae.getFeedback());
         telemetry.info("mode={} challengeId={} outcome={} durationMs={}", mode, challengeId, rr.getOutcome(), (System.currentTimeMillis() - start));

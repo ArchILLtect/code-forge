@@ -48,6 +48,9 @@ public class SessionFactoryProvider {
         return defaultVal;
     }
 
+    /**
+     * Build the SessionFactory using resolved configuration values.
+     */
     private static SessionFactory buildSessionFactory() {
         // URL: explicit hibernate prop wins; otherwise build from DB_HOST/DB_PORT/DB_NAME
         String explicitUrl = resolve("hibernate.connection.url", null);
@@ -113,6 +116,9 @@ public class SessionFactoryProvider {
         return buildFromRegistry(registry);
     }
 
+    /**
+     * Build SessionFactory from the given StandardServiceRegistry.
+     */
     private static SessionFactory buildFromRegistry(StandardServiceRegistry registry) {
         MetadataSources sources = new MetadataSources(registry)
                 .addAnnotatedClass(me.nickhanson.codeforge.entity.Challenge.class)

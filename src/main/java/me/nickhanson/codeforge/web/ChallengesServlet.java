@@ -128,6 +128,11 @@ public class ChallengesServlet extends HttpServlet {
 
     // ---- helpers (DRY) ----
 
+    /**
+     * Parses the "difficulty" parameter from the request.
+     * @param req the HttpServletRequest
+     * @return the Difficulty enum value, or null if not specified or invalid
+     */
     private Difficulty parseDifficultyParam(HttpServletRequest req) {
         String diff = req.getParameter("difficulty");
         if (diff == null || diff.isBlank() || "All".equalsIgnoreCase(diff)) return null;
@@ -138,6 +143,13 @@ public class ChallengesServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Parses a string segment as a Long ID, sending a 400 Bad Request if invalid.
+     * @param segment the string segment to parse
+     * @param resp the HttpServletResponse
+     * @return the parsed Long ID, or null if invalid (after sending error)
+     * @throws IOException if an I/O error occurs while sending error
+     */
     private Long parseIdOrBadRequest(String segment, HttpServletResponse resp) throws IOException {
         try {
             long id = Long.parseLong(segment);
@@ -149,6 +161,12 @@ public class ChallengesServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Applies challenge attributes to the request for editing.
+     * @param req the HttpServletRequest
+     * @param c the Challenge entity
+     * @param id the Challenge ID
+     */
     private void applyEditAttributes(HttpServletRequest req, Challenge c, long id) {
         req.setAttribute("title", c.getTitle());
         req.setAttribute("difficulty", c.getDifficulty());
@@ -158,6 +176,11 @@ public class ChallengesServlet extends HttpServlet {
         req.setAttribute("challengeId", id);
     }
 
+    /**
+     * Builds a ChallengeForm from the HTTP request parameters.
+     * @param req the HttpServletRequest
+     * @return the constructed ChallengeForm
+     */
     private ChallengeForm buildFormFromRequest(HttpServletRequest req) {
         ChallengeForm form = new ChallengeForm();
         form.setTitle(req.getParameter("title"));

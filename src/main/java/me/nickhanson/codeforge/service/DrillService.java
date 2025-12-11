@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service that encapsulates drill scheduling, queue orchestration, and
- * updating DrillItem metrics (timesSeen, streak, nextDueAt) when a user submits an outcome.
- * @author nickhanson
+ * Service for managing drill items and recording outcomes.
  */
 public class DrillService {
     private static final Logger log = LogManager.getLogger(DrillService.class);
@@ -37,10 +35,13 @@ public class DrillService {
     }
 
     /**
-     * Retrieves up to 'limit' DrillItems that are due for review.
-     * If none are due, returns the soonest upcoming DrillItem (if any).
-     * @param limit maximum number of DrillItems to retrieve
-     * @return list of due DrillItems
+     * Retrieves a list of due drill items for the specified user, up to the given limit.
+     * If no items are currently due, returns the soonest upcoming item if available.
+     *
+     * @param limit  the maximum number of drill items to retrieve
+     * @param userId the ID of the user
+     * @return a list of due drill items or the soonest upcoming item
+     * @throws IllegalArgumentException if limit is less than or equal to zero or if userId is null/blank
      */
     public List<DrillItem> getDueQueue(int limit, String userId) {
         if (limit <= 0) {
@@ -59,11 +60,14 @@ public class DrillService {
     }
 
     /**
-     * Records the outcome of a user's attempt at a challenge, updating the corresponding DrillItem metrics.
-     * @param challengeId ID of the challenge
-     * @param outcome outcome of the attempt
-     * @param code user's submitted code
-     * @return the recorded Submission
+     * Records the outcome of a user's attempt at a challenge and updates the corresponding drill item.
+     *
+     * @param challengeId the ID of the challenge
+     * @param outcome     the outcome of the attempt
+     * @param code        the code submitted by the user
+     * @param userId      the ID of the user
+     * @return the recorded submission
+     * @throws IllegalArgumentException if userId is null/blank or if the challenge is not found
      */
     public Submission recordOutcome(Long challengeId, Outcome outcome, String code, String userId) {
         if (userId == null || userId.isBlank()) {
@@ -98,8 +102,10 @@ public class DrillService {
     }
 
     /**
-     * Retrieves the DrillItem for the given Challenge, creating it if it doesn't exist.
-     * @param challenge the Challenge
+     * Retrieves an existing DrillItem for the given challenge and user, or creates a new one if none exists.
+     *
+     * @param challenge the challenge associated with the drill item
+     * @param userId    the ID of the user
      * @return the existing or newly created DrillItem
      */
     private DrillItem getOrCreateDrillItem(Challenge challenge, String userId) {
@@ -112,10 +118,11 @@ public class DrillService {
     }
 
     /**
-     * Computes the next due time for a DrillItem based on the outcome and new streak.
-     * @param outcome the outcome of the attempt
-     * @param newStreak the updated streak count
-     * @return the computed next due Instant
+     * Computes the next due date for a drill item based on the outcome and current streak.
+     *
+     * @param outcome   the outcome of the user's attempt
+     * @param newStreak the updated streak after the attempt
+     * @return the computed next due date as an Instant
      */
     private Instant computeNextDueAt(Outcome outcome, int newStreak) {
         Instant now = Instant.now();
@@ -132,18 +139,23 @@ public class DrillService {
     }
 
     /**
-     * Checks if a user is enrolled in drill for a specific challenge.
-     * @param challengeId ID of the challenge
-     * @return true if enrolled, false otherwise
+     * Checks if a user is enrolled in a drill for a specific challenge.
+     *
+     * @param challengeId the ID of the challenge
+     * @param userId      the ID of the user
+     * @return true if the user is enrolled in the drill, false otherwise
      */
     public boolean isEnrolledInDrill(Long challengeId, String userId) {
         return !drillItemDao.listByChallengeIdAndUser(challengeId, userId).isEmpty();
     }
 
     /**
-     * Ensures a DrillItem exists for the given challenge, creating it if necessary.
-     * @param challengeId ID of the challenge
+     * Ensures that a DrillItem exists for the given challenge and user, creating one if necessary.
+     *
+     * @param challengeId the ID of the challenge
+     * @param userId      the ID of the user
      * @return the existing or newly created DrillItem
+     * @throws IllegalArgumentException if the challenge is not found
      */
     public DrillItem ensureDrillItem(Long challengeId, String userId) {
         Challenge challenge = Optional.ofNullable(challengeDao.getById(challengeId))
@@ -152,8 +164,10 @@ public class DrillService {
     }
 
     /**
-     * Retrieves the next due DrillItem, if any.
-     * @return an Optional containing the next due DrillItem, or empty if none exist
+     * Retrieves the next due DrillItem for the specified user.
+     *
+     * @param userId the ID of the user
+     * @return an Optional containing the next due DrillItem, or empty if none are due
      */
     public Optional<DrillItem> nextDue(String userId) {
         List<DrillItem> queue = getDueQueue(1, userId);
@@ -161,9 +175,12 @@ public class DrillService {
     }
 
     /**
-     * Ensures DrillItems exist for the given user across the provided challenges.
-     * Creates missing items and leaves existing ones untouched.
-     * @return number of DrillItems created
+     * Ensures that DrillItems exist for a list of challenges for the specified user.
+     *
+     * @param challenges the list of challenges
+     * @param userId     the ID of the user
+     * @return the number of DrillItems created
+     * @throws IllegalArgumentException if userId is null/blank
      */
     public int ensureEnrollmentForUser(List<Challenge> challenges, String userId) {
         if (userId == null || userId.isBlank()) throw new IllegalArgumentException("userId required");

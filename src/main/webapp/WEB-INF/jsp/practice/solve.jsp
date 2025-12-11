@@ -1,12 +1,23 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: nickh
+  Date: 11/03/2025
+  Time: 6:30 PM
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitle" value="Solve/Practice | CodeForge" />
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Practice</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/drill.css" />
+  <!--// TODO: Remove drill.css once shared styles are refactored into practice.css -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/practice.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs/loader.min.js"></script>
 </head>
 <body>
@@ -36,12 +47,14 @@
       <!-- Prompt content -->
       <div class="cf-field">
         <label class="cf-label">Prompt (Markdown)</label>
-        <pre class="drill-prompt-text" style="border: 1px solid black; padding: 10px; overflow-x: auto;">
+        <pre class="practice-prompt-text">
 <c:out value="${challenge.promptMd}" />
         </pre>
       </div>
 
-      <form method="post" action="${pageContext.request.contextPath}/practice/${challenge.id}/submit">
+      <form method="post"
+            action="${pageContext.request.contextPath}/practice/${challenge.id}/submit"
+            class="cf-form drill-form">
 
         <div class="cf-field">
           <label>Language</label>
@@ -53,8 +66,31 @@
         <div class="cf-field" style="width: 100%">
           <label for="code-editor">Code</label>
           <div id="code-editor" style="height:400px;border:1px solid #ddd; padding: 5px; width: 100%"></div>
+
           <!-- hidden field for the actual submission -->
           <input type="hidden" name="code" id="code"/>
+
+          <div class="drill-form-actions">
+            <div id="codeCharCount" class="cf-hint" style="color:#6b7280">
+              Characters: <span id="codeCharCountVal">0</span>
+            </div>
+
+            <!-- Hint toggle -->
+            <div class="cf-hint-toggle-row">
+              <button type="button" id="toggleHintBtn" class="cf-link-button">
+                Show hint
+              </button>
+              <div id="hintBox" class="cf-hint-box" style="display:none;">
+                <strong>Hint</strong>
+                <pre class="cf-code-block">
+<c:out value="${challenge.expectedAnswer}" />
+                </pre>
+              </div>
+            </div>
+
+            <button type="button" id="clearCodeBtn" class="cf-btn cf-btn-secondary">Clear</button>
+          </div>
+
           <c:if test="${not empty submittedCode}">
             <div class="cf-submission-preview">
               <div class="cf-submission-header">Last submission</div>
@@ -72,31 +108,133 @@
   </section>
 </main>
 <script>
-  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs' } });
+  // Monaco loader config (shared)
+  require.config({
+    paths: {
+      'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs'
+    }
+  });
 
   require(['vs/editor/editor.main'], function () {
-    const editor = monaco.editor.create(document.getElementById('code-editor'), {
-      value: [
-        '// Write your code here',
-        'public class Main {',
-        '    public static void main(String[] args) {',
-        '        System.out.println("Hello CodeForge");',
-        '    }',
-        '}'
-      ].join('\n'),
+    const chalId = '${challenge.id}'; // server-side
+    const storageKey = 'cf.challenge.' + chalId + '.code';
+
+    const editorContainer = document.getElementById('code-editor');
+    const hiddenField = document.getElementById('code');
+    const countEl = document.getElementById('codeCharCountVal');
+    const clearBtn = document.getElementById('clearCodeBtn');
+    const form = document.querySelector('.drill-form');
+
+    if (!editorContainer || !hiddenField) {
+      // Page isn't a solve/practice page or markup changed unexpectedly
+      return;
+    }
+
+    const defaultSnippet = [
+      '// Write your code here',
+      'public class Main {',
+      '    public static void main(String[] args) {',
+      '        System.out.println("Hello CodeForge");',
+      '    }',
+      '}'
+    ].join('\n');
+
+    // Create Monaco editor
+    const editor = monaco.editor.create(editorContainer, {
+      value: '',
       language: 'java',
       theme: 'vs-dark',
       automaticLayout: true
     });
 
-    // Hook editor content into a hidden form field so you can save it if you want
-    const hiddenField = document.getElementById('code');
-    if (hiddenField) {
-      const syncEditorToHidden = () => hiddenField.value = editor.getValue();
-      editor.onDidChangeModelContent(syncEditorToHidden);
-      syncEditorToHidden();
+    // Restore saved code (if any) or fall back to template
+    let initial = null;
+    try {
+      initial = localStorage.getItem(storageKey);
+    } catch (e) {
+      // ignore storage errors
     }
+    if (!initial || initial.trim() === '') {
+      initial = defaultSnippet;
+    }
+
+    editor.setValue(initial);
+    hiddenField.value = initial;
+    if (countEl) {
+      countEl.textContent = String(initial.length);
+    }
+
+    // Keep everything in sync
+    let saveTimer;
+
+    const syncAll = () => {
+      const value = editor.getValue();
+      hiddenField.value = value;
+      if (countEl) {
+        countEl.textContent = String(value.length);
+      }
+    };
+
+    const persist = () => {
+      try {
+        localStorage.setItem(storageKey, editor.getValue());
+      } catch (e) {
+        // ignore quota or private mode failures
+      }
+    };
+
+    editor.onDidChangeModelContent(function () {
+      syncAll();
+      if (saveTimer) {
+        window.clearTimeout(saveTimer);
+      }
+      saveTimer = window.setTimeout(persist, 300); // debounce saves
+    });
+
+    // Clear button
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        editor.setValue('');
+        try {
+          localStorage.removeItem(storageKey);
+        } catch (e) {}
+        syncAll();
+      });
+    }
+
+    // Ensure latest code is synced right before submit
+    if (form) {
+      form.addEventListener('submit', function () {
+        syncAll();
+        persist();
+      });
+    }
+
+    // Ctrl+Enter shortcut
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        if (form) {
+          e.preventDefault();
+          syncAll();
+          form.submit();
+        }
+      }
+    });
   });
+
+  // Hint toggle behavior
+  (function() {
+    const btn  = document.getElementById('toggleHintBtn');
+    const box  = document.getElementById('hintBox');
+
+    if (!btn || !box) return;
+
+    btn.addEventListener('click', function () {
+      const isHidden = box.style.display === 'none' || box.style.display === '';
+      box.style.display = isHidden ? 'block' : 'none';
+      btn.textContent   = isHidden ? 'Hide hint' : 'Show hint';
+    });
+  })();
 </script>
 </body>
 </html>

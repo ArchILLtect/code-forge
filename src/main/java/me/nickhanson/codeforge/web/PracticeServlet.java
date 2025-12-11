@@ -12,6 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Servlet handling practice mode operations, including displaying practice challenges
+ * and processing challenge submissions.
+ * Supports URLs under /practice and /practice/*.
+ *
+ * @author Nick Hanson
+ */
 @WebServlet(urlPatterns = {"/practice", "/practice/*"})
 public class PracticeServlet extends HttpServlet {
 
@@ -19,6 +26,9 @@ public class PracticeServlet extends HttpServlet {
     private ChallengeRunService runService;
     private me.nickhanson.codeforge.service.ChallengeService challengeService;
 
+    /**
+     * Initializes services from servlet context or creates new instances if not present.
+     */
     @Override
     public void init() {
         var ctx = getServletContext();
@@ -37,6 +47,9 @@ public class PracticeServlet extends HttpServlet {
         if (challengeService == null) this.challengeService = new me.nickhanson.codeforge.service.ChallengeService();
     }
 
+    /**
+     * Handles GET requests for displaying practice challenges.
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!practiceEnabled) { resp.sendError(404); return; }
@@ -55,6 +68,9 @@ public class PracticeServlet extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/jsp/practice/solve.jsp").forward(req, resp);
     }
 
+    /**
+     * Handles POST requests for submitting practice challenge solutions.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         if (!practiceEnabled) { resp.sendError(404); return; }
@@ -91,6 +107,14 @@ public class PracticeServlet extends HttpServlet {
         resp.sendError(400);
     }
 
+    /**
+     * Parses a string segment as a long ID. Sends a 400 Bad Request response if parsing fails.
+     *
+     * @param segment the string segment to parse
+     * @param resp    the HttpServletResponse to send error responses
+     * @return the parsed long ID, or -1 if parsing failed
+     * @throws IOException if an I/O error occurs while sending the error response
+     */
     private long parseIdOrBadRequest(String segment, HttpServletResponse resp) throws IOException {
         try {
             long id = Long.parseLong(segment);
