@@ -3,21 +3,21 @@
   User: nickh
   Date: 11/03/2025
   Time: 6:30 PM
-  To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs/loader.min.js"></script>
+<c:set var="pageTitle" value="Solve ${challenge.title} | CodeForge" />
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solve – <c:out value="${challenge.title}"/></title>
+  <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/drill.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs/loader.min.js"></script>
 </head>
 <body>
 
@@ -107,10 +107,25 @@
 
           <!-- hidden field for the actual submission -->
           <input type="hidden" name="code" id="code"/>
+
           <div class="drill-form-actions">
             <div id="codeCharCount" class="cf-hint" style="color:#6b7280">
               Characters: <span id="codeCharCountVal">0</span>
             </div>
+
+            <!-- Hint toggle -->
+            <div class="cf-hint-toggle-row">
+              <button type="button" id="toggleHintBtn" class="cf-link-button">
+                Show hint
+              </button>
+              <div id="hintBox" class="cf-hint-box" style="display:none;">
+                <strong>Hint</strong>
+                <pre class="cf-code-block">
+<c:out value="${challenge.expectedAnswer}" />
+                </pre>
+              </div>
+            </div>
+
             <button type="button" id="clearCodeBtn" class="cf-btn cf-btn-secondary">Clear</button>
           </div>
         </div>
@@ -132,7 +147,11 @@
 <jsp:include page="/WEB-INF/jsp/footer.jsp" />
 
 <script>
-  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs' } });
+  require.config({
+    paths: {
+      'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs'
+    }
+  });
 
   require(['vs/editor/editor.main'], function () {
     const editor = monaco.editor.create(document.getElementById('code-editor'), {
@@ -149,58 +168,110 @@
       automaticLayout: true
     });
 
-    // Hook editor content into a hidden form field so you can save it if you want
-    const hiddenField = document.getElementById('code');
-    if (hiddenField) {
-      const syncEditorToHidden = () => hiddenField.value = editor.getValue();
-      editor.onDidChangeModelContent(syncEditorToHidden);
-      syncEditorToHidden();
-    }
-  });
-  (function() {
-    const textarea = document.getElementById('code');
-    const chalId = '${challenge.id}'; // server-side value
-    const storageKey = 'cf.challenge.' + chalId + '.code';
-    const countEl = document.getElementById('codeCharCountVal');
-    function updateCount() { if (countEl && textarea) { countEl.textContent = String(textarea.value.length); } }
-    if (textarea) {
-      // Restore saved value
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        textarea.value = saved;
-      }
-      updateCount();
-      let saveTimer;
-      const persist = () => {
-        try { localStorage.setItem(storageKey, textarea.value); } catch (e) { /* ignore quota errors */ }
-      };
-      textarea.addEventListener('input', function() {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(persist, 300); // debounce
-        updateCount();
-      });
-      // Ensure latest code stored on submit
-      const form = document.querySelector('.drill-form');
-      if (form) {
-        form.addEventListener('submit', persist);
-      }
-      // Clear button
-      const clearBtn = document.getElementById('clearCodeBtn');
-      if (clearBtn) {
-        clearBtn.addEventListener('click', function() {
-          localStorage.removeItem(storageKey);
-          textarea.value = '';
-          updateCount();
-        });
-      }
+    // Make editor accessible if you ever need it elsewhere
+    window.cfEditor = editor;
+
+    // --- Shared elements & config ---
+    const hiddenField = document.getElementById('code');           // hidden field for form submit
+    const form        = document.querySelector('.drill-form');
+    const clearBtn    = document.getElementById('clearCodeBtn');
+    const countEl     = document.getElementById('codeCharCountVal');
+    const chalId      = '${challenge.id}';
+    const storageKey  = 'cf.challenge.' + chalId + '.code';
+
+    function getText() {
+      return editor.getValue();
     }
 
-    // Ctrl+Enter to submit quickly (preserve existing behavior)
+    function setText(val) {
+      editor.setValue(val);
+      if (hiddenField) hiddenField.value = val;
+      updateCount();
+    }
+
+    function updateCount() {
+      if (!countEl) return;
+      const len = getText().length;
+      countEl.textContent = String(len);
+    }
+
+    // --- Restore from localStorage if available ---
+    (function restoreInitial() {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved && saved.length > 0) {
+          setText(saved);
+        } else {
+          // seed hidden field and counter from default editor value
+          if (hiddenField) hiddenField.value = getText();
+          updateCount();
+        }
+      } catch (e) {
+        // localStorage might be blocked; just fall back to default
+        if (hiddenField) hiddenField.value = getText();
+        updateCount();
+      }
+    })();
+
+    // --- Persist to localStorage + hidden field ---
+    let saveTimer;
+    function persist() {
+      const val = getText();
+      try {
+        localStorage.setItem(storageKey, val);
+      } catch (e) {
+        // ignore quota/storage errors
+      }
+      if (hiddenField) hiddenField.value = val;
+    }
+
+    editor.onDidChangeModelContent(function () {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(persist, 300); // debounce
+      updateCount();
+    });
+
+    // --- Ensure latest code on submit ---
+    if (form) {
+      form.addEventListener('submit', function () {
+        persist();
+      });
+    }
+
+    // --- Clear button behavior ---
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        try {
+          localStorage.removeItem(storageKey);
+        } catch (e) {
+          // ignore
+        }
+        setText('');
+      });
+    }
+
+    // --- Ctrl+Enter quick submit (same feature as before) ---
     document.addEventListener('keydown', function (e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const form = document.querySelector('.drill-form');
-        if (form) form.submit();
+        if (form) {
+          persist(); // make sure hidden field + localStorage are up to date
+          form.submit();
+        }
       }
+    });
+  });
+
+  // Hint toggle behavior
+  (function() {
+    const btn  = document.getElementById('toggleHintBtn');
+    const box  = document.getElementById('hintBox');
+
+    if (!btn || !box) return;
+
+    btn.addEventListener('click', function () {
+      const isHidden = box.style.display === 'none' || box.style.display === '';
+      box.style.display = isHidden ? 'block' : 'none';
+      btn.textContent   = isHidden ? 'Hide hint' : 'Show hint';
     });
   })();
 </script>
