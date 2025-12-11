@@ -5,14 +5,15 @@
   Time: 6:30 PM
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<c:set var="pageTitle" value="500 Error → CodeForge" />
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitle" value="Server Error | CodeForge" />
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Server Error</title>
+  <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>
