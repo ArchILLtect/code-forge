@@ -21,7 +21,9 @@ public class ChallengeRunService {
     private final AnswerEvaluator evaluator = new BasicEvaluatorService();
 
     /**
-     * Evaluates submitted code for a given challenge in an unknown mode.
+     * Evaluates submitted code for a given challenge using a default mode.
+     * <p>
+     * Delegates to {@link #runWithMode(String, Long, String, String)} with "unknown" as the mode.
      *
      * @param challengeId The ID of the challenge being evaluated.
      * @param language    The programming language of the submitted code.
