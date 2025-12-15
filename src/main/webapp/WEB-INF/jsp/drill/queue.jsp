@@ -16,6 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/drill.css" />
 </head>
 <body>
 
