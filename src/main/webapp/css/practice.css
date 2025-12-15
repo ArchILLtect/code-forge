@@ -1,0 +1,35 @@
+
+.practice-prompt-text {
+    border: 1px solid black;
+    padding: 10px;
+    overflow-x: auto;
+}
+
+/* Hint box styles */
+.cf-hint-toggle-row {
+    margin: 0.5rem 1rem 0.25rem;
+}
+
+.cf-link-button {
+    background: none;
+    border: none;
+    color: #60a5fa;
+    padding: 0;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.cf-link-button:hover {
+    text-decoration: underline;
+}
+
+.cf-hint-box {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: #020617;
+    border: 1px solid #1f2937;
+    font-size: 0.875rem;
+}
+
+

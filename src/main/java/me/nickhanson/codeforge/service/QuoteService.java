@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Service for fetching random inspirational quotes from an external API.
- * @author Nick Hanson
+ * Service to fetch random programming quotes from an external API.
+ * Caches the last fetched quote for a configurable duration to reduce API calls.
+ * Supports filtering by author and tags via configuration properties.
  */
 public class QuoteService implements PropertiesLoader {
     private static final Logger logger = LogManager.getLogger(QuoteService.class);
@@ -52,6 +53,7 @@ public class QuoteService implements PropertiesLoader {
         if (!allowInsecure && apiBaseUrl.startsWith("http://")) {
             logger.warn("Insecure HTTP configured for quote.api.url. Switch to HTTPS in production.");
         }
+
         // Safe parse with fallback (avoid NumberFormatException)
         this.CACHE_DURATION = safeParseLong(props.getProperty("quote.cache.duration.ms"), 60000L, "quote.cache.duration.ms");
         this.userAuthor = props.getProperty("quote.author", "").trim();
@@ -67,12 +69,13 @@ public class QuoteService implements PropertiesLoader {
     }
 
     /**
-     * Safely parses a string to a long, returning a default value on failure or non-positive input.
-     * This was implemented because Properties return strings, and we want to avoid exceptions.
-     * @param value The string to parse.
-     * @param def The default value to return on failure.
-     * @param key The configuration key for logging purposes.
-     * @return The parsed long or the default value.
+     * Safely parses a string to a long, returning a default value on failure.
+     * Logs warnings for invalid or non-positive values.
+     *
+     * @param value The string value to parse.
+     * @param def   The default value to return on failure.
+     * @param key   The configuration key for logging context.
+     * @return The parsed long value or the default.
      */
     private long safeParseLong(String value, long def, String key) {
         if (value == null || value.isBlank()) return def;
@@ -90,8 +93,11 @@ public class QuoteService implements PropertiesLoader {
     }
 
     /**
-     * Fetches a random inspirational quote using HttpClient and Jackson, with resilient fallbacks.
-     * @return A quote string formatted as: “text” — Author
+     * Fetches a random programming quote from the external API.
+     * Caches the result for a configurable duration to minimize API calls.
+     * Applies user-specified filters for author and tags.
+     *
+     * @return A formatted quote string in the format: "text — Author"
      */
     public String getRandomQuote() {
 
@@ -163,7 +169,8 @@ public class QuoteService implements PropertiesLoader {
 
     /**
      * Builds the URI for the quote API request based on user preferences.
-     * @return The constructed URI.
+     *
+     * @return The constructed URI with appropriate query parameters.
      */
     private URI buildQuoteUri() {
         // Build query parameters based on user preferences
@@ -204,6 +211,7 @@ public class QuoteService implements PropertiesLoader {
 
     /**
      * Parses a comma-separated string into a list of trimmed strings.
+     *
      * @param string The comma-separated string.
      * @return A list of trimmed strings.
      */
@@ -216,9 +224,9 @@ public class QuoteService implements PropertiesLoader {
     }
 
     /**
-     * Truncates a string to 200 characters for logging purposes.
-     * Makes sure logs aren't flooded with gigantic payloads.
-     * @param string The string to truncate.
+     * Truncates a string to 200 characters, appending an ellipsis if truncated.
+     *
+     * @param string The input string.
      * @return The truncated string.
      */
     private static String truncate(String string) {
@@ -226,12 +234,13 @@ public class QuoteService implements PropertiesLoader {
         return string.length() > 200 ? string.substring(0, 200) + "…" : string;
     }
 
-    // Minimal formatter for MVP: no added quotation marks, no trimming logic
     /**
-     * Formats the quote text and author into a single string.
-     * @param text the quote text
-     * @param author the quote author
-     * @return Formatted quote string
+     * Formats a quote with its author.
+     * Minimal for MVP--no trimming or validation beyond null/blank checks.
+     *
+     * @param text   The quote text.
+     * @param author The quote author.
+     * @return A formatted string in the format: "text — Author"
      */
     private static String formatQuote(String text, String author) {
         String safeText = (text == null) ? "" : text;

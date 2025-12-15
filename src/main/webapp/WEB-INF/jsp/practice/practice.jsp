@@ -1,12 +1,21 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: nickh
+  Date: 11/03/2025
+  Time: 6:30 PM
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitle" value="Practice | CodeForge" />
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Practice</title>
+  <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/practice.css" />
 </head>
 <body>
 <jsp:include page="/WEB-INF/jsp/header.jsp" />

@@ -188,6 +188,14 @@ public class DrillServlet extends HttpServlet {
     }
 
     // ---- helpers (DRY) ----
+
+    /**
+     * Parses a string segment as a long ID, sending a 400 Bad Request if invalid.
+     * @param segment the string segment to parse
+     * @param resp the HttpServletResponse
+     * @return the parsed long ID, or -1 if invalid (after sending error)
+     * @throws IOException if an I/O error occurs while sending error
+     */
     private long parseIdOrBadRequest(String segment, HttpServletResponse resp) throws IOException {
         try {
             long id = Long.parseLong(segment);
