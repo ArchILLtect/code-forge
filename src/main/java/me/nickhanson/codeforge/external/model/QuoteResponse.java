@@ -8,35 +8,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class QuoteResponse {
 
-	// Fields corresponding to the JSON properties of the quote response
 	@JsonProperty("authorSlug")
 	private String authorSlug;
 
-	// Field for the author of the quote
 	@JsonProperty("author")
 	private String author;
 
-	// Field for the length of the quote
 	@JsonProperty("length")
 	private int length;
 
-	// Field for the date the quote was last modified
 	@JsonProperty("dateModified")
 	private String dateModified;
 
-	// Field for the unique identifier of the quote
 	@JsonProperty("_id")
 	private String id;
 
-	// Field for the content of the quote
 	@JsonProperty("content")
 	private String content;
 
-	// Field for the date the quote was added
 	@JsonProperty("dateAdded")
 	private String dateAdded;
-
-	// Field for the tags associated with the quote
 	@JsonProperty("tags")
 	private List<String> tags;
 
