@@ -79,6 +79,16 @@
                             <li>Custom JSP layout + basic design system (CodeForge UI)</li>
                         </ul>
 
+                        <h2 class="cf-section-title">Project Javadocs</h2>
+                        <p class="cf-section-lead">
+                            The Java API documentation for this project is packaged with the app.
+                            You can browse it here:
+                            <br/>
+                            <a class="cf-link-strong" href="${pageContext.request.contextPath}/apidocs/index.html" target="_blank" rel="noopener">
+                                View CodeForge Javadocs
+                            </a>
+                        </p>
+
                         <!-- Nice spot to hint at future work -->
                         <h2 class="cf-section-title">Future enhancements</h2>
                         <ul class="cf-section-lead">

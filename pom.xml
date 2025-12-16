@@ -32,6 +32,7 @@
     <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
     <maven.war.plugin.version>3.4.0</maven.war.plugin.version>
+    <maven.javadoc.plugin.version>3.6.3</maven.javadoc.plugin.version>
   </properties>
 
   <dependencies>
@@ -197,7 +198,38 @@
         <version>${maven.war.plugin.version}</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <webResources>
+            <resource>
+              <directory>${project.build.directory}/site/apidocs</directory>
+              <targetPath>apidocs</targetPath>
+              <includes>
+                <include>**/*</include>
+              </includes>
+              <filtering>false</filtering>
+            </resource>
+          </webResources>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.javadoc.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>generate-web-apidocs</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <configuration>
+              <failOnError>false</failOnError>
+              <doclint>none</doclint>
+              <encoding>UTF-8</encoding>
+              <source>${maven.compiler.release}</source>
+              <!-- Generate standard site apidocs into target/site/apidocs -->
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <resources>

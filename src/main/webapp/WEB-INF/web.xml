@@ -22,6 +22,11 @@
     <url-pattern>/home</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>/apidocs/*</url-pattern>
+  </servlet-mapping>
+
   <!-- Filters -->
   <filter>
     <filter-name>AuthGuardFilter</filter-name>
