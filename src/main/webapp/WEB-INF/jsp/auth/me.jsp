@@ -6,23 +6,17 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="pageTitle" value="Me | CodeForge" />
-
-<%-- Fallback: if "user" isn't on the request, pull it from the session --%>
-<c:if test="${empty user and not empty sessionScope.user}">
-    <c:set var="user" value="${sessionScope.user}" scope="request" />
-</c:if>
+<c:set var="pageTitle" value="Me | CodeForge" scope="request" />
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
+  <c:import url="/WEB-INF/jsp/head-meta.jsp" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>
-<%@ include file="/WEB-INF/jsp/header.jsp" %>
+
+<c:import url="/WEB-INF/jsp/header.jsp" />
 
 <main class="cf-main">
     <section class="cf-section">
@@ -79,6 +73,7 @@
     </section>
 </main>
 
-<%@ include file="/WEB-INF/jsp/footer.jsp" %>
+<c:import url="/WEB-INF/jsp/footer.jsp" />
+
 </body>
 </html>

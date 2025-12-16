@@ -6,14 +6,12 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="pageTitle" value="Solve/Practice | CodeForge" />
+<c:set var="pageTitle" value="Solve/Practice | CodeForge" scope="request" />
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
+  <c:import url="/WEB-INF/jsp/head-meta.jsp" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/drill.css" />
   <!--// TODO: Remove drill.css once shared styles are refactored into practice.css -->
@@ -21,7 +19,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.0/min/vs/loader.min.js"></script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/header.jsp" />
+<c:import url="/WEB-INF/jsp/header.jsp" />
 <main class="cf-main">
   <section class="cf-page-header">
     <div>
@@ -107,6 +105,9 @@
     </div>
   </section>
 </main>
+
+<c:import url="/WEB-INF/jsp/footer.jsp" />
+
 <script>
   // Monaco loader config (shared)
   require.config({
@@ -236,5 +237,6 @@
     });
   })();
 </script>
+
 </body>
 </html>

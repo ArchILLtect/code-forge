@@ -10,11 +10,11 @@
 <footer class="cf-footer">
   <div class="cf-footer-inner">
     <p class="cf-footer-text">
-      &copy; <%= java.time.Year.now() %> CodeForge. Sharpen your skills, one challenge at a time.
+      &copy; <c:out value="${currentYear}" />
+      CodeForge. Sharpen your skills, one challenge at a time.
     </p>
 
     <!-- TODO: Add "created by: Nick Hanson (as link to showcase)" -->
-
     <div class="cf-footer-actions">
       <c:choose>
         <c:when test="${not empty sessionScope.user}">
