@@ -9,7 +9,6 @@ import java.util.Properties;
  * The environment is determined by the "APP_ENV" environment variable,
  * defaulting to "dev" if not set.
  * @author Nick Hanson
- * TODO: Is this still needed, now that spring is gone?
  */
 public final class EnvConfig {
 

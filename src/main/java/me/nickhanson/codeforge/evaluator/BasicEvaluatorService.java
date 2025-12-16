@@ -3,9 +3,20 @@ package me.nickhanson.codeforge.evaluator;
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.Outcome;
 
+/**
+ * Basic implementation of the AnswerEvaluator interface.
+ * Compares submitted answers to expected answers with normalization.
+ * @author Nick Hanson
+ */
 public class BasicEvaluatorService implements AnswerEvaluator {
     private static final int MAX_SOURCE_LENGTH = 10000; // simple guard for MVP
 
+    /**
+     * Evaluates a submitted answer for a given challenge.
+     * @param challenge The challenge to evaluate against.
+     * @param submission The submitted answer.
+     * @return An AnswerEvaluation containing the evaluation results.
+     */
     @Override
     public AnswerEvaluation evaluate(Challenge challenge, String submission) {
         String expected = challenge.getExpectedAnswer();

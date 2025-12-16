@@ -10,21 +10,37 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
 
+/**
+ * Servlet to handle errors and display appropriate error pages.
+ * Supports handling of 403, 404, and 500 errors with custom JSP views.
+ * Extracts error details from request attributes and forwards to the relevant JSP.
+ * @author Nick Hanson
+ */
 @WebServlet("/error")
 public class ErrorServlet extends HttpServlet {
 
+    /**
+     * Handles GET requests by delegating to the common error handling method.
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         handle(req, resp);
     }
 
+    /**
+     * Handles POST requests by delegating to the common error handling method.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         handle(req, resp);
     }
 
+    /**
+     * Common error handling logic for both GET and POST requests.
+     * Extracts error details and forwards to the appropriate JSP view.
+     */
     private void handle(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         // Extract standard servlet error attributes
