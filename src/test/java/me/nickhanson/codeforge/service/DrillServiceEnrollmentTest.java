@@ -27,6 +27,10 @@ class DrillServiceEnrollmentTest {
 
     @InjectMocks DrillService service;
 
+    /**
+     * Ensures that when enrolling a user in challenges, only missing DrillItems are created.
+     * @throws Exception if reflection fails
+     */
     @Test
     void ensureEnrollmentForUser_createsOnlyMissing() throws Exception {
         String userId = "enroll-user";

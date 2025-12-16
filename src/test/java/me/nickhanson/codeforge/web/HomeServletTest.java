@@ -32,6 +32,9 @@ class HomeServletTest {
 
     ServletConfig config;
 
+    /**
+     * Setup before each test: initialize servlet with mocked context and service.
+     */
     @BeforeEach
     void setup() throws Exception {
         lenient().when(req.getRequestDispatcher(any())).thenReturn(rd);
@@ -51,6 +54,9 @@ class HomeServletTest {
         servlet.init(config);
     }
 
+    /**
+     * Tests that a GET to the home servlet forwards to the home JSP and sets a quote.
+     */
     @Test
     void get_forwards_andSetsQuote() throws Exception {
         when(quoteService.getRandomQuote()).thenReturn("hello");

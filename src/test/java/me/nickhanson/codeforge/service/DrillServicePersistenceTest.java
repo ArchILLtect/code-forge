@@ -27,6 +27,9 @@ public class DrillServicePersistenceTest extends DbReset {
         drillItemDao = new DrillItemDao();
     }
 
+    /**
+     * Tests that recording an outcome updates the DrillItem fields appropriately.
+     */
     @Test
     void recordOutcome_updatesDrillItemFields() {
         // Seed a challenge

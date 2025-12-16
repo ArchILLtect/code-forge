@@ -1,6 +1,5 @@
 package me.nickhanson.codeforge.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +23,9 @@ class QuoteServiceTest {
 
     private QuoteService service;
 
+    /**
+     * Setup before each test: create QuoteService and inject mocked HttpClient.
+     */
     @BeforeEach
     void setup() throws Exception {
         service = new QuoteService();

@@ -27,12 +27,19 @@ class DrillServiceTest {
 
     @InjectMocks DrillService service;
 
+    /**
+     * Utility to create a Challenge with a specific ID via reflection.
+     */
     private static Challenge challengeWithId(long id) {
         Challenge c = new Challenge("Two Sum", Difficulty.EASY, "b", "p");
         try { var f = Challenge.class.getDeclaredField("id"); f.setAccessible(true); f.set(c, id); } catch (Exception ignored) {}
         return c;
     }
 
+    /**
+     * Tests that recording an outcome creates a Submission,
+     * updates the corresponding DrillItem, and persists both.
+     */
     @Test
     void recordOutcome_createsSubmission_updatesDrillItem_andPersistsBoth() {
         long id = 42L;
@@ -52,6 +59,9 @@ class DrillServiceTest {
         assertEquals(Outcome.CORRECT, s.getOutcome());
     }
 
+    /**
+     * Tests that the nextDueAt is computed correctly based on the current streak.
+     */
     @Test
     void computeNextDueAt_advancesAccordingToStreak() {
         long id = 7L;
@@ -74,6 +84,9 @@ class DrillServiceTest {
         verify(drillDao, atLeast(2)).saveOrUpdate(any());
     }
 
+    /**
+     * Tests that getDueQueue returns due items, or the soonest upcoming if none are due.
+     */
     @Test
     void getDueQueue_returnsSoonestWhenNoneDue() {
         String userId = "demo-user";
@@ -87,6 +100,9 @@ class DrillServiceTest {
         assertSame(soonest, queue.get(0));
     }
 
+    /**
+     * Tests that ensureDrillItem creates a DrillItem if missing.
+     */
     @Test
     void ensureDrillItem_createsWhenMissing() {
         long id = 9L;

@@ -10,12 +10,18 @@ public class BasicEvaluatorServiceTest {
 
     private final BasicEvaluatorService evaluator = new BasicEvaluatorService();
 
+    /**
+     * Helper method to create a Challenge with a specified expected answer.
+     */
     private Challenge challengeWithExpected(String expected) {
         Challenge ch = new Challenge("Test", Difficulty.EASY, "", "");
         ch.setExpectedAnswer(expected);
         return ch;
     }
 
+    /**
+     * Verifies that an exact match returns CORRECT outcome.
+     */
     @Test
     void exactMatch_isCorrect() {
         Challenge ch = challengeWithExpected("pivotIndex");
@@ -23,6 +29,9 @@ public class BasicEvaluatorServiceTest {
         assertEquals(Outcome.CORRECT, eval.getOutcome());
     }
 
+    /**
+     * Verifies that a match ignoring punctuation and spacing returns ACCEPTABLE outcome.
+     */
     @Test
     void punctuationOrSpacing_only_isAcceptable() {
         Challenge ch = challengeWithExpected("pivot index");
@@ -30,6 +39,9 @@ public class BasicEvaluatorServiceTest {
         assertEquals(Outcome.ACCEPTABLE, eval.getOutcome());
     }
 
+    /**
+     * Verifies that a mismatched answer returns INCORRECT outcome.
+     */
     @Test
     void mismatch_isIncorrect() {
         Challenge ch = challengeWithExpected("pivotIndex");
@@ -37,6 +49,9 @@ public class BasicEvaluatorServiceTest {
         assertEquals(Outcome.INCORRECT, eval.getOutcome());
     }
 
+    /**
+     * Verifies that an empty expected answer results in INCORRECT outcome.
+     */
     @Test
     void missingExpected_marksIncorrect() {
         Challenge ch = challengeWithExpected("");
@@ -44,6 +59,9 @@ public class BasicEvaluatorServiceTest {
         assertEquals(Outcome.INCORRECT, eval.getOutcome());
     }
 
+    /**
+     * Verifies that a submission exceeding the length limit is SKIPPED by the guard.
+     */
     @Test
     void longSubmission_isSkippedByGuard() {
         Challenge ch = challengeWithExpected("pivotIndex");

@@ -18,6 +18,9 @@ class ChallengeDaoTest extends DbReset {
     private final DrillItemDao drillDao = new DrillItemDao();
     private final SubmissionDao submissionDao = new SubmissionDao();
 
+    /**
+     * Verifies that saving a new Challenge assigns it an ID.
+     */
     @Test
     void create_assignsId() {
         Challenge c1 = new Challenge("Unique Alpha", Difficulty.EASY, "Find two numbers sum to target", "...");
@@ -25,6 +28,9 @@ class ChallengeDaoTest extends DbReset {
         assertNotNull(c1.getId());
     }
 
+    /**
+     * Verifies that retrieving a Challenge by ID returns the saved entity.
+     */
     @Test
     void read_getById_returnsSavedEntity() {
         Challenge c1 = new Challenge("Unique Beta", Difficulty.EASY, "Find two numbers sum to target", "...");
@@ -35,6 +41,9 @@ class ChallengeDaoTest extends DbReset {
         assertEquals(Difficulty.EASY, found.getDifficulty());
     }
 
+    /**
+     * Verifies that updating a Challenge persists the changes.
+     */
     @Test
     void update_persistsChanges() {
         Challenge c1 = new Challenge("Unique Gamma", Difficulty.EASY, "Find two numbers sum to target", "...");
@@ -45,6 +54,9 @@ class ChallengeDaoTest extends DbReset {
         assertEquals("Unique Gamma v2", updated.getTitle());
     }
 
+    /**
+     * Verifies that getAll returns all saved Challenges.
+     */
     @Test
     void getAll_returnsAll() {
         int before = dao.getAll().size();
@@ -54,12 +66,18 @@ class ChallengeDaoTest extends DbReset {
         assertEquals(before + 2, all.size());
     }
 
+    /**
+     * Verifies that existsTitleIgnoreCase returns false for non-existent title.
+     */
     @Test
     void existsTitleIgnoreCase_trueAfterInsert() {
         dao.saveOrUpdate(new Challenge("Unique Zeta", Difficulty.EASY, "", "..."));
         assertTrue(dao.existsTitleIgnoreCase("unique zeta"));
     }
 
+    /**
+     * Verifies that existsTitleForOtherIgnoreCase returns false when excluding the same entity.
+     */
     @Test
     void existsTitleForOtherIgnoreCase_falseForSameEntity() {
         Challenge c1 = new Challenge("Unique Eta", Difficulty.EASY, "", "...");
@@ -67,6 +85,9 @@ class ChallengeDaoTest extends DbReset {
         assertFalse(dao.existsTitleForOtherIgnoreCase("unique eta", c1.getId()));
     }
 
+    /**
+     * Verifies that findByDifficulty returns only challenges matching the specified difficulty.
+     */
     @Test
     void findByDifficulty_returnsOnlyMatching() {
         int beforeEasy = dao.findByDifficulty(Difficulty.EASY).size();
@@ -77,6 +98,9 @@ class ChallengeDaoTest extends DbReset {
         assertEquals(beforeMedium + 1, dao.findByDifficulty(Difficulty.MEDIUM).size());
     }
 
+    /**
+     * Verifies that deleting a Challenge removes it from the database.
+     */
     @Test
     void delete_removesRow() {
         int before = dao.getAll().size();
@@ -89,6 +113,9 @@ class ChallengeDaoTest extends DbReset {
         assertEquals(before, afterDelete);
     }
 
+    /**
+     * Verifies that deleting a Challenge cascades to dependent DrillItems and Submissions.
+     */
     @Test
     void delete_withDependents_cascadesToChildren() {
         Challenge ch = new Challenge("Dependent Test", Difficulty.EASY, "", "...");
