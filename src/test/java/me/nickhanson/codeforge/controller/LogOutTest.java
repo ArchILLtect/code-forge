@@ -31,6 +31,10 @@ class LogOutTest {
 
     ServletConfig config;
 
+    /**
+     * Sets up the LogOut servlet and provides a mock ServletConfig before each test.
+     * Initializes the servlet.
+     */
     @BeforeEach
     void setup() throws Exception {
         lenient().when(req.getServletContext()).thenReturn(ctx);
@@ -46,6 +50,9 @@ class LogOutTest {
         servlet.init();
     }
 
+    /**
+     * Verifies that doGet invalidates the session and redirects.
+     */
     @Test
     void doGet_invalidatesSession_andRedirects() throws Exception {
         servlet.doGet(req, resp);

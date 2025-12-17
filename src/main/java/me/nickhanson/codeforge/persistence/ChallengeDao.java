@@ -6,6 +6,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import java.util.List;
 
 /**
@@ -49,6 +54,7 @@ public class ChallengeDao {
         return data.findByPropertyEqual("difficulty", difficulty);
     }
 
+
     /**
      * Checks if a challenge with the given title exists, ignoring case.
      * @param title The title to check for existence.
@@ -56,10 +62,16 @@ public class ChallengeDao {
      */
     public boolean existsTitleIgnoreCase(String title) {
         try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
-            Long count = s.createQuery(
-                            "select count(c) from Challenge c where lower(c.title) = lower(:t)", Long.class)
-                    .setParameter("t", title)
-                    .getSingleResult();
+            CriteriaBuilder cb = s.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<Challenge> root = cq.from(Challenge.class);
+
+            Predicate sameTitleIgnoreCase =
+                    cb.equal(cb.lower(root.get("title")), title.toLowerCase());
+
+            cq.select(cb.count(root)).where(sameTitleIgnoreCase);
+
+            Long count = s.createQuery(cq).getSingleResult();
             return count != null && count > 0;
         }
     }
@@ -73,12 +85,18 @@ public class ChallengeDao {
      */
     public boolean existsTitleForOtherIgnoreCase(String title, Long excludeId) {
         try (Session s = SessionFactoryProvider.getSessionFactory().openSession()) {
-            Long count = s.createQuery(
-                            "select count(c) from Challenge c where lower(c.title) = lower(:t) and c.id <> :id",
-                            Long.class)
-                    .setParameter("t", title)
-                    .setParameter("id", excludeId)
-                    .getSingleResult();
+            CriteriaBuilder cb = s.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<Challenge> root = cq.from(Challenge.class);
+
+            Predicate sameTitleIgnoreCase =
+                    cb.equal(cb.lower(root.get("title")), title.toLowerCase());
+            Predicate notSameId =
+                    cb.notEqual(root.get("id"), excludeId);
+
+            cq.select(cb.count(root)).where(cb.and(sameTitleIgnoreCase, notSameId));
+
+            Long count = s.createQuery(cq).getSingleResult();
             return count != null && count > 0;
         }
     }

@@ -8,12 +8,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CognitoJWTParserTest {
 
+    /**
+     * Verifies that validateJWT throws an exception on a malformed JWT token.
+     */
     @Test
     void validateJWT_throwsOnBadToken() {
         // CognitoJWTParser.validateJWT throws java.security.InvalidParameterException on malformed JWT
         assertThrows(java.security.InvalidParameterException.class, () -> CognitoJWTParser.validateJWT("notajwt"));
     }
 
+    /**
+     * Verifies that getPayload and getClaim return the correct claim values from a JWT token.
+     */
     @Test
     void getPayload_and_getClaim_returnsClaimValue() {
         // create a simple jwt-like string: header.payload.signature where payload has {"sub":"123","email":"a@b"}

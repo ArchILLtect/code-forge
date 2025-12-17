@@ -30,7 +30,7 @@ public class Database implements PropertiesLoader {
 
     /** private constructor prevents instantiating this class anywhere else */
     private Database() {
-        properties = loadProperties("/hibernate.properties");
+        properties = loadProperties("/test-db.properties");
     }
 
     /** get the single database object */

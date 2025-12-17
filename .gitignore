@@ -108,3 +108,5 @@ https-instance.config
 
 /src/main/webapp/WEB-INF/web.xml
 /src/main/resources/local.properties
+/src/test/resources/test-db.properties
+/src/main/resources/test-db.properties

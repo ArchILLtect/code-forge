@@ -31,6 +31,10 @@ class LogInTest {
 
     ServletConfig config;
 
+    /**
+     * Sets up the LogIn servlet and provides a mock ServletConfig before each test.
+     * Initializes the servlet.
+     */
     @BeforeEach
     void setup() throws Exception {
         lenient().when(req.getServletContext()).thenReturn(ctx);
@@ -47,6 +51,9 @@ class LogInTest {
         servlet.init(config);
     }
 
+    /**
+     * Verifies that doGet redirects to login when Cognito properties are present.
+     */
     @Test
     void doGet_redirectsToLogin_whenConfigPresent() throws Exception {
         servlet.doGet(req, resp);

@@ -4,23 +4,19 @@
   Date: 11/14/2025
   Time: 11:52 PM
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="pageTitle" value="About | CodeForge" />
-
-<!-- Add info about me, links to my showcase site, and other related links including GitHub repo -->
+<c:set var="pageTitle" value="About | CodeForge" scope="request" />
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <%@ include file="/WEB-INF/jsp/head-meta.jspf" %>
+        <c:import url="/WEB-INF/jsp/head-meta.jsp" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
     </head>
     <body>
 
-        <jsp:include page="/WEB-INF/jsp/header.jsp" />
+    <c:import url="/WEB-INF/jsp/header.jsp" />
 
         <main class="cf-main">
             <section class="cf-page-header">
@@ -83,6 +79,16 @@
                             <li>Custom JSP layout + basic design system (CodeForge UI)</li>
                         </ul>
 
+                        <h2 class="cf-section-title">Project Javadocs</h2>
+                        <p class="cf-section-lead">
+                            The Java API documentation for this project is packaged with the app.
+                            You can browse it here:
+                            <br/>
+                            <a class="cf-link-strong" href="${pageContext.request.contextPath}/apidocs/index.html" target="_blank" rel="noopener">
+                                View CodeForge Javadocs
+                            </a>
+                        </p>
+
                         <!-- Nice spot to hint at future work -->
                         <h2 class="cf-section-title">Future enhancements</h2>
                         <ul class="cf-section-lead">
@@ -96,7 +102,7 @@
             </section>
         </main>
 
-        <jsp:include page="/WEB-INF/jsp/footer.jsp" />
+    <c:import url="/WEB-INF/jsp/footer.jsp" />
 
     </body>
 </html>

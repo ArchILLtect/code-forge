@@ -9,6 +9,9 @@ class ChallengeRunServiceTest {
 
     private final ChallengeRunService svc = new ChallengeRunService();
 
+    /**
+     * Verifies that running with unsupported language or blank language results in SKIPPED outcome.
+     */
     @Test
     void run_skippedForUnsupportedLanguageOrBlank() {
         assertEquals(Outcome.SKIPPED, svc.run(1L, null, "code").getOutcome());

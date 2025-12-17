@@ -4,6 +4,7 @@
   Date: 12/11/2025
   Time: 9:11 AM
 --%>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <c:choose>
@@ -14,6 +15,10 @@
         <title>CodeForge</title>
     </c:otherwise>
 </c:choose>
+
+<!-- Meta tags -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <!-- Standard ICO favicon -->
 <link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/favicon.ico" />

@@ -7,6 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TokenResponseMappingTest {
 
+    /**
+     * Verifies that Jackson correctly maps a JSON string to a TokenResponse object.
+     * @throws Exception if mapping fails
+     */
     @Test
     void jackson_maps_json_to_tokenResponse() throws Exception {
         String json = "{\"access_token\":\"a\",\"refresh_token\":\"r\",\"id_token\":\"i\",\"token_type\":\"t\",\"expires_in\":3600}";

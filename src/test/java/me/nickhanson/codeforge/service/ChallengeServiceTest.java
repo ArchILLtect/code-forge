@@ -24,6 +24,9 @@ class ChallengeServiceTest extends DbReset {
     @Mock ChallengeDao dao;
     @InjectMocks ChallengeService svc;
 
+    /**
+     * Verifies that listing all challenges returns what the DAO provides.
+     */
     @Test
     void findAll() {
         List<Challenge> all = List.of(
@@ -39,6 +42,9 @@ class ChallengeServiceTest extends DbReset {
         verifyNoMoreInteractions(dao);
     }
 
+    /**
+     * Verifies that listing challenges by difficulty returns what the DAO provides.
+     */
     @Test
     void findById_returnsOne_whenPresent() {
         Challenge c = new Challenge("Two Sum", Difficulty.EASY, "b","p");
@@ -49,6 +55,9 @@ class ChallengeServiceTest extends DbReset {
         verify(dao, times(2)).getById(42L); // or call once then store the Optional
     }
 
+    /**
+     * Verifies that creating a challenge sets fields from the form and saves it.
+     */
     @Test
     void create_setsFields_and_saves() {
         ChallengeForm form = new ChallengeForm();

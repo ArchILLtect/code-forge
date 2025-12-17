@@ -163,30 +163,30 @@
 
 ---
 
-// TODO: Update this template log for final week activities once the week is complete.
 ## Week 15 (Dec 8–Dec 14)
 | Date              | Task                                                                       | Hours        |
 |-------------------|----------------------------------------------------------------------------|--------------|
-| 12/08             | CodeForge → Added user_id propagation and DAO updates.                     | 3            |
+| 12/08             | CodeForge → Added user_id propagation and DAO updates.                     | 2            |
 | 12/08             | CodeForge → Added expected-answer support + ChallengeService enhancements. | 2            |
-| 12/08             | CodeForge → Implemented evaluator pipeline, Normalizer, telemetry logging. | 4            |
-| 12/08             | CodeForge → Practice Mode v2 (UI, styles, backend updates).                | 3            |
-| 12/09             | CodeForge → Monaco editor integration + UI adjustments.                    | 2.5          |
+| 12/08             | CodeForge → Implemented evaluator pipeline, Normalizer, telemetry logging. | 3            |
+| 12/08             | CodeForge → Practice Mode v2 (UI, styles, backend updates).                | 2            |
+| 12/09             | CodeForge → Monaco editor integration + UI adjustments.                    | 1.5          |
 | 12/09             | Ent Java → Time Log update                                                 | 2            |
-| **Total Week 15** |                                                                            | **16.5 hrs** |
+| 12/10             | Codeforge  → Peer review                                                   | 4            |
+| 12/11             | Codeforge  → Doc/Javadoc updates/Hints/JSP upgrades                        | 5            |
+| **Total Week 15** |                                                                            | **21.5 hrs** |
 
 ---
 
 // TODO: Update this template log for final week activities once course is complete.
 ## Week 16 (Dec 15–Dec 21)
-| Date              | Task                                                                               | Hours      |
-|-------------------|------------------------------------------------------------------------------------|------------|
-| 12/09–12/15       | CodeForge → Hibernate config restoration, UTF-8 filter, logout fix, model updates. | 4          |
-| 12/09–12/15       | CodeForge → Security polish, token redaction, client ID improvements.              | 2          |
-| 12/09–12/15       | CodeForge → UI refinements on solve/detail pages, editor tweaks.                   | 3          |
-| 12/09–12/15       | CodeForge → Final documentation updates, deployment checks.                        | 3          |
-| 12/15–12/21       | Ent Java → Final reflections, journal updates, course wrap-up.                     | 3          |
-| **Total Week 16** |                                                                                    | **15 hrs** |
+| Date  | Task                                             | Hours |
+|-------|--------------------------------------------------|-------|
+| 12/15 | CodeForge → Checkpoint 3 feedback implementation | 7     |
+| 12/16 | CodeForge → Presentation Outline Creation        | 4     |
+| 12/17 | CodeForge → Presentation Script/Practice         | 3     |
+
+| **Total Week 14** |                                                                                    | **-- hrs** |
 
 ---
 

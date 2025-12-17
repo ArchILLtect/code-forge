@@ -16,12 +16,18 @@ class DrillItemDaoTest extends DbReset {
 
     private static final String USER = "unit-test-user";
 
+    /**
+     * Helper method to create and persist a Challenge with the given title.
+     */
     private Challenge seedChallenge(String title) {
         Challenge ch = new Challenge(title, Difficulty.EASY, "", "...");
         challengeDao.saveOrUpdate(ch);
         return ch;
     }
 
+    /**
+     * Verifies that creating a DrillItem assigns it an ID and relates it to the Challenge.
+     */
     @Test
     void create_assignsId_and_relatesToChallenge() {
         Challenge ch = seedChallenge("FizzBuzz");
@@ -32,6 +38,9 @@ class DrillItemDaoTest extends DbReset {
         assertEquals(ch.getId(), di.getChallenge().getId());
     }
 
+    /**
+     * Verifies that listing DrillItems by Challenge ID returns the correct items.
+     */
     @Test
     void listByChallenge_returnsItems() {
         Challenge ch = seedChallenge("FizzBuzz");
@@ -43,6 +52,9 @@ class DrillItemDaoTest extends DbReset {
         assertEquals(ch.getId(), items.get(0).getChallenge().getId());
     }
 
+    /**
+     * Verifies that dueQueue orders items with null nextDueAt first, then by time.
+     */
     @Test
     void dueQueue_ordersNullFirst_thenByTime() {
         // Ensure we control the data set
@@ -86,6 +98,9 @@ class DrillItemDaoTest extends DbReset {
         assertFalse(challengeIds.contains(chFuture.getId()));
     }
 
+    /**
+     * Verifies that deleting a DrillItem does not delete the associated Challenge.
+     */
     @Test
     void delete_item_keepsChallenge() {
         int beforeChallengeCount = challengeDao.getAll().size();
@@ -102,6 +117,9 @@ class DrillItemDaoTest extends DbReset {
         assertEquals(beforeItemCount, drillDao.getAll().size());
     }
 
+    /**
+     * Verifies that deleting a Challenge with dependent DrillItems requires cleaning up the DrillItems first.
+     */
     @Test
     void delete_challenge_requiresCleaningDependents() {
         int beforeChallengeCount = challengeDao.getAll().size();

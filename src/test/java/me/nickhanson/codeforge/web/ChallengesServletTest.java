@@ -37,6 +37,9 @@ class ChallengesServletTest {
 
     ServletConfig config;
 
+    /**
+     * Setup before each test: initialize servlet with mocked context and service.
+     */
     @BeforeEach
     void setup() throws Exception {
         lenient().when(req.getServletContext()).thenReturn(ctx);
@@ -53,6 +56,9 @@ class ChallengesServletTest {
         servlet.init(config);
     }
 
+    /**
+     * Tests that a GET to the challenges list forwards to the list JSP with challenges.
+     */
     @Test
     void get_list_forwardsToListJsp_withChallenges() throws Exception {
         when(req.getPathInfo()).thenReturn(null);
@@ -68,6 +74,9 @@ class ChallengesServletTest {
         verify(rd).forward(req, resp);
     }
 
+    /**
+     * Tests that a GET to a challenge detail forwards to the detail JSP with the challenge.
+     */
     @Test
     void get_detail_nonexistent_returns404() throws Exception {
         when(req.getPathInfo()).thenReturn("/999");
@@ -78,6 +87,9 @@ class ChallengesServletTest {
         verify(resp).sendError(404);
     }
 
+    /**
+     * Tests that a POST to create a challenge redirects to the new challenge on success.
+     */
     @Test
     void post_create_redirectsOnSuccess() throws Exception {
         when(req.getPathInfo()).thenReturn(null);
@@ -95,6 +107,9 @@ class ChallengesServletTest {
         verify(resp).sendRedirect(contains("/challenges/123"));
     }
 
+    /**
+     * Tests that a POST to update a challenge redirects to the challenge on success.
+     */
     @Test
     void post_update_malformedPath_returns400() throws Exception {
         // choose a path that parses to a valid id but no known action -> final sendError(400)
@@ -105,6 +120,9 @@ class ChallengesServletTest {
         verify(resp).sendError(400);
     }
 
+    /**
+     * Tests that a POST to delete a challenge redirects to the challenges list on success.
+     */
     @Test
     void get_detail_invalidId_returns400() throws Exception {
         when(req.getPathInfo()).thenReturn("/abc");
@@ -112,6 +130,9 @@ class ChallengesServletTest {
         verify(resp).sendError(400);
     }
 
+    /**
+     * Tests that a GET to detail with an invalid id returns 400.
+     */
     @Test
     void post_update_invalidId_returns400() throws Exception {
         when(req.getPathInfo()).thenReturn("/xyz");
@@ -119,6 +140,9 @@ class ChallengesServletTest {
         verify(resp).sendError(400);
     }
 
+    /**
+     * Tests that a POST to delete with an invalid id returns 400.
+     */
     @Test
     void post_delete_invalidId_returns400() throws Exception {
         when(req.getPathInfo()).thenReturn("/xyz/delete");

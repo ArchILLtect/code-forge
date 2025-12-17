@@ -5,6 +5,7 @@ import me.nickhanson.codeforge.config.PropertiesLoader;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.time.Year;
 import java.util.Properties;
 
 /**
@@ -24,14 +25,7 @@ public class StartupServlet implements ServletContextListener, PropertiesLoader 
 
         Properties props = loadProperties("/cognito.properties");
         sce.getServletContext().setAttribute("cognitoProperties", props);
-    }
 
-    /**
-     * No operation on context destruction.
-     * @param sce the servlet context event
-     */
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        // no-op
+        sce.getServletContext().setAttribute("currentYear", Year.now().getValue());
     }
 }

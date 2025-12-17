@@ -9,6 +9,9 @@ import static org.mockito.Mockito.*;
 
 class StartupServletTest {
 
+    /**
+     * Verifies that contextInitialized sets the "cognitoProperties" attribute in the ServletContext.
+     */
     @Test
     void contextInitialized_setsCognitoPropertiesAttribute() {
         ServletContext ctx = mock(ServletContext.class);

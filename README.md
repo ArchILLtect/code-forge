@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="https://github.com/ArchILLtect/code-forge/actions/workflows/ci.yml">
-    <img alt="CI" src="https://github.com/ArchILLtect/code-forge/actions/workflows/ci.yml/badge.svg">
+    <img alt="CI" src="https://github.com/ArchILLtect/code-forge/actions/workflows/build-and-package.yml/badge.svg">
   </a>
   <img alt="Java" src="https://img.shields.io/badge/Java-17-007396?logo=java&logoColor=white">
   <img alt="Servlets/JSP" src="https://img.shields.io/badge/Servlets%2FJSP-Tomcat_9-4CAF50">
@@ -48,39 +48,50 @@ CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to ex
   Basic Challenge management (Create/Edit/Delete), list pagination/sorting, filter by difficulty, validation and friendly error pages (404/500).
 
 ---
-## 📚 Tech Stack
-
-The CodeForge project leverages a modern **Enterprise Java** stack alongside supporting tools for development, testing, and deployment.
+## 📚 Tech Stack (Current)
 
 - ### Backend
   - **Java 17 (LTS)** — Core language
-  - **JPA / Hibernate** — ORM layer for database persistence
+  - Servlets + JSP (Tomcat 9)
+  - Hibernate 6.x (JPA ORM)
   - **Project Lombok** — Reduces boilerplate (getters, setters, builders, etc.)
-  - **Log4J** — Centralized logging framework (replaces `System.out.println`)
+  - Log4j2 for application logging
+  - DAO layer with SessionFactoryProvider
 
-- ### Frontend (Server-Side)
-  - **JSP / Servlets** — Required for class demonstrations and some views
-  - **JSTL** — Tag library for dynamic rendering in JSPs
+- ### Frontend (Server-Side + Client Enhancements)
+  - JSP + JSTL for views
+  - Monaco Editor (CDN) for code editing in Drill/Practice pages
+  - Minimal vanilla JS for editor sync, hint toggle, and flash messages
+  - Lightweight CSS (“CodeForge UI”) without a large framework
 
 - ### Database
-  - **H2 (local/dev)** — Lightweight in-memory DB for rapid testing
-  - **MySQL / PostgreSQL (prod)** — Relational databases for persistence
+  - MySQL (local/dev tests and prod)
+  - Test DB reset via `DbReset` + `cleandb.sql`
+  - Seed data managed in `src/test/resources/cleandb.sql` (predictable schema)
   - **AWS RDS** — Cloud-hosted DB for deployment
 
 - ### Authentication & Security
-  - **AWS Cognito** — Authentication & authorization service (user registration, login, tokens)
-  - **Servlet filter (MVP)** — `AuthGuardFilter` protects admin routes and all Drill routes (redirects to `/logIn`)
+  - Amazon Cognito Hosted UI (servlet-based flow)
+  - AuthGuardFilter gate for Drill and admin routes
+  - Public Practice routes (GET/POST) with evaluator feedback, no persistence
   - ID token validation (JWKS, RSA256) and HTTP session storage of the user
 
+- ### Evaluator (MVP)
+  - Evaluator scaffold + ChallengeRunService (non-executing heuristics in MVP)
+  - Expected answer compare and outcome mapping (CORRECT/ACCEPTABLE/etc.)
+  - Timeout/memory guard planned for local runner
+
 - ### Testing
-  - **JUnit 5** — Unit and integration testing
-  - **Mockito** — (Optional/Stretch) Mocking framework for service/DAO testing
-  - **Log4J Test Appenders** — Capture and assert logs during test runs
+  - JUnit 5 test suite
+  - Mockito for unit tests and servlet/filter behavior stubbing
+  - DbReset single-source DB reset strategy
+  - Surefire plugin 3.2.x
   - **JaCoCo** — (Optional/Stretch) Test coverage reporting
 
 - ### Build & Deployment
-  - **Maven** — Dependency management and build tool
-  - **GitHub Actions** — (Optional/Stretch) CI/CD pipeline (build, test, deploy)
+  - Maven (3.9.x)
+  - WAR packaging
+  - GitHub Actions for CI (build + test + artifact upload)
   - **AWS (Elastic Beanstalk / EC2)** — Hosting & deployment
   - **Docker** (Stretch) — Containerized environment
 
@@ -154,54 +165,77 @@ CodeForge will include challenges from:
 - Linked Lists & Trees (basics → moderate)
 - Introductory Dynamic Programming
 
----
-## 🚀 Getting Started
-### Clone the repository:
+# 🚀 Getting Started
+
+## 1️⃣ Clone the repository
 ```bash
 git clone https://github.com/ArchILLtect/code-forge.git
 cd code-forge
 ```
 
-### Set required environment variable for Cognito client secret:
-- Windows cmd.exe
-```bash
+---
+
+## 🔐 Runtime configuration (local development)
+
+### Cognito client secret (required for login)
+
+The Cognito client secret **must NOT be committed**.  
+Set it via environment variable or JVM system property.
+
+**Windows (PowerShell):**
+```powershell
+$env:COGNITO_CLIENT_SECRET="your_client_secret"
+```
+
+**Windows (cmd.exe):**
+```cmd
 set COGNITO_CLIENT_SECRET=your_client_secret
 ```
-- PowerShell
-```bash
-$env:COGNITO_CLIENT_SECRET="your_client_secret"
-``` 
-- bash
+
+**macOS / Linux (bash):**
 ```bash
 export COGNITO_CLIENT_SECRET=your_client_secret
 ```
 
-### Set up test database:
-create a MySQL database--MySQL Workbench or command line:
+Non-secret Cognito values (user pool ID, region, etc.) live in:
+```
+src/main/resources/cognito.properties
+```
+
+---
+
+## 🧪 Test database setup (required to run tests)
+
+Tests use a **local MySQL test database** and are intentionally isolated from production data.
+
+### 2️⃣ Create a local MySQL test database
 ```sql
 CREATE DATABASE cf_test_db;
-``` 
+```
 
-Then create a new file: `src/main/resources/local.properties` with content:
-```properties
-DB_HOST=<your_host> # e.g., localhost
-DB_PORT=<your_port> # default MySQL port is 3306
-DB_NAME=<your_database> # e.g., cf_test_db
-DB_USER=<your_username> # e.g., root for local
-DB_PASS=<your_password>
-``` 
+Ensure MySQL is running locally.
 
-And a file `src/test/resources/hibernate.properties` with content:
+---
+
+### 3️⃣ Create `src/test/resources/test-db.properties` (untracked)
+
+Create the file:
+```
+src/test/resources/test-db.properties
+```
+
+Example contents:
 ```properties
-hibernate.connection.url=jdbc:mysql://<your_host>:<your_port>/<your_database>?useSSL=false&serverTimezone=UTC
+# JDBC for local test database (untracked)
+hibernate.connection.url=jdbc:mysql://localhost:3306/cf_test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 hibernate.connection.driver_class=com.mysql.cj.jdbc.Driver
 hibernate.connection.username=<your_username>
 hibernate.connection.password=<your_password>
 hibernate.dialect=org.hibernate.dialect.MySQLDialect
 
-#pool
-hibernate.c3p0.min_size=5
-hibernate.c3p0.max_size=20
+# Connection pool (local defaults)
+hibernate.c3p0.min_size=1
+hibernate.c3p0.max_size=10
 hibernate.c3p0.timeout=300
 hibernate.c3p0.max_statements=50
 hibernate.c3p0.idle_test_period=3000
@@ -210,18 +244,50 @@ hibernate.show_sql=false
 hibernate.hbm2ddl.auto=none
 ```
 
-Ensure you have a local MySQL instance running with a database named `cf_test_db`.
+> **Important**
+> - Do NOT commit this file.
+> - Each contributor must create their own local test DB and properties file.
 
-### Build and run the project (example with Maven):
+---
+
+### 4️⃣ How test DB reset works
+
+- `DbReset` runs before each test class.
+- It calls `Database.runSQL("cleandb.sql")`.
+- `cleandb.sql` lives in `src/test/resources/`.
+- Tests always start from a clean, predictable state.
+
+---
+
+## ▶️ Run tests
 ```bash
-mvn clean install
-mvn spring-boot:run
+mvn -q -DskipTests=false test
 ```
 
-### Open in your browser at:
+---
+
+## 🛠 Build & run the application
+
+### Build the WAR
 ```bash
-http://localhost:5000
+mvn clean package
 ```
+
+### Deploy to Tomcat 9
+- Copy `target/codeforge.war` into Tomcat’s `webapps/` directory
+- Start Tomcat
+- Open:
+```
+http://localhost:8080/codeforge/
+```
+
+---
+
+## ⚠️ Notes on environments
+
+- Production credentials are provided via environment variables (Elastic Beanstalk).
+- Local development may temporarily point to production DBs for demo purposes.
+- Tests always use the local test DB defined in `test-db.properties` and never touch production data.
 
 ---
 
@@ -244,7 +310,7 @@ Required runtime configuration:
 
 ---
 
-## Configuration required by QuoteService (non‑Spring)
+## Configuration required by QuoteService
 QuoteService loads settings from `src/main/resources/application.properties` at runtime.
 
 Required keys:
@@ -514,5 +580,3 @@ CodeForge stores static assets (images, JSON files, etc.) in an S3 bucket rather
 
 - ### JSP Usage
   `<img src="${cf:asset('banner.png')}" />`
-
----

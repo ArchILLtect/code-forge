@@ -44,6 +44,9 @@ class DrillServletTest {
 
     ServletConfig config;
 
+    /**
+     * Setup before each test: initialize servlet with mocked context and services.
+     */
     @BeforeEach
     void setup() throws Exception {
         lenient().when(req.getServletContext()).thenReturn(ctx);
@@ -66,6 +69,9 @@ class DrillServletTest {
         servlet.init(config);
     }
 
+    /**
+     * Tests that a GET to the drill endpoint forwards with due drill items.
+     */
     @Test
     void get_queue_forwardsWithRows() throws Exception {
         when(req.getPathInfo()).thenReturn(null);
@@ -78,6 +84,9 @@ class DrillServletTest {
         verify(rd).forward(req, resp);
     }
 
+    /**
+     * Tests that a POST to submit code records the outcome and redirects.
+     */
     @Test
     void post_submit_recordsOutcome_andRedirects() throws Exception {
         when(req.getPathInfo()).thenReturn("/42/submit");
@@ -92,6 +101,9 @@ class DrillServletTest {
         verify(resp).sendRedirect(contains("/drill/next"));
     }
 
+    /**
+     * Tests that a POST to add a challenge to the drill creates the DrillItem and redirects.
+     */
     @Test
     void get_invalidId_returns400() throws Exception {
         when(req.getPathInfo()).thenReturn("/abc");
@@ -99,6 +111,9 @@ class DrillServletTest {
         verify(resp).sendError(400);
     }
 
+    /**
+     * Tests that a POST to submit with an invalid ID returns 400.
+     */
     @Test
     void post_submit_invalidId_returns400() throws Exception {
         when(req.getPathInfo()).thenReturn("/xyz/submit");
@@ -106,6 +121,9 @@ class DrillServletTest {
         verify(resp).sendError(400);
     }
 
+    /**
+     * Tests that a POST to add with an invalid ID returns 400.
+     */
     @Test
     void post_add_invalidId_returns400() throws Exception {
         when(req.getPathInfo()).thenReturn("/bad/add");

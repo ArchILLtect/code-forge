@@ -69,13 +69,4 @@ public class AppBootstrap implements ServletContextListener {
             ctx.log("Seeding failed: " + e.getMessage(), e);
         }
     }
-
-    /**
-     * No operation on context destruction.
-     * @param sce the servlet context event
-     */
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
-        // no-op
-    }
 }

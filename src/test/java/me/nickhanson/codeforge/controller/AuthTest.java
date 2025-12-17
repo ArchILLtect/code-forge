@@ -25,6 +25,10 @@ class AuthTest {
     @Mock HttpServletResponse resp;
     @Mock RequestDispatcher rd;
 
+    /**
+     * Sets up the Auth servlet and provides a mock ServletConfig before each test.
+     * Initializes the servlet while ignoring ServletException during initialization.
+     */
     @BeforeEach
     void setup() throws Exception {
         servlet = new Auth();
@@ -45,6 +49,9 @@ class AuthTest {
         }
     }
 
+    /**
+     * Verifies that doGet with a valid code parameter forwards to the callback JSP.
+     */
     @Test
     void doGet_missingCode_forwardsToError() throws Exception {
         when(req.getParameter("code")).thenReturn(null);
