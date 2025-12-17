@@ -180,11 +180,13 @@
 
 // TODO: Update this template log for final week activities once course is complete.
 ## Week 16 (Dec 15–Dec 21)
-| Date              | Task                                                                               | Hours      |
-|-------------------|------------------------------------------------------------------------------------|------------|
-| 12/15             | CodeForge → Checkpoint 3 feedback implementation                                   | 7          |
+| Date  | Task                                             | Hours |
+|-------|--------------------------------------------------|-------|
+| 12/15 | CodeForge → Checkpoint 3 feedback implementation | 7     |
+| 12/16 | CodeForge → Presentation Outline Creation        | 4     |
+| 12/17 | CodeForge → Presentation Script/Practice         | 3     |
 
-| **Total Week 16** |                                                                                    | **-- hrs** |
+| **Total Week 14** |                                                                                    | **-- hrs** |
 
 ---
 
