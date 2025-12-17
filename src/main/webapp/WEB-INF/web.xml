@@ -6,27 +6,6 @@
 
   <display-name>CodeForge</display-name>
 
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>HomeServlet</servlet-name>
-    <servlet-class>me.nickhanson.codeforge.web.HomeServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>HomeServlet</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>HomeServlet</servlet-name>
-    <url-pattern>/home</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>default</servlet-name>
-    <url-pattern>/apidocs/*</url-pattern>
-  </servlet-mapping>
-
   <!-- Filters -->
   <filter>
     <filter-name>AuthGuardFilter</filter-name>
@@ -52,5 +31,9 @@
     <error-code>500</error-code>
     <location>/error</location>
   </error-page>
+
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
 
 </web-app>
