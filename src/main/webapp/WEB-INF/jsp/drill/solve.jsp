@@ -12,7 +12,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- removed explicit meta tags; head-meta.jspf provides them -->
   <c:import url="/WEB-INF/jsp/head-meta.jsp" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/drill.css" />
