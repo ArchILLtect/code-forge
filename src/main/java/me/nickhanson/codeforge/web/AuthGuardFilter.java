@@ -6,7 +6,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Set;
 
@@ -37,10 +36,39 @@ public class AuthGuardFilter extends HttpFilter {
             throws IOException, ServletException {
 
         String contextPath = req.getContextPath();
-        String path = req.getRequestURI().substring(contextPath.length());
+        String uri = req.getRequestURI();
+        String path = uri.substring(contextPath.length());
         String method = req.getMethod();
 
         boolean needsAuth = false;
+
+        // 1) Always allow static assets
+        if (path.startsWith("/css/")
+                || path.startsWith("/images/")
+                || path.startsWith("/apidocs/")
+                || path.equals("/favicon.ico")
+                || path.startsWith("/favicon")
+                || path.endsWith(".css")
+                || path.endsWith(".js")
+                || path.endsWith(".png")
+                || path.endsWith(".jpg")
+                || path.endsWith(".jpeg")
+                || path.endsWith(".gif")
+                || path.endsWith(".svg")
+                || path.endsWith(".webp")) {
+            chain.doFilter(req, resp);
+            return;
+        }
+
+// 2) Allow your public pages (home/about/login/error)
+        if (path.equals("/") || path.equals("/home")
+                || path.startsWith("/about")
+                || path.startsWith("/logIn")
+                || path.startsWith("/logout")
+                || path.startsWith("/error")) {
+            chain.doFilter(req, resp);
+            return;
+        }
 
         // Check if the request method is POST.
         if ("POST".equalsIgnoreCase(method)) {

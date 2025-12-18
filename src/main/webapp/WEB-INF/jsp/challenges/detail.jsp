@@ -12,6 +12,7 @@
 <html lang="en">
 <head>
   <c:import url="/WEB-INF/jsp/head-meta.jsp" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>

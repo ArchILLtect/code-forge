@@ -11,9 +11,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <c:import url="/WEB-INF/jsp/head-meta.jsp" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/layout.css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/home.css" />
 </head>
 <body>

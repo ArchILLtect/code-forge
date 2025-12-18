@@ -15,7 +15,7 @@ import java.io.IOException;
  *
  * @author Nick Hanson
  */
-@WebServlet(urlPatterns = {"/", "/home"})
+@WebServlet(urlPatterns = {"/home"})
 public class HomeServlet extends HttpServlet {
     private final QuoteService quotes = new QuoteService();
 
