@@ -24,7 +24,9 @@
     <!-- Center: Navigation -->
     <div class="cf-nav" aria-label="Main navigation">
       <ul class="cf-nav-list">
-        <a href="${pageContext.request.contextPath}/challenges" class="cf-nav-link">Challenges</a>
+        <li class="cf-nav-item">
+            <a href="${pageContext.request.contextPath}/challenges" class="cf-nav-link">Challenges</a>
+        </li>
 
         <li class="cf-nav-item cf-nav-item-has-menu">
           <a class="cf-nav-link" href="#">
