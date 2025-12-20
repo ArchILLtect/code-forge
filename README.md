@@ -13,10 +13,71 @@
   </a>
 </div>
 
+---
 
-Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
+### 🎥 Professional Development Presentation (Video):
+
+#### Making Java Less Boring with Project Lombok:
+
+This full presentation explores how Project Lombok can drastically simplify Java development by reducing boilerplate code and improving readability — all without sacrificing functionality.
+
+I take you through a real-world example from my CodeForge project, where I integrated Lombok into an existing entity class and immediately saw the benefits:
+
+- 120 lines of repetitive getters, setters, and constructors reduced to just 49.
+- Clearer, more maintainable code.
+- A few spicy bugs along the way (and what they taught me about Hibernate and reflection).
+- Enhanced productivity with less boilerplate.
+
+#### We'll look at:
+
+1. What Lombok is and how it works behind the scenes (compile-time annotation magic).
+1. How to integrate it cleanly using Maven.
+1. The before-and-after refactor of the Challenge class.
+1. Results, debugging, and lessons learned.
+1. Reflections on professional growth — from code cleanup to clear communication.
+
+Throughout the talk, I blend humor with practical insights — proving that writing clean Java code doesn’t have to be boring. 🌶️
+
+#### Watch the Full Presentation Below:
+
+#### Part 1:
+
+[![Project Documentation Presentation Part 1](https://img.youtube.com/vi/iCxZS0Pwx80/1.jpg)](https://www.youtube.com/watch?v=iCxZS0Pwx80)
+
+#### Part 2:
+
+[![Project Documentation Presentation Part 2](https://img.youtube.com/vi/JoKJuyTOpwk/1.jpg)](https://www.youtube.com/watch?v=JoKJuyTOpwk&t=7s)
+
+
+### 🎥 Walkthrough Presentation (Video):
+
+#### Building an Enterprise Java Application from the Ground Up:
+
+This presentation is a full walkthrough of CodeForge — an Enterprise Java web application built from scratch to explore authentication, request lifecycles, persistence, evaluation pipelines, and real-world deployment challenges.
+
+Rather than relying on heavy frameworks, CodeForge intentionally embraces the servlet-level stack to expose how modern Java web applications actually work under the hood.
+
+- End-to-end request flow using servlets, filters, services, and DAOs.
+- Authentication and authorization with AWS Cognito and custom servlet filters.
+- Challenge and drill execution pipelines with outcome tracking and telemetry.
+- Hibernate persistence with explicit session management and DAOs.
+- Production deployment on AWS Elastic Beanstalk — including environment and secrets management.
+
+#### We'll look at:
+
+1. High-level architecture and system design decisions.
+1. Authentication flow and request lifecycle (filters → servlets → services).
+1. Challenge execution, evaluation logic, and telemetry logging.
+1. Database persistence, entity relationships, and DAO patterns.
+1. Deployment lessons learned, tradeoffs, and post-MVP next steps.
+1. Throughout the walkthrough, I focus on clarity, tradeoffs, and lessons learned — highlighting not just what worked, but why certain decisions were made and what I would evolve next.
+
+#### Watch the Walkthrough Presentation Below:
+
+[![Project Documentation Presentation Part 1](https://img.youtube.com/vi/0w7RZdypvMs/2.jpg)](https://www.youtube.com/watch?v=0w7RZdypvMs)
 
 ---
+
 ### Problem Statement
 Most coding-practice platforms (like LeetCode or HackerRank) are powerful, but they aren’t always friendly to beginners. They assume too much context, provide cryptic feedback, and emphasize leaderboards or ads over clarity. They also push learners to focus heavily on **time/space complexity metrics** and competitive performance scoring. While important for advanced preparation, these distractions can overwhelm beginners who are still working to master syntax, logic, and step-by-step problem-solving. This creates frustration and discourages learners who want *fundamentals-first* growth.
 
@@ -27,6 +88,8 @@ Most coding-practice platforms (like LeetCode or HackerRank) are powerful, but t
 - **Instructor/Admin Tools**: easy challenge CRUD to keep content fresh.
 
 CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to existing platforms — helping learners master problem-solving without distraction.
+Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
+
 
 ---
 ## ✨ Features (Planned / In Progress)
