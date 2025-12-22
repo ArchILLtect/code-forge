@@ -70,7 +70,8 @@ Rather than relying on heavy frameworks, CodeForge intentionally embraces the se
 1. Challenge execution, evaluation logic, and telemetry logging.
 1. Database persistence, entity relationships, and DAO patterns.
 1. Deployment lessons learned, tradeoffs, and post-MVP next steps.
-1. Throughout the walkthrough, I focus on clarity, tradeoffs, and lessons learned — highlighting not just what worked, but why certain decisions were made and what I would evolve next.
+
+Throughout the walkthrough, I focus on clarity, tradeoffs, and lessons learned — highlighting not just what worked, but why certain decisions were made and what I would evolve next.
 
 #### Watch the Walkthrough Presentation Below:
 
@@ -87,8 +88,7 @@ Most coding-practice platforms (like LeetCode or HackerRank) are powerful, but t
 - **Progress Tracking**: history per challenge and overall streaks to visualize learning.
 - **Instructor/Admin Tools**: easy challenge CRUD to keep content fresh.
 
-CodeForge’s goal is to provide a *friendlier, clarity-first alternative* to existing platforms — helping learners master problem-solving without distraction.
-Think of it as a simpler, friendlier alternative to LeetCode — focused on clarity, fundamentals, and mastery through repetition.
+CodeForge’s goal is to provide a *simpler, clarity-first alternative* to platforms like LeetCode — helping learners focus on clarity, fundamentals, and mastery through repetition without distraction.
 
 
 ---

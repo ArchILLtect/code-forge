@@ -58,17 +58,16 @@ The project board groups all issues labeled `project:mvp` into a single executio
 - CI workflow: `.github/workflows/build.yml`
 - Health endpoint: `/actuator/health`
 
-
-# CodeForge MVP – Quick Start
-
-This guide summarizes how to run MVP features (Practice + Drill), configure flags, and run tests.
-
 ## How to Add Work to This Project
 - Apply the label `project:mvp` to any issue/PR that should appear on the MVP board.
 - Set up a Project workflow rule in GitHub Projects:
   1. Open the project → Settings → Workflows
   2. Add a rule: "When issue is added to the repository and label = project:mvp → Add to project"
   3. Optionally auto-set status to "Ready"
+
+# CodeForge MVP – Quick Start
+
+This guide summarizes how to run MVP features (Practice + Drill), configure flags, and run tests.
 
 ## Prerequisites
 - Java 21 (Temurin recommended)
@@ -84,7 +83,7 @@ This guide summarizes how to run MVP features (Practice + Drill), configure flag
 ## Run (Tomcat)
 - Build WAR:
 ```powershell
-mvn -f "C:\Users\nickh\Documents\My Projects\Java\code-forge\pom.xml" -DskipTests=true package
+mvn -f "[project-root]\pom.xml" -DskipTests=true package
 ```
 - Deploy `target/*.war` to Tomcat webapps and start Tomcat.
 
@@ -110,7 +109,7 @@ mvn -f "C:\Users\nickh\Documents\My Projects\Java\code-forge\pom.xml" -DskipTest
 ## Tests
 - Run all tests:
 ```powershell
-mvn -f "C:\Users\nickh\Documents\My Projects\Java\code-forge\pom.xml" -DskipTests=false test
+mvn -f "[project-root]\pom.xml" -DskipTests=false test
 ```
 - Notable tests:
   - Evaluator unit tests (correct/acceptable/incorrect/missing/guard).

@@ -282,11 +282,11 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 
 - In scope
   - Code updates in DrillService and other service classes to manage transaction boundaries.
-  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).Add @Version to DrillItem (no Flyway/Liquibase changes yet).
+  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).
 
 - Out of scope
-  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).Database-level unique constraints or race-condition handling.
-  - Add @Version to DrillItem (no Flyway/Liquibase changes yet).Concurrency tests and full Flyway migration (deferred to later issue).
+  - Database-level unique constraints or race-condition handling.
+  - Concurrency tests and full Flyway migration (deferred to later issue).
 
 - Acceptance criteria
   - [ ] Controllers have no @Transactional annotations.
