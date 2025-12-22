@@ -1,0 +1,51 @@
+name: "General / Misc"
+description: "Generic issue template for reviews, instructor feedback, questions, or any general request."
+title: ""
+labels: []
+assignees: []
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Select the closest type
+      options:
+        - Review
+        - Feedback
+        - Question
+        - Task
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary
+      placeholder: One-line summary of the issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Describe the request or issue in detail (what, why, scope)
+      placeholder: Describe the request or issue in detail
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Background / context
+      description: Links, PRs, commits, prior discussion, screenshots
+      render: markdown
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Additional info / attachments
+      description: Screenshots, logs, files, environment details
+
