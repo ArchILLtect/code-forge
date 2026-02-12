@@ -1,5 +1,16 @@
 # TODO
 
+## Immediate Necessity
+
+TODO (P1) Add "cold start" notice for free-tier backend hosting (Render)
+Context: CodeForge backend will be hosted on Render free tier and may spin down after inactivity, causing the first request to take ~10–60 seconds.
+Tasks:
+ Add a small note on the CodeForge landing page (and/or showcase site project card) explaining possible startup delay.
+ Optional: Add a loading state / friendly message when backend is waking up.
+Acceptance Criteria:
+ Visitors are informed the app may take up to 60 seconds to respond on first load.
+ The message is visible but unobtrusive and does not degrade UX.
+
 ## CI / Workflow Enhancements
 
 1) Add a lightweight CI guard to fail PRs if the checklist isn’t completed
