@@ -6,14 +6,15 @@ COPY pom.xml .
 RUN mvn -q -DskipTests dependency:go-offline
 
 COPY src ./src
-RUN mvn -q -DskipTests package
+RUN mvn -q -DskipTests package \
+ && cp /app/target/*.war /app/target/ROOT.war
 
 # ---- Runtime stage ----
 FROM tomcat:9.0-jdk17-temurin
 
 RUN rm -rf /usr/local/tomcat/webapps/*
 
-COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=build /app/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
