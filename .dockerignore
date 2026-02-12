@@ -1,0 +1,62 @@
+# Version control
+.git/
+.gitignore
+.githooks/
+
+# Maven build output
+target/
+
+# Documentation
+docs/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# NetBeans
+/nbproject/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Build artifacts
+build/
+out/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test and CI/CD
+.github/
+scripts/
+
+# Other
+README.md
+TODO.md
+BACKLOG.md
+.run/
