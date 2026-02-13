@@ -1,0 +1,9 @@
+# PostgreSQL connection settings for local testing
+# Copy this file to test-db.properties and update with your local PostgreSQL credentials
+# test-db.properties is git-ignored to prevent committing secrets
+
+hibernate.connection.driver_class=org.postgresql.Driver
+hibernate.connection.url=jdbc:postgresql://localhost:5432/cf_test_db?ssl=false
+hibernate.connection.username=postgres
+hibernate.connection.password=your_password_here
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
