@@ -64,10 +64,6 @@ CREATE INDEX idx_submissions_user_id ON submissions (user_id);
 -- Seed sample data
 -- ------------------------------------------
 
--- ------------------------------------------
--- Seed sample data
--- ------------------------------------------
-
 INSERT INTO challenges (title, blurb, prompt_md, expected_answer, difficulty) VALUES
         ('Array Pivot', 'Find pivot index in an array', 'Prompt\nGiven an array...', 'pivotIndex', 'EASY'),
         ('Linked Reversal', 'Reverse a singly linked list', 'Prompt\nImplement reverse...', 'reverseList', 'EASY'),
