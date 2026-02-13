@@ -50,7 +50,7 @@ public class Database implements PropertiesLoader {
         try {
             Class.forName(properties.getProperty("hibernate.connection.driver_class"));
         } catch (ClassNotFoundException e) {
-            throw new Exception("MySQL Driver not found", e);
+            throw new Exception("Database Driver not found", e);
         }
 
         String url = properties.getProperty("hibernate.connection.url");

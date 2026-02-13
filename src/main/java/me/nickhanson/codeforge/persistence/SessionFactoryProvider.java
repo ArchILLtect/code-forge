@@ -60,11 +60,11 @@ public class SessionFactoryProvider {
             url = explicitUrl;
         } else {
             String host = resolve("DB_HOST", "localhost");
-            String port = resolve("DB_PORT", "3306");
+            String port = resolve("DB_PORT", "5432");
             String db   = resolve("DB_NAME", "cf_test_db");
 
-            url = "jdbc:mysql://" + host + ":" + port + "/" + db
-                    + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            url = "jdbc:postgresql://" + host + ":" + port + "/" + db
+                    + "?ssl=true&sslmode=require";
         }
 
         // Username: hibernate prop -> DB_USER -> default "root"
@@ -91,14 +91,14 @@ public class SessionFactoryProvider {
         // Dialect: can still be overridden if needed
         String dialect = resolve(
                 "hibernate.dialect",
-                "org.hibernate.dialect.MySQL8Dialect"
+                "org.hibernate.dialect.PostgreSQLDialect"
         );
 
-        // Ensure MySQL JDBC driver is present
+        // Ensure PostgreSQL JDBC driver is present
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("MySQL JDBC driver not found on classpath", e);
+            throw new IllegalStateException("PostgreSQL JDBC driver not found on classpath", e);
         }
 
         // Log *non-secret* connection info

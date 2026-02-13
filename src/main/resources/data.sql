@@ -12,16 +12,16 @@ VALUES
   ('Median of Two Sorted Arrays', 'HARD', 'Find median of two sorted arrays.', 'Given two sorted arrays nums1 and nums2, return the median of the two sorted arrays.');
 
 -- Seed submissions for a few challenges (dev only)
-INSERT INTO SUBMISSIONS (CHALLENGE_ID, OUTCOME, CODE)
+INSERT INTO SUBMISSIONS (CHALLENGE_ID, USER_ID, OUTCOME, CODE)
 VALUES
-  (1, 'CORRECT', 'int[] twoSum(int[] nums, int target) { /* ... */ }'),
-  (1, 'INCORRECT', '/* first attempt */'),
-  (2, 'ACCEPTABLE', 'boolean isValid(String s) { /* ... */ }'),
-  (3, 'SKIPPED', NULL);
+  (1, 'demo', 'CORRECT', 'int[] twoSum(int[] nums, int target) { /* ... */ }'),
+  (1, 'demo', 'INCORRECT', '/* first attempt */'),
+  (2, 'demo', 'ACCEPTABLE', 'boolean isValid(String s) { /* ... */ }'),
+  (3, 'demo', 'SKIPPED', NULL);
 
 -- Seed drill items for a few challenges (dev only)
-INSERT INTO DRILL_ITEMS (CHALLENGE_ID, TIMES_SEEN, STREAK, NEXT_DUE_AT)
+INSERT INTO DRILL_ITEMS (CHALLENGE_ID, USER_ID, TIMES_SEEN, STREAK, NEXT_DUE_AT)
 VALUES
-  (1, 2, 1, NULL),
-  (2, 1, 0, NULL),
-  (3, 3, 2, NULL);
+  (1, 'demo', 2, 1, NULL),
+  (2, 'demo', 1, 0, NULL),
+  (3, 'demo', 3, 2, NULL);

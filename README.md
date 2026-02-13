@@ -128,10 +128,10 @@ CodeForge’s goal is to provide a *simpler, clarity-first alternative* to platf
   - Lightweight CSS (“CodeForge UI”) without a large framework
 
 - ### Database
-  - MySQL (local/dev tests and prod)
+  - PostgreSQL (Neon for production, local for dev/tests)
   - Test DB reset via `DbReset` + `cleandb.sql`
   - Seed data managed in `src/test/resources/cleandb.sql` (predictable schema)
-  - **AWS RDS** — Cloud-hosted DB for deployment
+  - **Neon (Postgres)** — Cloud-hosted serverless DB for deployment
 
 - ### Authentication & Security
   - Amazon Cognito Hosted UI (servlet-based flow)
