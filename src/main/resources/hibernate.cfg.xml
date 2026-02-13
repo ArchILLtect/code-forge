@@ -4,25 +4,21 @@
         "https://hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <!-- JDBC connection (values resolved from System properties for CI; MySQL only) -->
-        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <!-- Use system property hibernate.connection.url or default to local MySQL cf_test_db -->
+        <!-- JDBC connection (values resolved from System properties for CI; PostgreSQL) -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <!-- Use system property hibernate.connection.url or default to local PostgreSQL cf_test_db -->
         <property name="hibernate.connection.url">
-            jdbc:mysql://${DB_HOST}:3306/${DB_NAME}
-            ?useSSL=false
-            &amp;allowPublicKeyRetrieval=true
-            &amp;serverTimezone=UTC
-            &amp;useUnicode=true
-            &amp;characterEncoding=utf8mb4
-            &amp;connectionCollation=utf8mb4_unicode_ci
+            jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
+            ?ssl=true
+            &amp;sslmode=require
         </property>
         <property name="hibernate.connection.username">${DB_USER}</property>
         <property name="hibernate.connection.password">${DB_PASS}</property>
 
         <!-- Schema handling -->
 
-        <!-- Dialect (explicit MySQL) -->
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        <!-- Dialect (explicit PostgreSQL) -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 
         <!-- Show SQL while developing -->
         <property name="hibernate.show_sql">true</property>
