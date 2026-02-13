@@ -49,14 +49,12 @@ public class Challenge {
     /**
      * A short description or blurb about the Challenge.
      */
-    @Lob // Maps to a large object column for storing long text
     @Column(name = "blurb", columnDefinition = "TEXT", nullable = true) // Maps to a column that can be null
     private String blurb;
 
     /**
      * The full prompt of the Challenge in Markdown format.
      */
-    @Lob // Maps to a large object column for storing long text
     @Column(name = "prompt_md", columnDefinition = "TEXT", nullable = true) // Maps to a column that can be null
     private String promptMd;
 
@@ -81,7 +79,6 @@ public class Challenge {
     /**
      * The expected answer used by the evaluator for MVP.
      */
-    @Lob
     @Column(name = "expected_answer", columnDefinition = "TEXT")
     private String expectedAnswer;
 
