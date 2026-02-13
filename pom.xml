@@ -27,7 +27,7 @@
     <javax.validation.version>2.0.1.Final</javax.validation.version>
     <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
     <javax.el.version>3.0.1-b11</javax.el.version>
-    <postgresql.connector.version>42.7.4</postgresql.connector.version>
+    <postgresql.connector.version>42.7.7</postgresql.connector.version>
     <!-- Plugin versions -->
     <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
