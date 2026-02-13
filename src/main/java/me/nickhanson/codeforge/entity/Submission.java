@@ -53,7 +53,6 @@ public class Submission {
      * Optional solution code associated with the submission.
      * This field is a large object (LOB) to accommodate potentially lengthy code submissions.
      */
-    @Lob
     private String code; // optional solution text for future use
 
     /**
