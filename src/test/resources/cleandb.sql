@@ -1,42 +1,38 @@
 -- Purpose: Reset schema and seed sample data for local/dev testing
--- MySQL version
+-- PostgreSQL version
 
--- Disable FK checks for dropping
-SET FOREIGN_KEY_CHECKS = 0;
-
-DROP TABLE IF EXISTS submissions;
-DROP TABLE IF EXISTS drill_items;
-DROP TABLE IF EXISTS challenges;
-
-SET FOREIGN_KEY_CHECKS = 1;
+-- Drop tables (CASCADE handles foreign keys automatically)
+DROP TABLE IF EXISTS submissions CASCADE;
+DROP TABLE IF EXISTS drill_items CASCADE;
+DROP TABLE IF EXISTS challenges CASCADE;
 
 -- ------------------------------------------
 -- Recreate tables
 -- ------------------------------------------
 
 CREATE TABLE challenges (
-        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         blurb TEXT,
         prompt_md TEXT,
         expected_answer TEXT,
-        difficulty ENUM('EASY', 'MEDIUM', 'HARD') NOT NULL,
+        difficulty VARCHAR(20) NOT NULL CHECK (difficulty IN ('EASY', 'MEDIUM', 'HARD')),
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        UNIQUE KEY uk_challenges_title (title)
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT uk_challenges_title UNIQUE (title)
 );
 
 CREATE TABLE drill_items (
-         id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
          challenge_id BIGINT NOT NULL,
          user_id VARCHAR(64) NOT NULL, -- MVP: string-based user identifier (e.g., 'demo' or Cognito sub)
          times_seen INT NOT NULL DEFAULT 0,
          streak INT NOT NULL DEFAULT 0,
          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
          next_due_at TIMESTAMP NULL DEFAULT NULL,
          version BIGINT NOT NULL DEFAULT 0,
-         UNIQUE KEY uk_drill_items_user_challenge (user_id, challenge_id),
+         CONSTRAINT uk_drill_items_user_challenge UNIQUE (user_id, challenge_id),
          CONSTRAINT fk_drill_items_challenge
              FOREIGN KEY (challenge_id)
                  REFERENCES challenges(id)
@@ -45,13 +41,13 @@ CREATE TABLE drill_items (
 );
 
 CREATE TABLE submissions (
-         id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+         id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
          challenge_id BIGINT NOT NULL,
          user_id VARCHAR(64) NOT NULL, -- MVP: string-based user identifier (e.g., 'demo' or Cognito sub)
-         outcome ENUM('CORRECT', 'INCORRECT', 'ACCEPTABLE', 'SKIPPED') NOT NULL,
+         outcome VARCHAR(20) NOT NULL CHECK (outcome IN ('CORRECT', 'INCORRECT', 'ACCEPTABLE', 'SKIPPED')),
          code TEXT,
          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
          CONSTRAINT fk_submissions_challenge
              FOREIGN KEY (challenge_id)
                  REFERENCES challenges(id)

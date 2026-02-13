@@ -3,8 +3,8 @@
 This project runs as a WAR on Tomcat 9 (Jakarta Servlet API). The persistence layer uses Hibernate directly (no Spring). For MVP, schema is managed by Hibernate auto‑DDL; Flyway is a post‑MVP task.
 
 ## Environments
-- Dev/Test: H2 in‑memory DB via `src/main/resources/hibernate.cfg.xml`
-- Prod (Week 8): AWS RDS (PostgreSQL or MySQL)
+- Dev/Test: PostgreSQL (local or Docker)
+- Prod: Neon (serverless PostgreSQL)
 
 ## Required runtime configuration
 - Cognito secret: provided by environment or JVM property
@@ -18,23 +18,18 @@ This project runs as a WAR on Tomcat 9 (Jakarta Servlet API). The persistence la
 ### Dev/Test (default)
 - `src/main/resources/hibernate.cfg.xml` points to H2 and sets `hbm2ddl.auto=update`.
 
-### Production (RDS)
-Use either approach:
-1) Tomcat JNDI DataSource (recommended)
-   - Define a JNDI resource in Tomcat `conf/context.xml` or the webapp context `META-INF/context.xml`:
-     ```xml
-     <Resource name="jdbc/codeforge" auth="Container"
-               type="javax.sql.DataSource" maxTotal="20" maxIdle="5"
-               username="db_user" password="db_pass"
-               driverClassName="org.postgresql.Driver"
-               url="jdbc:postgresql://host:5432/dbname"/>
-     ```
-   - Update your Hibernate configuration to use JNDI lookup (optional enhancement), or provide a prod `hibernate.cfg.xml` packaged for deployment.
+### Production (Neon PostgreSQL)
+Use environment variables or system properties:
+- `DB_HOST`: Neon PostgreSQL endpoint (e.g., `ep-xyz.us-east-1.aws.neon.tech`)
+- `DB_PORT`: `5432` (default PostgreSQL port)
+- `DB_NAME`: Database name
+- `DB_USER`: Database username
+- `DB_PASS`: Database password
 
-2) Prod `hibernate.cfg.xml`
-   - Build a production variant of `hibernate.cfg.xml` with your RDS JDBC URL, user, and password.
-   - First deploy: set `<property name="hibernate.hbm2ddl.auto">update</property>`
-   - After verification: change to `validate` and redeploy
+Connection string format:
+```
+jdbc:postgresql://<host>:5432/<db>?ssl=true&sslmode=require
+```
 
 ## Balanced Approach (MVP)
 - Phase 1 (first deploy): allow Hibernate to create/update tables with `hbm2ddl.auto=update`
@@ -58,13 +53,12 @@ cmd /c 'cd /d "C:\Users\nickh\Documents\My Projects\Java\code-forge" && mvn -q -
   - Or add to Tomcat service/`setenv` as `-DCOGNITO_CLIENT_SECRET=your_secret`
 - Start Tomcat and open `http://localhost:8080/codeforge/`
 
-## RDS specifics
-- Create DB (PostgreSQL/MySQL), note endpoint, user, password
-- Security groups: allow inbound from your app host
-- JDBC URL examples:
-  - Postgres: `jdbc:postgresql://<host>:5432/<db>`
-  - MySQL: `jdbc:mysql://<host>:3306/<db>?useSSL=true&requireSSL=true`
-- On first deploy, keep DDL `update`; after verifying tables (`challenges`, `submissions`, `drill_items`), flip to `validate`
+## RDS/Neon specifics
+- Neon provides serverless PostgreSQL with automatic scaling
+- Security: Neon requires SSL (`ssl=true&sslmode=require`)
+- JDBC URL example:
+  - Postgres/Neon: `jdbc:postgresql://<host>:5432/<db>?ssl=true&sslmode=require`
+- On first deploy, Hibernate can auto-create schema with `hbm2ddl.auto=update`; after verifying tables (`challenges`, `submissions`, `drill_items`), consider switching to `validate`
 
 ## QuoteService notes
 - `QuoteService` loads `application.properties` from the classpath and uses `HttpClient` for outbound calls
@@ -90,48 +84,41 @@ For production (AWS RDS), override datasource and JPA properties with environmen
 
 ---
 
-## 1) Provision AWS RDS
+## 1) Provision Neon Database
 
-- Choose engine/version (e.g., PostgreSQL 15.x or MySQL 8.x).
-- Create database (DB name, username, password).
-- Configure security group rules to allow inbound from your app host (e.g., Elastic Beanstalk instance SG).
-- Note the JDBC endpoint: `host:port/dbname`.
+- Create a new project in Neon (https://neon.tech)
+- Note the connection details: host, database name, username, password
+- Neon automatically provides SSL-enabled PostgreSQL endpoints
 
-## 2) Configure application (first deploy)
+## 2) Configure application (Render deployment)
 
-Set the following environment variables in your hosting environment (Elastic Beanstalk, ECS, EC2, etc.), or for an one‑off local test run:
+Set the following environment variables in Render:
 
-- `SPRING_DATASOURCE_URL`
-  - PostgreSQL: `jdbc:postgresql://<host>:<port>/<db>?sslmode=require`
-  - MySQL: `jdbc:mysql://<host>:<port>/<db>?allowPublicKeyRetrieval=true&useSSL=true&requireSSL=true&useUnicode=true&characterEncoding=utf8`
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
-- `SPRING_JPA_HIBERNATE_DDL_AUTO=update` (first deploy only — lets Hibernate create missing tables/columns)
+- `DB_HOST`: Neon endpoint (e.g., `ep-xyz.us-east-1.aws.neon.tech`)
+- `DB_PORT`: `5432`
+- `DB_NAME`: Database name
+- `DB_USER`: Database username  
+- `DB_PASS`: Database password
 
-Example one‑shot local run on Windows cmd:
-
-```bat
-cmd /c 'set "SPRING_DATASOURCE_URL=jdbc:postgresql://mydb.abcdefg.us-east-1.rds.amazonaws.com:5432/codeforge?sslmode=require" && set "SPRING_DATASOURCE_USERNAME=appuser" && set "SPRING_DATASOURCE_PASSWORD=secret" && set "SPRING_JPA_HIBERNATE_DDL_AUTO=update" && mvn -q spring-boot:run'
+The application will build the JDBC URL automatically with SSL enabled:
 ```
-
-Notes
-- The app already externalizes server port via `server.port=${PORT:5000}`.
-- Keep test/dev profiles pointed at H2; only prod uses RDS overrides.
+jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl=true&sslmode=require
+```
 
 ## 3) Deploy and verify
 
-- Deploy the app to your AWS environment with the env vars above.
-- Verify health:
-  - `GET /actuator/health` → `UP`
+- Deploy the app to Render with the environment variables above.
+- Hibernate will auto-create the schema on first startup (using entity annotations).
 - Verify schema:
-  - Check RDS tables exist: `challenges`, `submissions`, `drill_items`, including `drill_items.version` (added in Issue 38 via `@Version`).
+  - Connect to Neon and check that tables exist: `challenges`, `submissions`, `drill_items`, including `drill_items.version` (added via `@Version`).
 - Smoke test the app (e.g., run a Drill flow to insert data).
 
-## 4) Flip ddl-auto to validate
+## 4) Schema management notes
 
-Once the schema looks correct in RDS:
-- Change environment variable: `SPRING_JPA_HIBERNATE_DDL_AUTO=validate`
-- Redeploy the app. Hibernate will now validate the schema at startup and fail fast if it drifts, but it will no longer apply changes automatically.
+- Hibernate uses entity annotations to create/validate schema
+- First deploy: Hibernate will auto-create tables based on `@Entity` classes
+- After verification: you can set `hibernate.hbm2ddl.auto=validate` to prevent auto-changes
+- Future: consider Flyway for versioned migrations (post-MVP)
 
 ## 5) Post‑MVP: Adopt Flyway migrations
 
@@ -147,16 +134,20 @@ After MVP deployment stabilizes:
 ## 6) Troubleshooting
 
 - `relation/table not found` at startup:
-  - You likely deployed with `ddl-auto=validate` before the schema existed; switch back to `update` for the first run.
-- Permission errors creating tables:
-  - Ensure the RDS user has `CREATE`/`ALTER` permissions.
+  - Ensure Hibernate can create tables (check DB user permissions).
 - Driver/URL errors:
-  - Confirm the correct JDBC driver is on the classpath (Spring Boot starters include both Postgres/MySQL when added) and that the JDBC URL is correct for your engine.
+  - Confirm PostgreSQL JDBC driver is in dependencies and JDBC URL is correct.
 - Connection timeouts:
-  - Check RDS SG rules, VPC networking, and that your app host can reach the RDS endpoint.
+  - Verify DB_HOST, DB_PORT, and that Neon endpoint is accessible from Render.
+  - Check that SSL is enabled (`ssl=true&sslmode=require`).
 
-## 7) Quick rollback plan
+## 7) Migration from AWS RDS MySQL
 
-- Keep `ddl-auto` in an env var so you can temporarily switch back to `update` if a small non‑destructive patch is needed.
-- Prefer to schedule structural changes; adopt Flyway promptly post‑MVP for safer, versioned changes.
+If migrating from existing MySQL database:
+1. Export data from MySQL using `mysqldump` or similar
+2. Convert MySQL syntax to PostgreSQL (AUTO_INCREMENT → SERIAL, ENUM → VARCHAR/CHECK, etc.)
+3. Import into Neon using `psql` or database client
+4. Update Render environment variables to point to Neon
+5. Deploy and verify
+6. After successful verification, delete AWS RDS instance
 
