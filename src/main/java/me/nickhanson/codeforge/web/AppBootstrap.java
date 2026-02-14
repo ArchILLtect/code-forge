@@ -1,9 +1,9 @@
 package me.nickhanson.codeforge.web;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import me.nickhanson.codeforge.service.ChallengeRunService;
 import me.nickhanson.codeforge.service.ChallengeService;
 import me.nickhanson.codeforge.service.DrillService;
@@ -70,3 +70,4 @@ public class AppBootstrap implements ServletContextListener {
         }
     }
 }
+

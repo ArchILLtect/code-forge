@@ -1,6 +1,6 @@
 package me.nickhanson.codeforge.web;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Helper for reading the authenticated user context (Cognito sub) from the session.
@@ -28,4 +28,5 @@ public final class UserContext {
         return getUserId(req) != null;
     }
 }
+
 

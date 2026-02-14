@@ -1,3 +1,6 @@
+# Historical Note
+This document is kept for coursework/history context. Current deployment/database implementation is Render + Docker + Neon PostgreSQL.
+
 # Full Time Log (Weeks 1–16)
 
 ## Week 1 (Sept 2–Sept 7)
@@ -60,7 +63,7 @@
 | 10/10/25         | CodeForge → Route protection (AuthGuardFilter)  | 2      | CRUD + edit form    |
 | 10/11/25         | CodeForge → Client-side pagination (DataTables) | 3      | challenges list     |
 | 10/12/25         | CodeForge → CI build WAR + upload artifact      | 2      | Actions green       |
-| 10/12/25         | CodeForge → EB deploy (Tomcat) + health check   | 1.5    | /actuator/health UP |
+| 10/12/25         | CodeForge → deployment smoke test (Tomcat) + health check   | 1.5    | /actuator/health UP |
 | 10/12/25         | CodeForge → Docs updates (README/plan/journal)  | 1      | Week 6 wrap-up      |
 | **Total Week 6** |                                                 | **14** |                     |
 
@@ -143,7 +146,7 @@
 |-------------------|------------------------------------------------------------------------------------------------|------------|
 | 11/25             | CodeForge → Drill page layout improvements, localStorage persistence, editor enhancements.     | 5          |
 | 11/25             | CodeForge → Improved error handling on drill ID parsing, refined controllers.                  | 4          |
-| 11/29             | CodeForge → CI improvements: MySQL test service, schema resets, delete test fixes.             | 4          |
+| 11/29             | CodeForge → CI improvements: previous SQL backend test service, schema resets, delete test fixes.             | 4          |
 | 11/29–11/30       | CodeForge → DB cleanup, schema standardization, seed resets, timestamp improvements.           | 4          |
 | 11/24–11/30       | Ent Java → Week 13 materials (Asynchronous Messaging) and optional Week 13 challenge exercise. | 4          |
 | 11/27–11/30       | CodeForge → DBSchema docs expansion, workflow updates, test isolation improvements.            | 3          |
@@ -154,7 +157,7 @@
 ## Week 14 (Dec 1–Dec 7)
 | Date              | Task                                                                                   | Hours      |
 |-------------------|----------------------------------------------------------------------------------------|------------|
-| 12/03             | CodeForge → Removed H2, migrated tests fully to MySQL; added DaoTestBase; CI refactor. | 5          |
+| 12/03             | CodeForge → Removed H2, migrated tests fully to previous SQL backend; added DaoTestBase; CI refactor. | 5          |
 | 12/03             | CodeForge → Labels added, DBSchema updates, workflow cleanup.                          | 2          |
 | 12/04–12/05       | CodeForge → UI polish: layout fixes, date formatting, navigation improvements.         | 3          |
 | 12/05             | CodeForge → Implemented LocalConfig + SessionFactoryProvider improvements.             | 2          |
@@ -216,3 +219,4 @@
 #### **269.5 hrs** ==> So, almost 270 hours over 16 weeks! Woot!
 
 # 270 Hours logged!
+

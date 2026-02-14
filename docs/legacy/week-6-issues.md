@@ -1,3 +1,6 @@
+# Historical Note
+This issue plan reflects a prior milestone period. Use docs/deployment.md for the current production stack (Render + Neon + Docker).
+
 # Week 6 – Issue Seeds (Copy/Paste into New Issues)
 
 Use these blocks to create GitHub issues with our templates. Each includes: Problem / context, Proposed solution, In scope / Out of scope, Acceptance criteria, Area, Dependencies / related issue, and Suggested labels.
@@ -21,7 +24,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 - In scope (MVP)
   - Hosted UI redirect, code→token exchange, JWKS verification
   - Session persistence for user across requests
-  - README/docs for local + EB env vars
+  - README/docs for local + legacy platform env vars
 
 - Out of scope (Deferred → see Post‑MVP issue)
   - Spring Security OIDC configuration and route protection
@@ -31,8 +34,8 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - [x] Clicking “Login with Cognito” starts Hosted UI flow and returns to /auth
   - [x] /auth verifies ID token, stores user in session, redirects to /me
   - [x] /me shows the user; navigating away/back still shows user (until logout or timeout)
-  - [x] No secrets in repo; COGNITO_CLIENT_SECRET read from env (local + EB)
-  - [x] README updated with local/EB env setup and .env.example added
+  - [x] No secrets in repo; COGNITO_CLIENT_SECRET read from env (local + legacy platform)
+  - [x] README updated with local/legacy platform env setup and .env.example added
 
 - Area
   - area:security, area:web
@@ -44,7 +47,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - status:done, area:security, area:web, priority:P1-high
 
 - Closing comment (paste into the existing GitHub Issue 1)
-  - “Resolution: Implemented servlet-based Cognito login for MVP. The app redirects to Hosted UI (/logIn), exchanges the code on /auth, verifies the ID token, and stores the user in the HTTP session; /me and home read the session user. Secrets are no longer in source; COGNITO_CLIENT_SECRET is provided via env (local + EB). Further work to migrate to Spring Security OIDC + route protection is tracked separately in ‘Post‑MVP: Spring Security OIDC + route protection’. Closing this issue as completed for MVP.”
+  - “Resolution: Implemented servlet-based Cognito login for MVP. The app redirects to Hosted UI (/logIn), exchanges the code on /auth, verifies the ID token, and stores the user in the HTTP session; /me and home read the session user. Secrets are no longer in source; COGNITO_CLIENT_SECRET is provided via env (local + legacy platform). Further work to migrate to Spring Security OIDC + route protection is tracked separately in ‘Post‑MVP: Spring Security OIDC + route protection’. Closing this issue as completed for MVP.”
 
 ---
 
@@ -239,28 +242,28 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 
 ---
 
-## 8) Tooling/CI: EB Tomcat (WAR) + Health Readiness
+## 8) Tooling/CI: legacy platform Tomcat (WAR) + Health Readiness
 
 - Title
-  - ci(deploy): Produce WAR artifact for EB Tomcat and verify /actuator/health
+  - ci(deploy): Produce WAR artifact for legacy platform Tomcat and verify /actuator/health
 - Problem / context
-  - We’ve switched from JAR + Procfile (Java SE) to WAR packaging for JSP support. Elastic Beanstalk should use a Tomcat platform (Corretto 17), and deployments should use the built WAR artifact.
+  - We’ve switched from JAR + Procfile (Java SE) to WAR packaging for JSP support. legacy hosting platform should use a Tomcat platform (Corretto 17), and deployments should use the built WAR artifact.
 
 - Proposed solution
   - CI builds and uploads target/codeforge-0.0.1-SNAPSHOT.war as an artifact.
   - Verify Actuator health endpoint is exposed and returns UP locally.
-  - Document EB environment setup (Tomcat platform) and manual WAR deploy step.
+  - Document legacy platform environment setup (Tomcat platform) and manual WAR deploy step.
 
 - In scope
   - CI artifact upload (WAR), health exposure, minimal deployment notes.
 
 - Out of scope
-  - Automated EB deployment (manual deploy acceptable this week).
+- Automated deployment (manual deploy acceptable this week).
 
 - Acceptance criteria
   - [ ] CI run uploads the WAR artifact (e.g., codeforge-0.0.1-SNAPSHOT.war)
   - [ ] Local run shows /actuator/health UP
-  - [ ] EB environment uses a Tomcat platform (Corretto 17) and accepts the WAR
+  - [ ] legacy platform environment uses a Tomcat platform (Corretto 17) and accepts the WAR
 
 - Area
   - area:ci-cd, area:deployment
@@ -269,7 +272,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - None
 
 - Suggested labels
-  - status:triage, area:ci-cd, area:deployment, feature:aws-eb, priority:P2-normal
+  - status:triage, area:ci-cd, area:deployment, feature:aws-legacy platform, priority:P2-normal
 
 ---
 
@@ -309,7 +312,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 - Title
   - docs: Update Week 6 docs (README, project-plan, journal)
 - Problem / context
-  - Keep docs aligned with auth, pagination, and EB changes.
+  - Keep docs aligned with auth, pagination, and legacy platform changes.
 
 - Proposed solution
   - Update project-plan.md checkboxes for Week 6.
@@ -323,7 +326,7 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
   - Detailed architecture write-ups (later).
 
 - Acceptance criteria
-  - [ ] Docs reflect Cognito envs, EB Tomcat + WAR deployment, and jQuery pagination
+  - [ ] Docs reflect Cognito envs, legacy platform Tomcat + WAR deployment, and jQuery pagination
   - [ ] Week 6 progress marked in plan
 
 - Area
@@ -340,25 +343,25 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 ## 11) Security: Secret hygiene (rotate + SSM/Secrets Manager)
 
 - Title
-  - chore(security): Rotate Cognito client secret (if needed) and move EB env secret to SSM/Secrets Manager
+  - chore(security): Rotate Cognito client secret (if needed) and move legacy platform env secret to SSM/Secrets Manager
 - Problem / context
-  - The Cognito client secret must not be shared in plaintext; use AWS-managed secrets and least-privilege access. EB currently uses plain-text env vars which are visible to console users.
+  - The Cognito client secret must not be shared in plaintext; use AWS-managed secrets and least-privilege access. legacy platform currently uses plain-text env vars which are visible to console users.
 
 - Proposed solution
   - (If ever exposed) Rotate the Cognito App Client secret in AWS.
   - Store the secret in AWS Secrets Manager or SSM Parameter Store.
-  - Update EB environment property Source to reference the managed secret/parameter.
-  - Ensure the EB instance role has permission (IAM policy) to read the secret/parameter.
+  - Update legacy platform environment property Source to reference the managed secret/parameter.
+  - Ensure the legacy platform instance role has permission (IAM policy) to read the secret/parameter.
 
 - In scope
-  - Secret rotation (if needed), SSM/Secrets Manager setup, EB env property update, IAM permission check.
+  - Secret rotation (if needed), SSM/Secrets Manager setup, legacy platform env property update, IAM permission check.
 
 - Out of scope
   - Spring Security OIDC migration.
 
 - Acceptance criteria
-  - [ ] Cognito client secret not stored in plaintext in EB
-  - [ ] EB environment reads secret from SSM/Secrets Manager
+  - [ ] Cognito client secret not stored in plaintext in legacy platform
+  - [ ] legacy platform environment reads secret from SSM/Secrets Manager
   - [ ] Instance role can read secret and app starts cleanly
 
 - Area
@@ -408,3 +411,5 @@ Use these blocks to create GitHub issues with our templates. Each includes: Prob
 
 - Suggested labels
   - status:triage, enhancement, area:security, post-mvp, priority:P2-normal
+
+

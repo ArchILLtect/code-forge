@@ -5,7 +5,7 @@
   Time: 2:30 PM
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="pageTitle" value="Challenges | CodeForge" scope="request" />
 
 <!DOCTYPE html>

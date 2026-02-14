@@ -1,3 +1,6 @@
+# Historical Note
+This file records Week 6 class milestones and is kept for project history. Current deployment/database guidance is in docs/deployment.md (Render + Neon + Docker).
+
 # Week 6 Plan — Authentication, Hosting, and Drill Foundations (Oct 6–12)
 
 Source inputs: docs/project-plan.md (Week 6), Week 5 wrap-up notes, and deployment/auth checklist.
@@ -7,7 +10,7 @@ Source inputs: docs/project-plan.md (Week 6), Week 5 wrap-up notes, and deployme
 - [x] Route protection for challenge CRUD via servlet filter (AuthGuardFilter)
 - [x] Client-side pagination via jQuery DataTables on challenges list
 - [x] CI builds and uploads WAR artifact; latest run is green
-- [x] WAR deployed to Elastic Beanstalk (Tomcat/Corretto 17); /actuator/health = UP
+- [x] WAR deployed to the prior hosting setup; /actuator/health = UP
 - [x] Documentation updated (README + journal + timelog)
 - [ ] Drill submission UI/flow (deferred to Week 7)
 - [ ] Spring Security OIDC migration + role-based rules (post-MVP)
@@ -44,7 +47,7 @@ Acceptance criteria
 - [x] Challenges list paginates client-side without any Pageable in controllers/services
 - [x] Sort/filters work (client-side) as currently expected
 
-### 4) AWS Elastic Beanstalk (Java SE, Corretto 17)
+### 4) Deployment Packaging and Health Readiness
 - Create Procfile
 - Health readiness
   - Ensure Spring Boot Actuator enabled and /actuator/health returns UP
@@ -53,12 +56,12 @@ Acceptance criteria
 
 Acceptance criteria
 - [x] Build locally and run with overridden port; verify health endpoint and basic pages
-- [x] EB deploy (Tomcat/Corretto 17) using WAR; /actuator/health is UP
+- [x] Prior hosting deployment (Tomcat/Corretto 17) using WAR; /actuator/health is UP
 
 ### 5) CI and Packaging
 - Add GitHub Actions workflow build-and-package.yml
   - mvn -B -DskipTests=false verify
-  - Produce eb-bundle.zip artifact suitable for Beanstalk deployment (jar + Procfile + any EB config)
+- Produce deployment artifact suitable for manual hosting deployment
 - CI cleanup to reflect jQuery pagination (no Pageable assumptions in builds/tests)
 
 Acceptance criteria
@@ -81,12 +84,12 @@ Status notes:
 - WebMvc + filter tests green for challenges + auth guard; drill/submission tests deferred with submission UI.
 
 ### 8) Documentation
-- Update README with: Cognito auth, EB deploy notes, health endpoint, CI badge/workflow summary
+- Update README with: Cognito auth, deployment notes, health endpoint, CI badge/workflow summary
 - Update docs/project-plan.md progress markers for Week 6
 - Journal/time log entries for Week 6
 
 Acceptance criteria
-- [x] README updated (Cognito env, EB deploy notes, health endpoint, CI status)
+- [x] README updated (Cognito env, deployment notes, health endpoint, CI status)
 - [x] Week 6 plan updated; journal/time log entries added
 
 ## Done When
@@ -94,7 +97,7 @@ Acceptance criteria
 - DrillService updates streak/timesSeen/nextDueAt and drives a simple queue
 - Submission flow persists outcomes and updates DrillItem as expected
 - jQuery pagination is wired via CDN; server APIs no longer require Pageable
-- EB bundle (eb-bundle.zip) produced by CI and validated with a local jar smoke test
+- Deployment artifact produced by CI and validated with a local smoke test
 - /actuator/health returns UP
 - README and project-plan updated; tests green in CI
 
@@ -105,7 +108,9 @@ Acceptance criteria
   - docs/screenshots/week6-challenges-list.png
 
 ## Notes & Assumptions
-- Target runtime: Java 17 (Corretto 17 on EB)
-- Secrets for Cognito configured via environment variables or EB configuration (not committed)
+- Target runtime: Java 17 (Corretto 17 in prior hosting setup)
+- Secrets for Cognito configured via environment variables (not committed)
 - If actuator not present, add dependency and minimal config as part of this week
+
+
 

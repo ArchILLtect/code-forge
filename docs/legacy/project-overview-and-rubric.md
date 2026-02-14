@@ -1,3 +1,6 @@
+# Historical Note
+This document is kept for coursework/history context. Current deployment/database implementation is Render + Docker + Neon PostgreSQL.
+
 
 # Individual Project
 ## Overview
@@ -45,3 +48,4 @@ The Individual Enterprise Java Project is designed to facilitate your transition
 | **Evidence of significant revision and incorporation of feedback** | Significant revision and incorporation of feedback, resulting in major improvement. | Some revision and feedback incorporation, resulting in improvement. | Minor revision only, minimal improvement. | Little to no revision or feedback incorporation. |
 | **Complexity** | Complex | Difficult | Average | Simple |
 | **Final Presentation** | - Engaging, enthusiastic, relevant, comprehensive, clear. <br> - Innovative and effective aids. <br> - High technical understanding. <br> - Time well managed. <br> - Video demonstration link in README. | Well-delivered, smooth, relevant, understandable. <br> Supporting materials used effectively. <br> Able to explain most technical concepts. | Audience can follow but with disconnects. <br> Presentation heavily scripted. <br> Supporting materials used but not explained well. <br> Explains some technical concepts. | Difficult to follow, flow issues. <br> Supporting materials not explained or misused. <br> Explains few technicalities. <br> Time poorly managed. |
+

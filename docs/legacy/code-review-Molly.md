@@ -1,3 +1,6 @@
+# Historical Note
+This document is kept for coursework/history context. Current deployment/database implementation is Render + Docker + Neon PostgreSQL.
+
 # Indie Project Peer Code Review
 
 ## Project:
@@ -22,9 +25,9 @@ The table below contains my rubric-aligned review of the project, including stre
 |  | Database relationships         | - **Kudos:** Well-structured `Review` → `Photo` and `Review` → `User` relationships with proper cascade and orphan removal.                                                                                                         |
 |  | –                            | - **Suggestion 1:** Initialize `photos` list to avoid NPEs when rendering JSPs.                                                                                                                                                     |
 |  | –                            | - **Suggestion 2:** Consider adding a mapped collection on `User` for reverse navigation if needed.                                                                                                                                 |
-|  | Deployment readiness           | - **Kudos:** WAR packaging, redirect logic, and the presence of EB configuration folders (`.ebextensions` and `.platform`) demonstrate solid deployment preparation.                                                                |
+|  | Deployment readiness           | - **Kudos:** WAR packaging, redirect logic, and the presence of deployment configuration folders demonstrate solid deployment preparation.                                                                |
 |  | –                            | - **Suggestion 1:** Add deployment steps or the live AWS URL to the README for easier verification.                                                                                                                                 |
-|  | –                            | - **Suggestion 2:** Briefly document the purpose of `.platform` and `.ebextensions` configs so future maintainers understand how the EB environment is customized.                                                                  |
+|  | –                            | - **Suggestion 2:** Briefly document the purpose of deployment configuration files so future maintainers understand how runtime behavior is customized.                                                                  |
 | Experimentation & Innovation | Original solutions             | - **Kudos:** The “personal food diary” concept paired with a dynamic Dad-joke feature adds charm and originality. |
 |  | –                            | - **Suggestion 1:** Emphasize privacy features in UI (per-user visibility, restrictions).                                                                                                                                           |
 |  | –                            | - **Suggestion 2:** Add simple tagging/categorization for richer review organization.                                                                                                                                               |
@@ -89,4 +92,6 @@ I found parts of the implementation inspiring, and I’m already planning to inc
   Adding tests that simulate HTTP requests and verify expected redirects, access control, and error handling will significantly strengthen reliability and confidence when deploying updates.
 
 - **Enhance the README with environment setup and deployment documentation.**  
-  Include local setup steps, Cognito configuration notes, and a brief description of how `.platform` and `.ebextensions` customize Elastic Beanstalk. This helps future maintainers and ensures smooth reproduction of the environment.
+Include local setup steps, Cognito configuration notes, and a brief description of deployment/runtime configuration. This helps future maintainers and ensures smooth reproduction of the environment.
+
+

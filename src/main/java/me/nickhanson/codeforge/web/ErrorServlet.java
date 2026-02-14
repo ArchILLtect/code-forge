@@ -1,11 +1,11 @@
 package me.nickhanson.codeforge.web;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
@@ -70,10 +70,10 @@ public class ErrorServlet extends HttpServlet {
         req.setAttribute("timestamp", Instant.now().toString());
         req.setAttribute("referer", req.getHeader("Referer"));
 
-        // Align with existing JSPs: they read errorMessage and javax.servlet.error.request_uri
+        // Align with existing JSPs: they read errorMessage and jakarta.servlet.error.request_uri
         req.setAttribute("errorMessage", errorMessage);
-        req.setAttribute("javax.servlet.error.request_uri", requestUri);
-        req.setAttribute("javax.servlet.error.status_code", status);
+        req.setAttribute("jakarta.servlet.error.request_uri", requestUri);
+        req.setAttribute("jakarta.servlet.error.status_code", status);
 
         // Choose view based on status code
         String view;
@@ -98,3 +98,5 @@ public class ErrorServlet extends HttpServlet {
         req.getRequestDispatcher(view).forward(req, resp);
     }
 }
+
+

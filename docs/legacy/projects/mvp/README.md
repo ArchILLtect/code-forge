@@ -1,3 +1,6 @@
+# Historical Note
+This file originated during MVP planning. Use README.md and docs/deployment.md for current runtime/deployment instructions.
+
 # CodeForge MVP Release Project
 
 This GitHub Project tracks the minimum set of features, quality gates, and deployment steps required to ship the CodeForge MVP.
@@ -10,17 +13,17 @@ Deliver a working MVP of CodeForge that supports:
 - Cognito-based login (OIDC)
 - Client-side pagination via jQuery CDN
 - Drill submission flow wired to scheduling logic (stub runner)
-- Health checks and packaging for AWS Elastic Beanstalk
+- Docker deployment readiness for Render
 - Documentation updates and basic test coverage
 
 The project board groups all issues labeled `project:mvp` into a single execution view. Use this label to include new work items in the MVP scope.
 
 ## Goals (Done = MVP)
-- AuthN: Cognito OIDC login works locally and on EB
+- AuthN: Cognito login works locally and in Render
 - AuthZ: Public vs protected routes enforced; admin pages limited
 - Drill: Users can submit, persist outcomes, and advance in queue
 - Pagination: Challenges list paginates client-side (no Pageable)
-- Deployability: eb-bundle.zip produced by CI; /actuator/health = UP
+- Deployability: legacy platform-bundle.zip produced by CI; /actuator/health = UP
 - Documentation: README, plan, and journal reflect Week 6+ changes
 - Tests: Core DAO/service/web tests cover MVP flows
 
@@ -44,7 +47,7 @@ The project board groups all issues labeled `project:mvp` into a single executio
 ## Issue Templates to Use
 - Feature: Cognito, route protection, client-side pagination, drill submission
 - Test coverage: Drill scheduling & submission
-- Tooling/CI: EB bundle and health readiness
+- Tooling/CI: legacy platform bundle and health readiness
 - Documentation: Week 6 updates
 
 ## Milestone Suggestions
@@ -71,7 +74,7 @@ This guide summarizes how to run MVP features (Practice + Drill), configure flag
 
 ## Prerequisites
 - Java 21 (Temurin recommended)
-- MySQL 8.x running locally (cf_test_db)
+- PostgreSQL running locally (cf_test_db)
 - Maven 3.9+
 
 ## Config
@@ -120,3 +123,5 @@ mvn -f "[project-root]\pom.xml" -DskipTests=false test
 - If Practice/Drill are disabled, servlets respond with 404.
 - If DB isn’t reachable, tests may fail; ensure `DB_PASSWORD` and JDBC URL are set.
 - Check `logs/telemetry.log` for evaluator run entries.
+
+
