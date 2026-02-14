@@ -38,7 +38,7 @@ erDiagram
 - `version BIGINT` optimistic lock (`@Version`), not null, default `0`
 - `challenge_id BIGINT` FK -> `challenges(id)`, not null
 - `user_id VARCHAR(64)` not null
-- unique pair (`user_id`, `challenge_id`) to allow one drill item per user/challenge
+- DB-level unique constraint on pair (`user_id`, `challenge_id`) to allow one drill item per user/challenge (see `UNIQUE (user_id, challenge_id)` below; when using JPA schema generation, mirror this with `@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "challenge_id"}))` on the `DrillItem` entity)
 - `times_seen INT` not null, default 0
 - `streak INT` not null, default 0
 - `next_due_at TIMESTAMP` nullable
