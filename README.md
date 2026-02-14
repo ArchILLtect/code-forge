@@ -27,7 +27,6 @@ Current production stack:
 - User stories: `docs/user-stories.md`
 - Project plan: `docs/project-plan.md`
 - Deployment runbook: `docs/deployment.md`
-- Reflections: `docs/reflections/WeeklyJournal.md`
 
 ## Runtime configuration
 Required secret:

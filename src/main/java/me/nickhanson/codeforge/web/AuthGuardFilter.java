@@ -45,6 +45,8 @@ public class AuthGuardFilter extends HttpFilter {
         // 1) Always allow static assets
         if (path.startsWith("/css/")
                 || path.startsWith("/images/")
+                || path.startsWith("/assets/")
+                || path.startsWith("/static/")
                 || path.startsWith("/apidocs/")
                 || path.equals("/favicon.ico")
                 || path.startsWith("/favicon")
@@ -63,6 +65,7 @@ public class AuthGuardFilter extends HttpFilter {
 // 2) Allow your public pages (home/about/login/error)
         if (path.equals("/") || path.equals("/home")
                 || path.startsWith("/about")
+                || path.equals("/health")
                 || path.startsWith("/logIn")
                 || path.startsWith("/logout")
                 || path.startsWith("/error")) {
