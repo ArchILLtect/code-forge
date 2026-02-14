@@ -23,8 +23,8 @@
 - [ ] Tests updated/added (DAO/Service/Web as needed)
 - [ ] Local tests pass
   - mvn -B -DskipTests=false test
-- [ ] Actuator health OK locally
-  - http://localhost:8080/actuator/health returns {"status":"UP"}
+- [ ] Smoke-test endpoints OK locally
+  - e.g., http://localhost:8080/home and/or http://localhost:8080/challenges load successfully
 - [ ] Deployment packaging unaffected or updated
   - Docker/Render deployment path verified
   - CI artifacts/build outputs updated if needed
