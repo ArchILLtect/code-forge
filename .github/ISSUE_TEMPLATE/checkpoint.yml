@@ -66,7 +66,7 @@ body:
     attributes:
       label: Checkpoint 3 – requirements (use if CP = 3)
       options:
-        - label: Deployed to AWS (link available)
+        - label: Deployed (link available)
         - label: At least one JSP displays DB data
         - label: Authentication implemented
 
@@ -74,11 +74,11 @@ body:
     id: evidence
     attributes:
       label: Evidence (links, screenshots)
-      description: Add links to files, test reports, CI runs, screenshots (H2 console, deployed app), etc.
+      description: Add links to files, test reports, CI runs, DB screenshots, deployed app, etc.
       placeholder: |
-        - H2 console screenshot showing tables
+        - Database screenshot showing tables
         - Surefire test report file(s) or CI summary
-        - Deployed URL and /actuator/health = UP (for CP3)
+        - Deployed URL and basic smoke checks (for CP3)
         - Log snippet demonstrating Log4J configured
 
   - type: textarea
@@ -97,7 +97,7 @@ body:
       label: Demo plan (optional)
       description: Brief steps to demonstrate the checkpoint items live
       placeholder: |
-        - Show H2 console tables
+        - Show database tables
         - Run tests and show reports
         - Show logging output
         - (CP3) Navigate to deployed app + JSP with DB data; show login works

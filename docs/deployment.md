@@ -3,7 +3,7 @@
 This runbook documents the current production deployment path for CodeForge.
 
 ## Architecture
-- App runtime: Tomcat 9 in Docker container
+- App runtime: Tomcat 10.1 in Docker container
 - Build artifact: WAR (`target/codeforge.war`)
 - Hosting: Render Web Service (Docker)
 - Database: Neon PostgreSQL

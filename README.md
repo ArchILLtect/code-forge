@@ -1,6 +1,6 @@
 ## CodeForge README
 
-CodeForge is a Java 17 coding-practice web app built with Servlets/JSP + Hibernate.
+CodeForge is a Java 21 coding-practice web app built with Servlets/JSP + Hibernate.
 
 Current production stack:
 - Hosting: Render (Docker)
@@ -14,7 +14,7 @@ Current production stack:
 - Admin CRUD: create/edit/delete challenge routes (auth-protected).
 
 ## Tech Stack
-- Java 17
+- Java 21
 - Servlets + JSP (Tomcat runtime inside Docker image)
 - Hibernate 6
 - PostgreSQL (Neon in prod)
@@ -87,7 +87,7 @@ jdbc:postgresql://<host>:5432/<db>?ssl=true&sslmode=require
 ```
 
 ## Notes
-- This repository previously documented legacy hosting platform/legacy managed database and previous SQL backend workflows during earlier class milestones.
+- This repository previously documented older hosting/database workflows during earlier class milestones.
 - The active and supported deployment/database path is now Render + Docker + Neon PostgreSQL.
 
 ## License
