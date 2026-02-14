@@ -5,7 +5,7 @@ _Inputs: README.md, course_calendar.md, project_overview.md, project_rubric_clea
 
 Indie Project Scope:
 - Build a Java web app focused on: Practice Mode, Drill Mode, Progress Tracking, Problem database with Admin interface, and a polished UI.
-- Stack: Spring Boot, JPA, JUnit, relational DB (local H2 for dev, MySQL/PostgreSQL later), IntelliJ IDEA.
+- Stack: Servlets/JSP, Hibernate, JUnit, PostgreSQL (local + Neon), IntelliJ IDEA.
 
 **Legend**
 - **Class** = Enterprise Java course tasks and milestones
@@ -37,13 +37,13 @@ Indie Project Scope:
     - [x] Done when: ER diagram, DAO CRUD, tests, log4j, journal, plan, GitHub tag
     - [x] Evidence: ER diagram, DAO test report, repo tag, screenshots
     - [x] **Milestone:** Project 1 checkpoint complete! App template running and accessible locally. 🎉
-    - [x] H2 console enabled
+    - [x] Local DB tooling enabled
     - [x] Challenge entity mapped, Spring Data repository with CRUD, JPA tests passing, Log4J logging (no System.out)
     - [x] Week 5: Challenge Admin CRUD (Create/Edit/Delete), list pagination/sorting and difficulty filtering
     - [x] Update journal and time log
     - [ ] Next: Add Submission/DrillItem DAOs, wire simple controllers/views, API spike.
   - [ ] Implements Challenge entity + DAO + CRUD (foundation for Story 9: Admin Create Challenge, and Story 4: Learner submissions persistence).
-  - DB note: DAO tested with H2, but dev DB = MySQL.
+  - DB note: DAO/tests use PostgreSQL-aligned configuration.
 
 ---
 
@@ -53,12 +53,12 @@ Indie Project Scope:
   - [x] DAO integration patterns in the web tier
 - **Indie**
   - [x] Rubric mapping: web tier, DAO integration
-  - [x] Implement controllers/services wiring to DAO [🔗](user-stories.md#learner) (Stories 2–3: Browse & View challenge).
-  - [x] Build basic JSPs for listing/detail and form submission [🔗](user-stories.md#learner) (Stories 2–4).
+  - [x] Implement controllers/services wiring to DAO [🔗](../user-stories.md#learner) (Stories 2–3: Browse & View challenge).
+  - [x] Build basic JSPs for listing/detail and form submission [🔗](../user-stories.md#learner) (Stories 2–4).
     - List with pagination/sorting and difficulty filter; Detail page.
-  - [x] Add error handling, validation, and simple UX [🔗](user-stories.md#learner) (Stories 2, 3, 4).
+  - [x] Add error handling, validation, and simple UX [🔗](../user-stories.md#learner) (Stories 2, 3, 4).
     - @ControllerAdvice with 404/500 JSPs; form validation; flash messages.
-  - [x] ⭐ Expand unit and integration tests [🔗](user-stories.md#learner)
+  - [x] ⭐ Expand unit and integration tests [🔗](../user-stories.md#learner)
     - Repo + WebMvc tests for list, 404, new/create (ok/dup), update (ok/dup), delete (ok/not-found), and 500.
   - [x] Expand seed data for challenges (10+ entries, various difficulties).
   - [ ] ⭐ (Stretch Goal) Challenge run service (stubbed execution for now; real compile/run later if time).
@@ -75,18 +75,18 @@ Indie Project Scope:
   - [x] Unit/integration testing practices and coverage
 - **Indie**
   - [x] Rubric mapping: authentication, logging, test coverage
-  - [x] Implement authentication/authorization using AWS Cognito (Spring Security OIDC) [🔗](user-stories.md#learner) (Story 1: Register/Sign in)
-  - [x] Secure protected routes and challenge data (roles/authorities) [🔗](user-stories.md#learner) (Story 2: Browse challenges)
+  - [x] Implement authentication/authorization using AWS Cognito (Spring Security OIDC) [🔗](../user-stories.md#learner) (Story 1: Register/Sign in)
+  - [x] Secure protected routes and challenge data (roles/authorities) [🔗](../user-stories.md#learner) (Story 2: Browse challenges)
   - [x] Replace any lingering `System.out.println` with Log4J logging
   - [x] Switch to jQuery-based pagination via CDN; remove server-side Pageable from APIs and tests
-  - [x] Elastic Beanstalk prep (Java 17/Corretto): ensure /actuator/health returns UP; handle PORT via `-Dserver.port=$PORT` or `server.port=${PORT:8080}`
-  - [x] Add DAO/CRUD for Submission and DrillItem; service layer for Drill logic. [🔗](user-stories.md#learner) (Story 4: Submit solution & see result, Story 6 outcomes).
-  - [x] Spike: shortlist and select external API, prove minimal call [🔗](user-stories.md#learner) (Story 8).
+  - [x] Render deploy prep (Docker): ensure app boots in container with env-provided secrets and DB vars
+  - [x] Add DAO/CRUD for Submission and DrillItem; service layer for Drill logic. [🔗](../user-stories.md#learner) (Story 4: Submit solution & see result, Story 6 outcomes).
+  - [x] Spike: shortlist and select external API, prove minimal call [🔗](../user-stories.md#learner) (Story 8).
   - [ ] ⭐ (Stretch Goal) Centralize logging with log rotation and diagnostic context (MDC)
   - [ ] ⭐ (Stretch Goal) Raise code coverage threshold; add CI/static analysis
   - [x] Prep for Checkpoint 2 readiness
   - [x] Done when: Cognito login works; protected routes enforced; jQuery pagination wired; health endpoint UP; log4j in place; CI green
-  - [x] Evidence: test report, screenshots (login & health), CI artifact (eb-bundle.zip), CI badge
+  - [x] Evidence: test report, screenshots (login & health), CI artifact (WAR + Docker build logs), CI badge
   - [x] Update journal and time log
 
 ---
@@ -97,7 +97,7 @@ Indie Project Scope:
 - **Indie**
   - [x] Rubric mapping: DB, DAO, logging, test coverage
   - [x] Double-check Checkpoint 2 items are complete and visible in GitHub (DAO + CRUD + tests, Log4J, DB schema)
-  - [x] Harden DAO and transaction boundaries; add more entities if needed [🔗](user-stories.md#learner) (Stories 4 & 6)
+  - [x] Harden DAO and transaction boundaries; add more entities if needed [🔗](../user-stories.md#learner) (Stories 4 & 6)
   - [x] Add entries if missing (e.g. DrillItem)
   - [x] README badges for build/coverage
   - [x] Done when: all checkpoint items in repo
@@ -118,14 +118,14 @@ Indie Project Scope:
   - [ ] REST/Web Services consumption patterns
 - **Indie**
   - [ ] Rubric mapping: deployment, external API, configs
-  - [ ] Create AWS RDS database and bootstrap schema using Hibernate auto-DDL
-    - Configure RDS instance and connect app via environment variables (url, username, password).
+  - [ ] Create Neon PostgreSQL database and bootstrap schema using Hibernate auto-DDL
+    - Configure Neon and connect app via DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASS.
     - Set `spring.jpa.hibernate.ddl-auto=update` for first deploy to let Hibernate create/update schema.
     - After schema verification, switch to `spring.jpa.hibernate.ddl-auto=validate` to lock structure.
     - Document plan to adopt Flyway post-MVP for versioned migrations (export verified schema as `V1__init_schema.sql`).
-  - [ ] Update configs for AWS; externalize secrets
-  - [ ] Deploy app to AWS; verify health and logs
-  - [ ] Consume at least one external/public API using Java (rubric requirement) [🔗](user-stories.md#learner) (Story 8: External API)
+  - [ ] Update configs for Render/Neon; externalize secrets
+  - [ ] Deploy app to Render; verify startup and logs
+  - [ ] Consume at least one external/public API using Java (rubric requirement) [🔗](../user-stories.md#learner) (Story 8: External API)
   - [ ] Add deployed link to indie project list
   - [ ] ⭐ (Stretch Goal) Document API contract and rate limits
   - [ ] ⭐ (Stretch Goal) Add health endpoints and structured logs; Switch to structured JSON logs
@@ -141,8 +141,8 @@ Indie Project Scope:
 - **Indie**
   - [ ] Rubric mapping: Drill Mode, persistence, metrics
   - [ ] Validate Checkpoint 3 criteria and fix gaps
-  - [ ] Implement Drill Mode persistence: track outcomes (`Correct`, `Acceptable`, `Incorrect`, `Skipped`) [🔗](user-stories.md#learner) (Stories 5: Drill mode)
-  - [ ] Build algorithm to cycle skipped/incorrect challenges until completed [🔗](user-stories.md#learner) (Story 5)
+  - [ ] Implement Drill Mode persistence: track outcomes (`Correct`, `Acceptable`, `Incorrect`, `Skipped`) [🔗](../user-stories.md#learner) (Stories 5: Drill mode)
+  - [ ] Build algorithm to cycle skipped/incorrect challenges until completed [🔗](../user-stories.md#learner) (Story 5)
   - [ ] ⭐ (Stretch Goal) Mix solved challenges into queue for re-check (“flashcard” effect)
   - [ ] ⭐ (Stretch Goal) Monitoring and basic metrics; error log review
   - [ ] Done when: Drill Mode works, metrics visible
@@ -157,8 +157,8 @@ Indie Project Scope:
   - [ ] Validation and error handling patterns
 - **Indie**
   - [ ] Rubric mapping: admin UI, data access, performance
-  - [ ] Implement Admin challenge management UI (create, edit, delete challenges) [🔗](user-stories.md#admin) (Stories 9–11: Admin CRUD)
-  - [ ] Restrict admin routes with authorization rules (role-based access) [🔗](user-stories.md#admin) (Stories 10 & 11: security)
+  - [ ] Implement Admin challenge management UI (create, edit, delete challenges) [🔗](../user-stories.md#admin) (Stories 9–11: Admin CRUD)
+  - [ ] Restrict admin routes with authorization rules (role-based access) [🔗](../user-stories.md#admin) (Stories 10 & 11: security)
   - [ ] ⭐ (Stretch Goal) Add pagination, sorting, and input validation (use jQuery datatables)
   - [ ] ⭐ (Stretch Goal) Optimize performance: indexes, query tuning, lazy/eager balance
   - [ ] ⭐ (Stretch Goal) Expand integration tests against test DB
@@ -173,9 +173,9 @@ Indie Project Scope:
   - [ ] JSP/UI refinement, accessibility basics, resilient design
 - **Indie**
   - [ ] Rubric mapping: dashboard, UX, API resilience
-  - [ ] Build Progress Tracking Dashboard: number solved, % success, cycle status [🔗](user-stories.md#learner) (Stories 6 & 7: Track outcomes, View submission history)
+  - [ ] Build Progress Tracking Dashboard: number solved, % success, cycle status [🔗](../user-stories.md#learner) (Stories 6 & 7: Track outcomes, View submission history)
   - [ ] ⭐ (Stretch Goal) Enhance progress (tables, charts, summaries) with simple charts and pagination (jQuery) for history
-  - [ ] Polish UI/UX for implemented flows [🔗](user-stories.md#learner) (Stories 2–7)
+  - [ ] Polish UI/UX for implemented flows [🔗](../user-stories.md#learner) (Stories 2–7)
   - [ ] ⭐ (Stretch Goal) Add retries/timeouts for external API calls
   - [ ] ⭐ (Stretch Goal) Improve empty/error states and form usability
   - [ ] ⭐ (Stretch Goal) Update docs: architecture, endpoints, and data model diagram
@@ -191,7 +191,7 @@ Indie Project Scope:
 - **Indie**
   - [ ] Rubric mapping: security, CI/CD, code quality
   - [ ] Address review feedback; refactor risky areas
-  - [ ] Security pass: input sanitization, authZ checks [🔗](user-stories.md#learner) (Stories 1, 9–11)
+  - [ ] Security pass: input sanitization, authZ checks [🔗](../user-stories.md#learner) (Stories 1, 9–11)
   - [ ] ⭐ (Stretch Goal) Add CI/CD pipeline (GitHub Actions or Maven build for compile + tests)
   - [ ] ⭐ (Stretch Goal) Backup/restore steps; deployment runbook
   - [ ] ⭐ (Stretch Goal) Code quality and lint pass; eliminate dead code
@@ -246,4 +246,5 @@ Indie Project Scope:
 
 ### Checkpoint 3:
 
-- Deployed to AWS, at least one JSP that displays data from the database is implemented, authentication implemented. Add link to your deployed application here. Week 9.
+- Deployed (Render), at least one JSP that displays data from the database is implemented, authentication implemented. Add link to your deployed application here. Week 9.
+

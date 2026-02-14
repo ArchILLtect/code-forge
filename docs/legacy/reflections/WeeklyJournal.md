@@ -1,3 +1,6 @@
+# Historical Note
+This document is kept for coursework/history context. Current deployment/database implementation is Render + Docker + Neon PostgreSQL.
+
 # Weekly Journal (Weeks 1–16)
 
 ---
@@ -116,7 +119,7 @@ Reflection
 
 ## **Week 6 (Oct 6–Oct 12)**
 
-This week I wrapped up authentication (MVP), protected key routes, finished client-side pagination, got CI artifacts building, and deployed the WAR to Elastic Beanstalk Tomcat.
+This week I wrapped up authentication (MVP), protected key routes, finished client-side pagination, got CI artifacts building, and deployed the WAR to legacy hosting platform Tomcat.
 
 Highlights
 - Auth (MVP): Cognito Hosted UI login via servlet flow, ID token verification, user stored in session; `/me` displays user; `/logout` clears session.
@@ -124,18 +127,18 @@ Highlights
 - Bugfix: Fixed a JSP EL typo on the challenges list page (`pageContext.rbequest` → `pageContext.request`) that caused a 500.
 - Pagination: Switched to client-side pagination with jQuery DataTables on `/challenges`.
 - CI: GitHub Actions workflow (`.github/workflows/ci.yml`) builds and uploads the WAR; latest run is green.
-- Deploy: Deployed the WAR to EB Tomcat (Corretto 17); `/actuator/health` returns `UP`.
-- Secrets: Kept `COGNITO_CLIENT_SECRET` in EB environment variables for now; secret-hygiene improvements tracked in a separate issue.
+- Deploy: Deployed the WAR to legacy platform Tomcat (Corretto 17); `/actuator/health` returns `UP`.
+- Secrets: Kept `COGNITO_CLIENT_SECRET` in legacy platform environment variables for now; secret-hygiene improvements tracked in a separate issue.
 
 Reflection
 - Guardrails in two layers help: server filter prevents unauthorized access; UI guard avoids confusing the user. Tests around the filter gave confidence when tightening routes.
 - Small typos can break JSP pages; I’ll keep leaning on tests and quick greps to catch these quickly.
-- Shipping the WAR via CI and proving it live on EB felt like a good end-to-end checkpoint for Week 6.
+- Shipping the WAR via CI and proving it live on legacy platform felt like a good end-to-end checkpoint for Week 6.
 
 Evidence (screenshots)
 - `docs/screenshots/week6-auth-login.png`
 - `docs/screenshots/week6-challenges-list.png`
-- `docs/screenshots/week6-eb-health-up.png`
+- `docs/screenshots/week6-legacy platform-health-up.png`
 
 Next
 - Week 7: Wire the Drill submission UI/flow to create Submissions and update DrillItem; add service/web tests for outcomes and queue advance.
@@ -262,7 +265,7 @@ Reviewing Hibernate and JDBC again brought clarity to some design choices I had 
 
 ## **Week 13 (Nov 24–Nov 30)**
 Thanksgiving week… but CodeForge did not take a holiday.  
-This was a massive testing and cleanup push: migrating fully to MySQL, standardizing the schema, resetting seeds, cleaning up timestamps, and improving test isolation. It felt like preparing a battlefield for the final sprint.
+This was a massive testing and cleanup push: migrating fully to previous SQL backend, standardizing the schema, resetting seeds, cleaning up timestamps, and improving test isolation. It felt like preparing a battlefield for the final sprint.
 
 The UI also got some nice quality-of-life improvements — smoother layouts, better date formatting, consistent navigation. The app is finally starting to feel “real.”
 
@@ -270,7 +273,7 @@ Ent Java Week 13 was about asynchronous messaging — challenging but interestin
 
 
 ### Major Work
-- Complete migration to **MySQL-only** testing.
+- Complete migration to **previous SQL backend-only** testing.
 - Cleaned up seeding logic and ensured test isolation.
 - Fixed seeds that unexpectedly mutated state between tests.
 - UI polish and nav consistency.
@@ -284,14 +287,14 @@ Emotional journey: 3 hours.
 ---
 
 ## **Week 14 (Dec 1–Dec 7)**
-This week was pure momentum. More MySQL test migrations, DaoTestBase setup, workflow cleanups, and a surprisingly large set of UI fixes. LocalConfig + SessionFactoryProvider also fell into place, which unclogged several configuration headaches I’d been dealing with.
+This week was pure momentum. More previous SQL backend test migrations, DaoTestBase setup, workflow cleanups, and a surprisingly large set of UI fixes. LocalConfig + SessionFactoryProvider also fell into place, which unclogged several configuration headaches I’d been dealing with.
 
 Ent Java Week 14 focused on code reviews and peer feedback. Fortunately, one of my teammates was available for me to team up with, so we did a deep dive into each other’s codebases. It was enlightening to see how others approached similar problems.
 
 
 ### Work Completed
 - Full cleanup of CI pipelines.
-- H2 removed entirely, replaced with MySQL test infra.
+- H2 removed entirely, replaced with previous SQL backend test infra.
 - SessionFactoryProvider became a first-class citizen instead of a gremlin.
 - UI smoother than ever before.
 
@@ -359,12 +362,12 @@ By the time I ripped Boot out, I basically had to relearn the entire web stack �
 
 ### 2. I’d give myself more breathing room on deployment and AWS setup.
 
-AWS has a knack for behaving perfectly or breaking in ways that feel personal. Elastic Beanstalk in particular seems to wait until I'm confident… then throws a new error format at me. At this point, I’ve simply accepted this as part of the AWS experience.
+AWS has a knack for behaving perfectly or breaking in ways that feel personal. legacy hosting platform in particular seems to wait until I'm confident… then throws a new error format at me. At this point, I’ve simply accepted this as part of the AWS experience.
 
 Things like:
 
 - UTF-8 encoding mysteriously breaking
-- EB health checks failing without logs
+- legacy platform health checks failing without logs
 - Cognito login propagation delays
 - SSL certificate embedding weirdness
 - Tomcat deciding which MIME types it likes that day
@@ -413,4 +416,6 @@ And I’m proud of the work I put in.
 ### — Nick Hanson (ArchILLtect)
 
 ---
+
+
 

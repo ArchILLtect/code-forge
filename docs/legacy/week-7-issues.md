@@ -1,3 +1,6 @@
+# Historical Note
+This file captures Week 7 milestone planning. For current runtime/deploy instructions, use README.md and docs/deployment.md.
+
 # Week 7 – Project Checkpoint 2 (Copy/Paste Issue Content)
 
 Use this content with the "Project Checkpoint" issue template. Copy the Title into the title field, then paste the rest into the body/fields.
@@ -26,12 +29,12 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
   - [ ] Log4J implemented (no System.out.println)
 
 - Evidence (links, screenshots)
-  - H2 console screenshot showing CHALLENGE table and row count
+  - PostgreSQL/Neon query screenshot showing challenge row count
   - Test summary (CI or local): `mvn -B -DskipTests=false test`
   - Surefire report(s):
     - `target/surefire-reports/TEST-me.nickhanson.codeforge.persistence.ChallengeDaoTest.xml`
   - Log4J config file reference: `src/main/resources/log4j2.properties`
-  - Health endpoint screenshot: `GET /actuator/health` returns `UP`
+  - App availability screenshot (`/home` and `/challenges`)
 
 - References
   - Plan: `docs/project-plan.md` (Week 7 – Checkpoint 2)
@@ -40,9 +43,9 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
   - README (logging + stack notes): `README.md`
 
 - Demo plan (live)
-  1) Start app: `mvn spring-boot:run`
-  2) Show `/actuator/health` → status `UP`
-  3) Open H2 console → run `SELECT COUNT(*) FROM CHALLENGE;`
+  1) Build app: `mvn -q -DskipTests=false clean package`
+  2) Verify `/home` and `/challenges` load in deployed/local runtime
+  3) Query PostgreSQL and show challenge count
   4) Run tests: `mvn -B -DskipTests=false test` → show green summary
   5) Show logging output on startup (Log4J console appender)
 
@@ -348,4 +351,5 @@ Use this content with the "Project Checkpoint" issue template. Copy the Title in
 
 - Suggested labels
   - status:backlog, priority:P3-low, hardening, migration
+
 
