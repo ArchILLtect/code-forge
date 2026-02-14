@@ -10,13 +10,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this for GitHub Actions, Maven build changes, EB packaging, local dev tooling, linters, etc.
+        Use this for GitHub Actions, Maven build changes, deployment packaging, local dev tooling, linters, etc.
   - type: textarea
     id: context
     attributes:
       label: Context / problem statement
       placeholder: |
-        What needs to change and why? (e.g., EB bundle, caching, test matrix, flaky step)
+        What needs to change and why? (e.g., deployment artifact, caching, test matrix, flaky step)
     validations:
       required: true
   - type: textarea
@@ -26,7 +26,7 @@ body:
       placeholder: |
         - Update .github/workflows/build.yml to ...
         - Add caching for Maven repo
-        - Produce eb-bundle.zip with Procfile
+        - Produce/update deployment artifact for Render
     validations:
       required: true
   - type: checkboxes
@@ -42,7 +42,7 @@ body:
     attributes:
       label: Acceptance criteria
       placeholder: |
-        - [ ] CI workflow publishes eb-bundle.zip artifact
+        - [ ] CI workflow publishes expected deployment artifact(s)
         - [ ] Build remains green on main
         - [ ] Docs updated if commands changed
     validations:

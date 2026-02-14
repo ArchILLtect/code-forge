@@ -43,7 +43,7 @@ body:
         - OS:
         - Java:
         - Profile: dev/test/prod
-        - DB: H2/MySQL/Postgres
+        - DB: PostgreSQL (local/Neon)
         - Browser:
   - type: textarea
     id: steps

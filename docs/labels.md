@@ -57,7 +57,7 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
   - description: GitHub Actions, build, test, packaging, and release workflows.
   - color: d4c5f9
 - name: area:deployment
-  - description: Tomcat, AWS environments, and runtime configs.
+  - description: Container/runtime hosting configuration and deployment operations.
   - color: bfdadc
 - name: area:logging
   - description: Log4J configuration, structured logging, MDC, and log hygiene.
@@ -79,8 +79,8 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: feature:cognito-auth
   - description: OAuth2/OIDC login via Amazon Cognito and protected routes.
   - color: d1d5da
-- name: feature:aws-eb
-  - description: Elastic Beanstalk packaging, health checks, and deployment.
+- name: feature:deployment-runtime
+  - description: Render/Docker deployment, environment configuration, and release operations.
   - color: c0e585
 - name: feature:pagination-jquery
   - description: Client-side pagination using jQuery/CDN; no server-side Pageable.
@@ -120,4 +120,5 @@ This file lists labels to add for CodeForge. For each new label, create it in Gi
 - name: chore
   - description: Maintenance, refactors, and non-feature tasks (e.g., config, build, logging hygiene).
   - color: d4c5f9
+
 

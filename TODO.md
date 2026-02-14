@@ -54,10 +54,10 @@ Acceptance Criteria:
 
 1) Adopt Flyway with initial baseline migration (labels: migration, hardening)
 - Title: Post‑MVP: adopt Flyway with `V1__init_schema.sql`
-- Context: After MVP deployment using Hibernate auto‑DDL (update → validate), baseline the verified RDS schema and move to versioned migrations for safety and collaboration.
+- Context: After MVP deployment using Hibernate auto‑DDL (update → validate), baseline the verified Neon/Postgres schema and move to versioned migrations for safety and collaboration.
 - Tasks:
-  - [ ] Export current RDS schema as `V1__init_schema.sql`
-  - [ ] Add Flyway dependency and enable Flyway in Spring Boot
+  - [ ] Export current Neon/Postgres schema as `V1__init_schema.sql`
+  - [ ] Add Flyway dependency and enable Flyway migrations for this servlet/Hibernate app
   - [ ] Configure `spring.jpa.hibernate.ddl-auto=validate` for prod; keep schema immutable under JPA
   - [ ] Place `V1__init_schema.sql` in `src/main/resources/db/migration/`
   - [ ] Document migration workflow for devs (how to add `V2__...sql`, `V3__...sql`)
@@ -110,3 +110,5 @@ Acceptance Criteria:
 - [Security][Logging] Add Log4j2 RegexFilter to drop lines containing token keys (`access_token|id_token|refresh_token`) in file/telemetry appenders.
 - [Security][Testing] Add a lightweight test that generates a mock token response and asserts logs do not contain token values (use an in-memory appender or temporary file).
 - [Docs] Note logging policy in `projects/mvp/README.md`: never log tokens; use redaction and info-level in prod.
+
+

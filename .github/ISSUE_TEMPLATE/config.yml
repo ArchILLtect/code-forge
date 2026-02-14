@@ -8,7 +8,7 @@ contact_links:
     about: Weekly plan, scope, and checkpoints.
   - name: ✅ Week 6 Plan
     url: https://github.com/ArchILLtect/code-forge/blob/main/docs/week-6-plan.md
-    about: Current week tasks, auth, pagination, and EB deployment steps.
+    about: Current week tasks, auth, pagination, and deployment steps.
   - name: 🏷️ Labels Guide
     url: https://github.com/ArchILLtect/code-forge/blob/main/docs/labels.md
     about: Use these labels when filing issues.

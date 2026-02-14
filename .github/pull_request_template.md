@@ -25,9 +25,9 @@
   - mvn -B -DskipTests=false test
 - [ ] Actuator health OK locally
   - http://localhost:8080/actuator/health returns {"status":"UP"}
-- [ ] EB packaging unaffected or updated
-  - Procfile present and correct (uses $PORT)
-  - eb-bundle.zip produced in CI (if applicable)
+- [ ] Deployment packaging unaffected or updated
+  - Docker/Render deployment path verified
+  - CI artifacts/build outputs updated if needed
 - [ ] Security: no secrets committed; Cognito config via env/secret store
 - [ ] Docs updated if behavior/config changed
   - README
@@ -47,6 +47,5 @@
 ### Dev Notes (optional)
 - Commands:
   - Build: `mvn -B -ntp clean verify`
-  - Run: `mvn spring-boot:run`
-  - Jar: `java -Dserver.port=8080 -jar target/codeforge-0.0.1-SNAPSHOT.jar`
+  - Package: `mvn -q -DskipTests=false clean package`
 
