@@ -151,7 +151,7 @@ public class DrillServlet extends HttpServlet {
             if (language == null || language.isBlank() || code == null || code.isBlank()) {
                 jakarta.servlet.http.HttpSession session = req.getSession(true);
                 String msg = me.nickhanson.codeforge.entity.Outcome.SKIPPED + " — Missing language or code. Please fill in both fields.";
-                if (session != null) session.setAttribute("flashInfo", msg); else req.setAttribute("info", msg);
+                session.setAttribute("flashInfo", msg);
                 resp.sendRedirect(req.getContextPath() + "/drill");
                 return;
             }
