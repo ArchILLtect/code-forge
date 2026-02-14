@@ -5,7 +5,7 @@
   Time: 9:48 PM
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <header class="cf-header">
   <div class="cf-header-inner">

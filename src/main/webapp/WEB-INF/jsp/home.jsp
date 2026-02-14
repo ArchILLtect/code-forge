@@ -5,7 +5,7 @@
   Time: 9:40 PM
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="pageTitle" value="CodeForge" scope="request" />
 
 <!DOCTYPE html>
@@ -89,7 +89,7 @@
           <h3>Real-World Stack</h3>
           <p>
             Practice in an environment that looks like the real thing:
-            Java, JSP, MySQL, AWS, and deployment pipelines.
+            Java, JSP, PostgreSQL, Render, and deployment pipelines.
           </p>
         </article>
       </div>

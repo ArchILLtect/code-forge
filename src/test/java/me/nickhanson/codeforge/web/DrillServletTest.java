@@ -15,11 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -54,7 +54,7 @@ class DrillServletTest {
         lenient().when(ctx.getAttribute("challengeService")).thenReturn(challengeService);
         lenient().when(ctx.getAttribute("runService")).thenReturn(runService);
         lenient().when(req.getRequestDispatcher(any())).thenReturn(rd);
-        var session = mock(javax.servlet.http.HttpSession.class);
+        var session = mock(jakarta.servlet.http.HttpSession.class);
         lenient().when(req.getSession(false)).thenReturn(session); // UserContext reads this
         lenient().when(req.getSession()).thenReturn(session);
         when(session.getAttribute("userSub")).thenReturn("demo-user");
@@ -131,3 +131,4 @@ class DrillServletTest {
         verify(resp).sendError(400);
     }
 }
+

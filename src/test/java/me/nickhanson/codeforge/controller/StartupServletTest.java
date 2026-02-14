@@ -2,8 +2,8 @@ package me.nickhanson.codeforge.controller;
 
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
 
 import static org.mockito.Mockito.*;
 
@@ -23,4 +23,5 @@ class StartupServletTest {
         verify(ctx).setAttribute(eq("cognitoProperties"), any());
     }
 }
+
 

@@ -5,7 +5,7 @@
   Time: 11:52 PM
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="pageTitle" value="About | CodeForge" scope="request" />
 
 <!DOCTYPE html>
@@ -45,7 +45,7 @@
                             <li>Java web app using servlets and JSP</li>
                             <li>DAO layer on top of a relational database</li>
                             <li>Drill engine for spaced-repetition practice</li>
-                            <li>Deployment on AWS Elastic Beanstalk</li>
+                            <li>Deployment on Render using Docker</li>
                             <li>Authentication via Amazon Cognito</li>
                         </ul>
 
@@ -63,12 +63,12 @@
                         <h2 class="cf-section-title">Tech stack</h2>
 
                         <ul class="cf-section-lead">
-                            <li><strong>Backend:</strong> Java 11, Servlets, JSP, JSTL</li>
-                            <li><strong>Persistence:</strong> DAO layer, MySQL (via JDBC)</li>
+                            <li><strong>Backend:</strong> Java 21, Servlets, JSP, JSTL</li>
+                            <li><strong>Persistence:</strong> DAO layer, PostgreSQL (Neon)</li>
                             <li><strong>Auth:</strong> Amazon Cognito (Hosted UI + OAuth)</li>
-                            <li><strong>Hosting:</strong> AWS Elastic Beanstalk (Tomcat)</li>
-                            <li><strong>Routing:</strong> Nginx proxy → Tomcat app</li>
-                            <li><strong>Static assets:</strong> AWS S3 (planned hardening)</li>
+                            <li><strong>Hosting:</strong> Render (Docker + Tomcat 10.1)</li>
+                            <li><strong>Routing:</strong> Render edge → containerized app</li>
+                            <li><strong>Build:</strong> Maven WAR packaging</li>
                         </ul>
 
                         <h2 class="cf-section-title">Current status</h2>

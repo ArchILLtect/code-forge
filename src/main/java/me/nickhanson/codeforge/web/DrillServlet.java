@@ -1,10 +1,10 @@
 package me.nickhanson.codeforge.web;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import me.nickhanson.codeforge.entity.Challenge;
 import me.nickhanson.codeforge.entity.DrillItem;
 import me.nickhanson.codeforge.entity.Outcome;
@@ -15,7 +15,7 @@ import me.nickhanson.codeforge.service.RunResult;
 
 import java.io.IOException;
 import java.util.List;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Optional;
 
 /**
@@ -149,7 +149,7 @@ public class DrillServlet extends HttpServlet {
             String code = req.getParameter("code");
 
             if (language == null || language.isBlank() || code == null || code.isBlank()) {
-                javax.servlet.http.HttpSession session = req.getSession(true);
+                jakarta.servlet.http.HttpSession session = req.getSession(true);
                 String msg = me.nickhanson.codeforge.entity.Outcome.SKIPPED + " — Missing language or code. Please fill in both fields.";
                 if (session != null) session.setAttribute("flashInfo", msg); else req.setAttribute("info", msg);
                 resp.sendRedirect(req.getContextPath() + "/drill");
@@ -162,7 +162,7 @@ public class DrillServlet extends HttpServlet {
             drillService.recordOutcome(id, outcome, code, userId);
 
             // flash message (ensure session exists for tests and runtime)
-            javax.servlet.http.HttpSession session = req.getSession(true);
+            jakarta.servlet.http.HttpSession session = req.getSession(true);
             String msg = outcome + " — " + (result != null ? result.getMessage() : "Runner unavailable.");
             if (session != null) {
                 session.setAttribute("flashInfo", msg);
@@ -209,3 +209,4 @@ public class DrillServlet extends HttpServlet {
         }
     }
 }
+

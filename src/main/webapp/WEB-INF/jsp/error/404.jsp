@@ -5,7 +5,7 @@
   Time: 6:30 PM
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="pageTitle" value="Not Found | CodeForge" scope="request" />
 
 <!DOCTYPE html>
@@ -37,11 +37,11 @@
       </p>
     </c:if>
 
-    <c:if test="${not empty requestScope['javax.servlet.error.request_uri']}">
+    <c:if test="${not empty requestScope['jakarta.servlet.error.request_uri']}">
       <p class="cf-muted">
         Requested path:
         <span class="cf-mono">
-          <c:out value="${requestScope['javax.servlet.error.request_uri']}" />
+          <c:out value="${requestScope['jakarta.servlet.error.request_uri']}" />
         </span>
       </p>
     </c:if>
@@ -66,7 +66,7 @@
     <%-- TODO: Update this message post-MVP --%>
     <p class="cf-tiny cf-muted">
       If this keeps happening, grab the timestamp from this page and check
-      the logs in Elastic Beanstalk.
+      the application logs in your deployment environment.
     </p>
 
   </section>
@@ -76,3 +76,4 @@
 
 </body>
 </html>
+
