@@ -10,6 +10,7 @@ import java.io.IOException;
 /**
  * Lightweight readiness/liveness endpoint.
  * Returns 200 quickly without touching downstream dependencies.
+ * @author Nick Hanson
  */
 @WebServlet(urlPatterns = {"/health"})
 public class HealthServlet extends HttpServlet {
